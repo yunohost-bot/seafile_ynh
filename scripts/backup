@@ -6,11 +6,11 @@ set -e
 BACKUP_DIR=$1
 
 # The parameter $2 is the id of the app instance ex: strut__2
-app=$2
+APP=$2
 
 # retrieve useful param
-domain=$(sudo yunohost app setting $app domain)
-db_pwd=$(sudo yunohost app setting $app mysqlpwd)
+domain=$(sudo yunohost app setting ${APP} domain)
+db_pwd=$(sudo yunohost app setting ${APP} db_pwd)
 
 # Backup app files
 sudo mkdir -p "${BACKUP_DIR}/www"
@@ -18,8 +18,8 @@ sudo cp -a /var/www/$app/. "${BACKUP_DIR}/www"
 
 # Backup conf files
 sudo mkdir -p "${BACKUP_DIR}/conf"
-sudo cp -a /etc/nginx/conf.d/$domain.d/$app.conf "${BACKUP_DIR}/conf/${app}.conf"
-sudo cp -a /etc/logrotate.d/seafile "${BACKUP_DIR}/conf/seafile"
+sudo cp -a /etc/nginx/conf.d/$domain.d/$app.conf "${BACKUP_DIR}/conf/${APP}.conf"
+sudo cp -a /etc/logrotate.d/${APP} "${BACKUP_DIR}/conf/${APP}"
 sudo cp -a /etc/init.d/seafile-server "${BACKUP_DIR}/conf/seafile-server"
 
 # Backup data
@@ -27,6 +27,8 @@ sudo mkdir -p "${BACKUP_DIR}/data"
 sudo cp -a /home/yunohost.app/seafile-data/. "${BACKUP_DIR}/data"
 
 # Backup mysql
-sudo mysqldump -u $app -p$db_pwd ccnetdb > "${BACKUP_DIR}/ccnetdb.dmp"
-sudo mysqldump -u $app -p$db_pwd seafiledb > "${BACKUP_DIR}/seafiledb.dmp"
-sudo mysqldump -u $app -p$db_pwd seahubdb > "${BACKUP_DIR}/seahubdb.dmp"
+mysqldump -u ${APP} -p$db_pwd ccnetdb | sudo dd of=${BACKUP_DIR}/ccnetdb.dmp
+mysqldump -u ${APP} -p$db_pwd seafiledb | sudo dd of=${BACKUP_DIR}/seafiledb.dmp
+mysqldump -u ${APP} -p$db_pwd seahubdb | sudo dd of=${BACKUP_DIR}/seahubdb.dmp
+
+exit 0

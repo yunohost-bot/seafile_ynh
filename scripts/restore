@@ -6,14 +6,15 @@ set -e
 BACKUP_DIR=$1
 
 # The parameter $2 is the id of the app instance ex: strut__2
-app=$2
+APP=$2
 
-domain=$(sudo yunohost app setting $app domain)
-path=$(sudo yunohost app setting $app path)
-db_pwd=$(sudo yunohost app setting $app mysqlpwd)
+# retrieve useful param
+domain=$(sudo yunohost app setting ${APP} domain)
+db_pwd=$(sudo yunohost app setting ${APP} db_pwd)
+path=$(sudo yunohost app setting ${APP} path)
 
 # Check domain/path availability
-sudo yunohost app checkurl $domain$path -a $app  \
+sudo yunohost app checkurl $domain$path -a ${APP}  \
     || (echo "Path not available: $domain$path" && exit 1)
 
 # Restore dependencies
@@ -21,14 +22,14 @@ sudo apt-get update
 sudo apt-get install -qq python2.7 python-setuptools python-simplejson python-imaging python-mysqldb python-flup expect
 
 # Restore app files
-final_path=/var/www/$app
+final_path=/var/www/${APP}
 sudo mkdir -p $final_path
 sudo cp -a "${BACKUP_DIR}/www/." $final_path
 sudo chown -R www-data:www-data $final_path
 
 # Restore conf files
-sudo cp -a "${BACKUP_DIR}/conf/${app}.conf" /etc/nginx/conf.d/$domain.d/$app.conf
-sudo cp -a "${BACKUP_DIR}/conf/seafile" /etc/logrotate.d/seafile
+sudo cp -a "${BACKUP_DIR}/conf/${APP}.conf" /etc/nginx/conf.d/$domain.d/${APP}.conf
+sudo cp -a "${BACKUP_DIR}/conf/${APP}" /etc/logrotate.d/${APP}
 sudo cp -a "${BACKUP_DIR}/conf/seafile-server" /etc/init.d/seafile-server
 sudo chmod +x /etc/init.d/seafile-server
 
@@ -39,9 +40,12 @@ sudo cp -a "${BACKUP_DIR}/data/." /home/yunohost.app/seafile-data/.
 sudo chown -R www-data:www-data $seafile_data
 
 # Restore mysql dump
-sudo mysql -u $app -p$db_pwd ccnetdb < "${BACKUP_DIR}/ccnetdb.dmp"
-sudo mysql -u $app -p$db_pwd seafiledb < "${BACKUP_DIR}/seafiledb.dmp"
-sudo mysql -u $app -p$db_pwd seahubdb < "${BACKUP_DIR}/seahubdb.dmp"
+sudo su -c "mysql -u ${APP} -p$db_pwd ccnetdb < ${BACKUP_DIR}/ccnetdb.dmp"
+sudo su -c "mysql -u ${APP} -p$db_pwd seafiledb < ${BACKUP_DIR}/seafiledb.dmp"
+sudo su -c "mysql -u ${APP} -p$db_pwd seahubdb < ${BACKUP_DIR}/seahubdb.dmp"
+
+# Restore sso persistent config
+sudo python $final_path/add_sso_conf.py
 
 # Add Seafile to YunoHost's monitored services
 sudo yunohost service add seafile-server
@@ -54,3 +58,5 @@ sudo yunohost app ssowatconf
 
 # start seafile
 sudo service seafile-server start
+
+exit 0
