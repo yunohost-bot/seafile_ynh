@@ -15,14 +15,14 @@ Installation
 
 From command line:
 
-`sudo yunohost app install -l Seafile https://github.com/mbugeia/seafile_ynh`
+`sudo yunohost app install -l Seafile https://github.com/YunoHost-Apps/seafile_ynh`
 
 Upgrade
 -------
 
 From command line:
 
-`sudo yunohost app upgrade -u https://github.com/mbugeia/seafile_ynh seafile`
+`sudo yunohost app upgrade -u https://github.com/YunoHost-Apps/seafile_ynh`
 
 Infos
 -----
@@ -60,7 +60,7 @@ Please do your pull request to the Dev branch.
 Test or upgrade to dev version:
 ```
 su - admin
-git clone -b Dev https://github.com/mbugeia/seafile_ynh
+git clone -b Dev https://github.com/YunoHost-Apps/seafile_ynh
 # to install
 sudo yunohost app install -l Seafile /home/admin/seafile_ynh
 # to upgrade
