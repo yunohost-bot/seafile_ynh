@@ -10,9 +10,24 @@ admin=$4
 admin_password=$5
 is_public=$6
 architecture=$7
-final_path=/var/www/$app
 seafile_data=/home/yunohost.app/seafile-data
-seafile_version=5.0.3
+seafile_version=6.0.4
+
+# Source YunoHost helpers
+source /usr/share/yunohost/helpers
+
+# Import common cmd
+source ./_common.sh
+
+# Set configuration for user and final path
+set_configuration
+
+# Check domain/path availability
+sudo yunohost app checkurl $domain$path -a $app  \
+    || (echo "Path not available: $domain$path" && ynh_die "Error : path not available")
+
+# Download new version from sources
+get_source $architecture $seafile_version
 
 # Retrieve admin email
 admin_email=$(sudo yunohost user info $admin | grep mail: | sed "s/mail: //g")
@@ -31,10 +46,6 @@ findPort () {
    return $port
 }
 
-# Check domain/path availability
-sudo yunohost app checkurl $domain$path -a $app  \
-    || (echo "Path not available: $domain$path" && exit 1)
-
 # Check dependencies
 sudo apt-get update
 sudo apt-get install -qq python2.7 python-setuptools python-simplejson python-imaging python-mysqldb python-flup expect
@@ -45,7 +56,7 @@ sudo mkdir -p $final_path/installed
 sudo mkdir -p $final_path/logs
 sudo mkdir -p $final_path/seafile-data
 sudo mkdir -p $final_path/seafile-server-$seafile_version
-sudo tar xzf ../sources/'seafile-server_'$seafile_version'_'$architecture'.tar.gz'
+sudo tar xzf '/tmp/seafile_src.tar.gz'
 sudo mv seafile-server-$seafile_version/* $final_path/seafile-server-$seafile_version
 sudo mv ../sources/'seafile-server_'$seafile_version'_'$architecture'.tar.gz' $final_path/installed
 
@@ -58,20 +69,20 @@ findPort 8080
 webdav_port=$port
 
 # store config in yunohost
-sudo yunohost app setting $app seahub_port -v $seahub_port
-sudo yunohost app setting $app fileserver_port -v $fileserver_port
-sudo yunohost app setting $app webdav_port -v $webdav_port
-sudo yunohost app setting $app is_public -v $is_public
-sudo yunohost app setting $app architecture -v $architecture
-sudo yunohost app setting $app installed_version -v $seafile_version
+ynh_app_setting_set $app seahub_port $seahub_port
+ynh_app_setting_set $app fileserver_port $fileserver_port
+ynh_app_setting_set $app webdav_port $webdav_port
+ynh_app_setting_set $app is_public $is_public
+ynh_app_setting_set $app architecture $architecture
+ynh_app_setting_set $app installed_version $seafile_version
 
 # init databases
-db_user=$app
-db_pwd=$(openssl rand -hex 15)
-sudo yunohost app initdb -d ccnetdb -p $db_pwd $db_user 
-sudo yunohost app initdb -d seafiledb -p $db_pwd $db_user 
-sudo yunohost app initdb -d seahubdb -p $db_pwd $db_user
-sudo yunohost app setting seafile db_pwd -v $db_pwd
+dbuser=seafile
+db_pwd=$(ynh_string_random 15)
+ynh_app_setting_set "$app" mysqlpwd "$db_pwd"
+ynh_mysql_create_db ccnetdb "$dbuser" "$db_pwd"
+ynh_mysql_create_db seafiledb "$dbuser" "$db_pwd"
+ynh_mysql_create_db seahubdb "$dbuser" "$db_pwd"
 
 # Run install script
 sudo chmod +x ../conf/install.exp
@@ -127,12 +138,12 @@ sudo cp ../conf/first_launch.exp $final_path
 sudo chmod +x $final_path/first_launch.exp
 
 # Set permissions to seafile directory
-sudo chown -R www-data:www-data $final_path
-sudo chown -R www-data:www-data $seafile_data
+sudo chown -R $seafile_user:$seafile_user $final_path
+sudo chown -R $seafile_user:$seafile_user $seafile_data
 
 # Start seafile, seahub and populate admin account
-sudo su - www-data -s /bin/bash -c "/var/www/seafile/seafile-server-$seafile_version/seafile.sh start"
-sudo su - www-data -s /bin/bash -c "$final_path/first_launch.exp $final_path/seafile-server-$seafile_version $admin_email $admin_password"
+sudo su - $seafile_user -s /bin/bash -c "$final_path/seafile-server-$seafile_version/seafile.sh start"
+sudo su - $seafile_user -s /bin/bash -c "$final_path/first_launch.exp $final_path/seafile-server-$seafile_version $admin_email $admin_password"
 
 # Add sso config to unprotect domain.tld/seafhttp + domain.tld/seafdav do in /etc/ssowat/conf.json.persistent
 sudo cp ../conf/add_sso_conf.py $final_path
@@ -140,13 +151,13 @@ sudo cp ../conf/remove_sso_conf.py $final_path
 sudo python $final_path/add_sso_conf.py
 
 # unprotect media
-sudo yunohost app setting seafile unprotected_uris -v "/media"
+ynh_app_setting_set seafile unprotected_uris "/media"
 
-if [ "$is_public" = "No" ]
+if [ "$is_public" = "0" ]
 then
-	sudo yunohost app setting seafile unprotected_uris -d
+	ynh_app_setting_delete seafile unprotected_uris
 else
-	sudo yunohost app setting seafile unprotected_uris -v "/"
+        ynh_app_setting_set seafile unprotected_uris "/"
 fi
 
 # Add logrotate
@@ -162,6 +173,6 @@ sudo service nginx reload
 sudo yunohost app ssowatconf
 
 # Restart seafile
-sudo su - www-data -s /bin/bash -c "/var/www/seafile/seafile-server-latest/seahub.sh stop"
+sudo su - $seafile_user -s /bin/bash -c "$final_path/seafile-server-latest/seahub.sh stop"
 sudo service seafile-server stop
 sudo service seafile-server start

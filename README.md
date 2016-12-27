@@ -27,7 +27,7 @@ From command line:
 Infos
 -----
 
-Seafile server v5.0.3
+Seafile server v6.0.6
 
 Available for x64, i386, and Raspberry Pi architecture but only tested for x64 (feedback are welcome)
 
@@ -51,6 +51,31 @@ TODO
 
  - Auto login/logout, see #1
  - Test of backup/restore script
+
+Use a spial user and put seafile binary in /opt dir :
+--------------------------------------
+
+With this new package for a better security, it's possible to run seafile with a special user (seafile) put all seafile file in /opt/yunohost dir.
+To do this open a console and do this command :
+
+```
+# stop seafile server
+sudo service seafile-server stop
+
+# Move all data to opt and change user
+sudo mv /var/www/seafile /opt/yunohost/seafile
+sudo addgroup seafile --system --quiet
+sudo adduser seafile --disabled-login --ingroup seafile --system --quiet --shell /bin/bash --home /opt/yunohost/seafile
+
+# Adapt configuration
+sudo sed -i "s@user=www-data@user=seafile@g" /etc/init.d/seafile-server 
+sudo sed -i "s@seafile_dir=/var/www/seafile@seafile_dir=/opt/yunohost/seafile@g" /etc/init.d/seafile-server
+sudo sed -i "s@alias /var/www/seafile/@alias /opt/yunohost/seafile/@g" /etc/nginx/conf.d/$domain.d/seafile.conf
+
+# Restart services
+sudo service nginx reload
+sudo service seafile-server start
+```
 
 Developper infos
 ----------------

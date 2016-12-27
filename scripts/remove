@@ -1,13 +1,19 @@
 #!/bin/bash
-domain=$(sudo yunohost app setting seafile domain)
+domain=$(ynh_app_setting_get seafile domain)
 root_pwd=$(sudo cat /etc/yunohost/mysql)
+
+# Import common cmd
+source ./_common.sh
+
+# Set configuration for user and final path
+set_configuration
 
 sudo service seafile-server stop
 
 # remove sso config to unprotect domain.tld/seafhttp in /etc/ssowat/conf.json.persistent
-sudo python /var/www/seafile/remove_sso_conf.py
+sudo python $final_path/remove_sso_conf.py
 
-sudo rm -rf /var/www/seafile
+sudo rm -rf $final_path
 sudo rm -f /etc/nginx/conf.d/$domain.d/seafile.conf
 sudo rm -f /etc/init.d/seafile-server
 sudo rm -rf /home/yunohost.app/seafile-data
