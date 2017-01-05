@@ -221,3 +221,4 @@ pip-log.txt
 # From kateproject
 .kateproject
 .kateproject.d
+.directory

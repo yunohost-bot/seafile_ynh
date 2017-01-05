@@ -1,30 +1,29 @@
 #!/bin/bash
 
-app=seafile
-
-# Retrieve arguments
-domain=$1
-path=$2
-server_name=$3
-admin=$4
-admin_password=$5
-is_public=$6
-architecture=$7
-seafile_data=/home/yunohost.app/seafile-data
-seafile_version=6.0.4
-
-# Source YunoHost helpers
-source /usr/share/yunohost/helpers
-
 # Import common cmd
 source ./_common.sh
 
-# Set configuration for user and final path
-set_configuration
+# Init script
+init_script
+
+# Retrieve arguments
+domain=$YNH_APP_ARG_DOMAIN
+path=$YNH_APP_ARG_PATH
+server_name=$YNH_APP_ARG_SERVER_NAME
+admin=$YNH_APP_ARG_ADMIN
+admin_password=$YNH_APP_ARG_ADMIN_PASSWORD
+is_public=$YNH_APP_ARG_PUBLIC_SITE
+architecture=$YNH_APP_ARG_ARCHITECTURE
+seafile_data=/home/yunohost.app/seafile-data
+final_path=/var/www/$app
+seafile_user=www-data
+
+# Correct path if it is not correct
+correct_path
 
 # Check domain/path availability
-sudo yunohost app checkurl $domain$path -a $app  \
-    || (echo "Path not available: $domain$path" && ynh_die "Error : path not available")
+sudo yunohost app checkurl "${domain}${path}" -a "$app" \
+    || ynh_die "Path not available: ${domain}${path}"
 
 # Download new version from sources
 get_source $architecture $seafile_version
@@ -36,14 +35,9 @@ port=''
 findPort () {
     port=$1
 
-    sudo yunohost app checkport $port
-    while [[ ! $? -eq 0 ]]
-        do
-            port=$(($port + 1))
-            sudo yunohost app checkport $port
-        done
-
-   return $port
+    while ! sudo yunohost app checkport $port ; do
+        port=$(($port + 1))
+    done
 }
 
 # Check dependencies
@@ -51,6 +45,8 @@ sudo apt-get update
 sudo apt-get install -qq python2.7 python-setuptools python-simplejson python-imaging python-mysqldb python-flup expect
 
 # Copy files to the right place
+test -e $final_path && sudo rm -rf "$final_path"
+test -e $seafile_data && sudo rm -rf "$seafile_data"
 sudo mkdir -p $final_path
 sudo mkdir -p $final_path/installed
 sudo mkdir -p $final_path/logs
@@ -58,7 +54,7 @@ sudo mkdir -p $final_path/seafile-data
 sudo mkdir -p $final_path/seafile-server-$seafile_version
 sudo tar xzf '/tmp/seafile_src.tar.gz'
 sudo mv seafile-server-$seafile_version/* $final_path/seafile-server-$seafile_version
-sudo mv ../sources/'seafile-server_'$seafile_version'_'$architecture'.tar.gz' $final_path/installed
+sudo mv '/tmp/seafile_src.tar.gz' $final_path/installed/seafile-server_${seafile_version}.tar.gz
 
 # Find available ports
 findPort 8000
@@ -98,6 +94,7 @@ echo 'SERVE_STATIC = False' | sudo tee -a $final_path/conf/seahub_settings.py
 echo 'MEDIA_URL = "'$path'/media/"' | sudo tee -a $final_path/conf/seahub_settings.py
 echo 'COMPRESS_URL = MEDIA_URL' | sudo tee -a $final_path/conf/seahub_settings.py
 echo "STATIC_URL = MEDIA_URL + 'assets/'" | sudo tee -a $final_path/conf/seahub_settings.py
+echo "LOGIN_URL = '"$path"/accounts/login/'" | sudo tee -a $final_path/conf/seahub_settings.py
 
 # Email configuration
 echo 'EMAIL_USE_TLS = False' | sudo tee -a $final_path/conf/seahub_settings.py

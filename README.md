@@ -70,9 +70,15 @@ sudo adduser seafile --disabled-login --ingroup seafile --system --quiet --shell
 # Adapt configuration
 sudo sed -i "s@user=www-data@user=seafile@g" /etc/init.d/seafile-server 
 sudo sed -i "s@seafile_dir=/var/www/seafile@seafile_dir=/opt/yunohost/seafile@g" /etc/init.d/seafile-server
-sudo sed -i "s@alias /var/www/seafile/@alias /opt/yunohost/seafile/@g" /etc/nginx/conf.d/$domain.d/seafile.conf
+sudo sed -i "s@alias /var/www/seafile/@alias /opt/yunohost/seafile/@g" /etc/nginx/conf.d/$(sudo yunohost app setting seafile domain).d/seafile.conf
+
+# Set the good user for seafile
+sudo chown seafile:seafile -R /opt/yunohost/seafile
+sudo chown seafile:seafile -R /home/yunohost.app/seafile-data/
 
 # Restart services
+sudo rm -rf /tmp/seahub_cache
+sudo systemctl daemon-reload
 sudo service nginx reload
 sudo service seafile-server start
 ```

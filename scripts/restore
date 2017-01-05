@@ -1,12 +1,14 @@
 #!/bin/bash
 
-set -e
-
 # Import common cmd
 source ./_common.sh
 
-# Set configuration for user and final path
-set_configuration
+# Init script
+init_script
+
+# Retrieve arguments
+final_path=/var/www/$app
+seafile_user=www-data
 
 # The parameter $1 is the backup directory location dedicated to the app
 BACKUP_DIR=$1
@@ -19,10 +21,13 @@ domain=$(ynh_app_setting_get ${APP} domain)
 db_pwd=$(ynh_app_setting_get ${APP} db_pwd)
 path=$(ynh_app_setting_get ${APP} path)
 
+# Correct path if it is not correct
+correct_path
+
 # Check domain/path availability
 sudo yunohost app checkurl $domain$path -a ${APP}  \
     || (echo "Path not available: $domain$path" && ynh_die "Error : path not available")
-
+    
 # Restore dependencies
 sudo apt-get update
 sudo apt-get install -qq python2.7 python-setuptools python-simplejson python-imaging python-mysqldb python-flup expect

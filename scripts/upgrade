@@ -1,18 +1,19 @@
 #!/bin/bash
 
-app=seafile
+# Import common cmd
+source ./_common.sh
+
+# Init script
+init_script
 
 # Retrieve settings
 installed_version=$(ynh_app_setting_get $app installed_version)
+path=$(ynh_app_setting_get "$app" path)
 architecture=$(ynh_app_setting_get $app architecture)
 root_pwd=$(sudo cat /etc/yunohost/mysql)
-seafile_version=6.0.6
 
-# Source YunoHost helpers
-source /usr/share/yunohost/helpers
-
-# Import common cmd
-source ./_common.sh
+# Correct path if it is not correct
+correct_path
 
 # Set configuration for user and final path
 set_configuration
@@ -20,14 +21,15 @@ set_configuration
 # Download new version from sources
 get_source $architecture $seafile_version
 
+# stop seafile server
+sudo service seafile-server stop
+
 # extract new version
+test -e $final_path/seafile-server-$seafile_version && sudo rm -rf "$final_path/seafile-server-$seafile_version"
 sudo mkdir -p $final_path/seafile-server-$seafile_version
 sudo tar xzf '/tmp/seafile_src.tar.gz'
 sudo mv seafile-server-$seafile_version/* $final_path/seafile-server-$seafile_version
-sudo mv ../sources/'seafile-server_'$seafile_version'_'$architecture'.tar.gz' $final_path/installed
-
-# stop seafile server
-sudo service seafile-server stop
+sudo mv '/tmp/seafile_src.tar.gz' $final_path/installed/seafile-server_${seafile_version}.tar.gz
 
 # permission to execute update script and expect helper
 sudo chmod +x ../conf/upgrade_4.1.1.exp
@@ -133,8 +135,8 @@ then
 	sudo python $final_path/add_sso_conf_webdav.py
 	
 	# Update seafile config
-	echo 'COMPRESS_URL = MEDIA_URL' | sudo tee -a $final_path/seahub_settings.py
-	echo "STATIC_URL = MEDIA_URL + 'assets/'" | sudo tee -a $final_path/seahub_settings.py
+	echo 'COMPRESS_URL = MEDIA_URL' | sudo tee -a $final_path/conf/seahub_settings.py
+	echo "STATIC_URL = MEDIA_URL + 'assets/'" | sudo tee -a $final_path/conf/seahub_settings.py
 	
 	# Add logrotate
 	sudo cp ../conf/logrotate /etc/logrotate.d/seafile
@@ -142,21 +144,27 @@ then
 	sudo service rsyslog restart
 fi
 
+# Update seahub config for old version to version 5.0.4
+if [[ $(sudo grep -c "LOGIN_URL" $final_path/conf/seahub_settings.py) == 0 ]]
+then
+        echo "LOGIN_URL = '"$path"/accounts/login/'" | sudo tee -a $final_path/conf/seahub_settings.py
+fi
+
 # restore correct permissions
 sudo chown -R $seafile_user:$seafile_user $final_path
 
 # delete seafile cache
-sudo rm -r /tmp/seahub_cache
+sudo rm -rf /tmp/seahub_cache
 
 # restart seafile server
 sudo service seafile-server start
 
 # remove old version files
-sudo rm -f $final_path/installed/seafile-server_$installed_version_$architecture.tar*
-sudo rm -f $final_path/seafile-server_$installed_version_$architecture
+sudo rm -f $final_path/installed/seafile-server_${installed_version}*.tar*
+sudo rm -f $final_path/seafile-server_${installed_version}_$architecture
 
 # store new installed version
-ynh_app_setting_set seafile installed_version -v $seafile_version
+ynh_app_setting_set $app installed_version $seafile_version
 
 # Reload Nginx and regenerate SSOwat conf
 sudo service nginx reload
