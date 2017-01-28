@@ -3,11 +3,42 @@
 # Exit on command errors and treat unset variables as an error
 set -eu
 
-# Source YunoHost helpers
-source /usr/share/yunohost/helpers
+######## Actually we cant use common script in backup / restore script see this issue for more informations : https://dev.yunohost.org/issues/621
+# # Import common cmd
+# source ./_common.sh
+#
 
-# Import common cmd
-source ./_common.sh
+######## We implement manually this fonctions 
+
+init_script() {
+    # Exit on command errors and treat unset variables as an error
+    set -eu
+
+    # Source YunoHost helpers
+    source /usr/share/yunohost/helpers
+
+    # Retrieve arguments
+    app=$YNH_APP_INSTANCE_NAME
+}
+
+set_configuration() {
+    if [[ -e /var/www/$app ]]
+    then
+        final_path=/var/www/$app
+        seafile_user=www-data
+    elif [[ -e /opt/yunohost/$app ]]
+    then
+        final_path=/opt/yunohost/$app
+        seafile_user=seafile
+    else
+        ynh_die "Error : can't find seafile path"
+    fi
+}
+
+######## End of common fonctions
+
+# Init script
+init_script
 
 # Retrieve arguments
 app=$YNH_APP_INSTANCE_NAME
