@@ -19,7 +19,7 @@ final_path=/var/www/$app
 seafile_user=www-data
 
 # Correct path if it is not correct
-correct_path
+CHECK_PATH
 
 # Check domain/path availability
 sudo yunohost app checkurl "${domain}${path}" -a "$app" \
@@ -30,15 +30,6 @@ get_source $architecture $seafile_version
 
 # Retrieve admin email
 admin_email=$(sudo yunohost user info $admin | grep mail: | sed "s/mail: //g")
-
-port=''
-findPort () {
-    port=$1
-
-    while ! sudo yunohost app checkport $port ; do
-        port=$(($port + 1))
-    done
-}
 
 # Check dependencies
 sudo apt-get update
@@ -57,11 +48,11 @@ sudo mv seafile-server-$seafile_version/* $final_path/seafile-server-$seafile_ve
 sudo mv '/tmp/seafile_src.tar.gz' $final_path/installed/seafile-server_${seafile_version}.tar.gz
 
 # Find available ports
-findPort 8000
+FIND_PORT 8000
 seahub_port=$port
-findPort 8082
+FIND_PORT 8082
 fileserver_port=$port
-findPort 8080
+FIND_PORT 8080
 webdav_port=$port
 
 # store config in yunohost

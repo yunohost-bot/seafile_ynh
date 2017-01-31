@@ -18,13 +18,13 @@ init_script() {
     app=$YNH_APP_INSTANCE_NAME
 }
 
-correct_path() {
-    if [ "${path:0:1}" != "/" ] && [ ${#path} -gt 0 ]; then
-        path="/$path"
-    fi
-    if [ "${path:${#path}-1}" == "/" ] && [ ${#path} -gt 1 ]; then
-        path="${path:0:${#path}-1}"
-    fi
+CHECK_PATH () {	# Vérifie la présence du / en début de path. Et son absence à la fin.
+	if [ "${path:0:1}" != "/" ]; then    # Si le premier caractère n'est pas un /
+		path="/$path"    # Ajoute un / en début de path
+	fi
+	if [ "${path:${#path}-1}" == "/" ] && [ ${#path} -gt 1 ]; then    # Si le dernier caractère est un / et que ce n'est pas le seul caractère.
+		path="${path:0:${#path}-1}"	# Supprime le dernier caractère
+	fi
 }
 
 ######## End of common fonctions
@@ -39,19 +39,16 @@ seafile_user=www-data
 # The parameter $1 is the backup directory location dedicated to the app
 BACKUP_DIR=$1
 
-# The parameter $2 is the id of the app instance ex: strut__2
-APP=$2
-
 # retrieve useful param
-domain=$(ynh_app_setting_get ${APP} domain)
-db_pwd=$(ynh_app_setting_get ${APP} db_pwd)
-path=$(ynh_app_setting_get ${APP} path)
+domain=$(ynh_app_setting_get ${app} domain)
+db_pwd=$(ynh_app_setting_get ${app} mysqlpwd)
+path=$(ynh_app_setting_get ${app} path)
 
 # Correct path if it is not correct
-correct_path
+CHECK_PATH
 
 # Check domain/path availability
-sudo yunohost app checkurl $domain$path -a ${APP}  \
+sudo yunohost app checkurl $domain$path -a ${app}  \
     || (echo "Path not available: $domain$path" && ynh_die "Error : path not available")
     
 # Restore dependencies
@@ -65,21 +62,25 @@ sudo cp -a "${BACKUP_DIR}/www/." $final_path
 sudo chown -R $seafile_user:$seafile_user $final_path
 
 # Restore conf files
-sudo cp -a "${BACKUP_DIR}/conf/${APP}.conf" /etc/nginx/conf.d/$domain.d/${APP}.conf
-sudo cp -a "${BACKUP_DIR}/conf/${APP}" /etc/logrotate.d/${APP}
+sudo cp -a "${BACKUP_DIR}/conf/${app}.conf" /etc/nginx/conf.d/$domain.d/${app}.conf
+sudo cp -a "${BACKUP_DIR}/conf/${app}" /etc/logrotate.d/${app}
 sudo cp -a "${BACKUP_DIR}/conf/seafile-server" /etc/init.d/seafile-server
 sudo chmod +x /etc/init.d/seafile-server
 
 # Restore data
 seafile_data=/home/yunohost.app/seafile-data
-mkdir -p $seafile_data
+sudo mkdir -p $seafile_data
 sudo cp -a "${BACKUP_DIR}/data/." /home/yunohost.app/seafile-data/.
 sudo chown -R $seafile_user:$seafile_user $seafile_data
 
 # Restore mysql dump
-sudo su -c "mysql -u ${APP} -p$db_pwd ccnetdb < ${BACKUP_DIR}/ccnetdb.dmp"
-sudo su -c "mysql -u ${APP} -p$db_pwd seafiledb < ${BACKUP_DIR}/seafiledb.dmp"
-sudo su -c "mysql -u ${APP} -p$db_pwd seahubdb < ${BACKUP_DIR}/seahubdb.dmp"
+dbuser=seafile
+ynh_mysql_create_db ccnetdb "$dbuser" "$db_pwd"
+ynh_mysql_create_db seafiledb "$dbuser" "$db_pwd"
+ynh_mysql_create_db seahubdb "$dbuser" "$db_pwd"
+sudo su -c "mysql -u ${app} -p$db_pwd ccnetdb < ${BACKUP_DIR}/ccnetdb.dmp"
+sudo su -c "mysql -u ${app} -p$db_pwd seafiledb < ${BACKUP_DIR}/seafiledb.dmp"
+sudo su -c "mysql -u ${app} -p$db_pwd seahubdb < ${BACKUP_DIR}/seahubdb.dmp"
 
 # Restore sso persistent config
 sudo python $final_path/add_sso_conf.py
@@ -90,8 +91,8 @@ sudo yunohost service add seafile-server
 # Reload/restart services
 sudo update-rc.d seafile-server defaults
 sudo service rsyslog restart
-sudo service nginx reload
 sudo yunohost app ssowatconf
+sudo service nginx reload
 
 # start seafile
 sudo service seafile-server start

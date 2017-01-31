@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Exit on command errors and treat unset variables as an error
-set -eu
-
 ######## Actually we cant use common script in backup / restore script see this issue for more informations : https://dev.yunohost.org/issues/621
 # # Import common cmd
 # source ./_common.sh
@@ -40,9 +37,6 @@ set_configuration() {
 # Init script
 init_script
 
-# Retrieve arguments
-app=$YNH_APP_INSTANCE_NAME
-
 # Set configuration for user and final path
 set_configuration
 
@@ -54,7 +48,7 @@ APP=$2
 
 # retrieve useful param
 domain=$(ynh_app_setting_get ${APP} domain)
-db_pwd=$(ynh_app_setting_get ${APP} db_pwd)
+db_pwd=$(ynh_app_setting_get ${APP} mysqlpwd)
 
 # Backup app files
 sudo mkdir -p "${BACKUP_DIR}/www"
