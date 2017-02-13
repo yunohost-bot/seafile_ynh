@@ -9,6 +9,7 @@ init_script
 # Retrieve settings
 installed_version=$(ynh_app_setting_get $app installed_version)
 architecture=$(ynh_app_setting_get $app architecture)
+path=$(ynh_app_setting_get $app path)
 root_pwd=$(sudo cat /etc/yunohost/mysql)
 
 # Set configuration for user and final path
