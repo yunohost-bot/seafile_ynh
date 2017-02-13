@@ -48,11 +48,11 @@ sudo mv seafile-server-$seafile_version/* $final_path/seafile-server-$seafile_ve
 sudo mv '/tmp/seafile_src.tar.gz' $final_path/installed/seafile-server_${seafile_version}.tar.gz
 
 # Find available ports
-FIND_PORT 8000
+NO_LOG FIND_PORT 8000
 seahub_port=$port
-FIND_PORT 8082
+NO_LOG FIND_PORT 8082
 fileserver_port=$port
-FIND_PORT 8080
+NO_LOG FIND_PORT 8080
 webdav_port=$port
 
 # store config in yunohost
