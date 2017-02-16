@@ -1,6 +1,44 @@
 #!/bin/bash
 
-set -e
+######## Actually we cant use common script in backup / restore script see this issue for more informations : https://dev.yunohost.org/issues/621
+# # Import common cmd
+# source ./_common.sh
+#
+
+######## We implement manually this fonctions 
+
+init_script() {
+    # Exit on command errors and treat unset variables as an error
+    set -eu
+
+    # Source YunoHost helpers
+    source /usr/share/yunohost/helpers
+
+    # Retrieve arguments
+    app=$YNH_APP_INSTANCE_NAME
+}
+
+set_configuration() {
+    if [[ -e /var/www/$app ]]
+    then
+        final_path=/var/www/$app
+        seafile_user=www-data
+    elif [[ -e /opt/yunohost/$app ]]
+    then
+        final_path=/opt/yunohost/$app
+        seafile_user=seafile
+    else
+        ynh_die "Error : can't find seafile path"
+    fi
+}
+
+######## End of common fonctions
+
+# Init script
+init_script
+
+# Set configuration for user and final path
+set_configuration
 
 # The parameter $1 is the backup directory location dedicated to the app
 BACKUP_DIR=$1
@@ -9,12 +47,12 @@ BACKUP_DIR=$1
 APP=$2
 
 # retrieve useful param
-domain=$(sudo yunohost app setting ${APP} domain)
-db_pwd=$(sudo yunohost app setting ${APP} db_pwd)
+domain=$(ynh_app_setting_get ${APP} domain)
+db_pwd=$(ynh_app_setting_get ${APP} mysqlpwd)
 
 # Backup app files
 sudo mkdir -p "${BACKUP_DIR}/www"
-sudo cp -a /var/www/${APP}/. "${BACKUP_DIR}/www"
+sudo cp -a $final_path/. "${BACKUP_DIR}/www"
 
 # Backup conf files
 sudo mkdir -p "${BACKUP_DIR}/conf"
@@ -30,5 +68,3 @@ sudo cp -a /home/yunohost.app/seafile-data/. "${BACKUP_DIR}/data"
 mysqldump -u ${APP} -p$db_pwd ccnetdb | sudo dd of=${BACKUP_DIR}/ccnetdb.dmp
 mysqldump -u ${APP} -p$db_pwd seafiledb | sudo dd of=${BACKUP_DIR}/seafiledb.dmp
 mysqldump -u ${APP} -p$db_pwd seahubdb | sudo dd of=${BACKUP_DIR}/seahubdb.dmp
-
-exit 0

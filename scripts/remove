@@ -1,20 +1,29 @@
 #!/bin/bash
-domain=$(sudo yunohost app setting seafile domain)
-root_pwd=$(sudo cat /etc/yunohost/mysql)
 
-sudo service seafile-server stop
+# Import common cmd
+source ./_common.sh
+
+# Init script
+init_script
+
+sudo service seafile-server stop || true
 
 # remove sso config to unprotect domain.tld/seafhttp in /etc/ssowat/conf.json.persistent
-sudo python /var/www/seafile/remove_sso_conf.py
-
-sudo rm -rf /var/www/seafile
-sudo rm -f /etc/nginx/conf.d/$domain.d/seafile.conf
+test -e /var/www/$app/remove_sso_conf.py && sudo python /var/www/$app/remove_sso_conf.py
+test -e /opt/yunohost/$app/remove_sso_conf.py && sudo python /opt/yunohost/$app/remove_sso_conf.py
+sudo rm -rf /var/www/$app 
+sudo rm -rf /opt/yunohost/$app
 sudo rm -f /etc/init.d/seafile-server
 sudo rm -rf /home/yunohost.app/seafile-data
-sudo rm -r /tmp/seahub_cache
+sudo rm -rf /tmp/seahub_cache
 
 # Remove databases
-mysql -u root -p$root_pwd -e "DROP DATABASE ccnetdb ; DROP DATABASE seafiledb ; DROP DATABASE seahubdb ; DROP USER seafile@localhost ;"
+root_pwd=$(sudo cat /etc/yunohost/mysql)
+mysql -u root -p$root_pwd -e "DROP DATABASE ccnetdb ; DROP DATABASE seafiledb ; DROP DATABASE seahubdb ; DROP USER seafile@localhost ;" || true
+
+# Remove domain config
+domain=$(ynh_app_setting_get seafile domain)
+sudo rm -f /etc/nginx/conf.d/$domain.d/seafile.conf
 
 sudo yunohost service remove seafile-server
 

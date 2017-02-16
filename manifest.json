@@ -1,23 +1,30 @@
 {
     "name": "Seafile",
     "id": "seafile",
+    "packaging_format": 1,
+    "license": "free",
+    "url": "https://www.seafile.com",
     "description": {
         "en": "Open Source Cloud Storage",
         "fr": "Stockage Cloud Open Source"
     },
-    "developer": {
+    "maintainer": {
         "name": "mbugeia",
         "email": "maxime@max.privy.place"
     },
-    "multi_instance": "false",
+    "multi_instance": false,
     "services": [
         "nginx",
         "mysql"
     ],
+    "requirements": {
+        "yunohost": ">= 2.4.0"
+    },
     "arguments": {
         "install": [
             {
                 "name": "domain",
+                "type": "domain",
                 "ask": {
                     "en": "Choose a domain for Seafile",
                     "fr": "Choisissez un domaine pour Seafile"
@@ -26,6 +33,7 @@
             },
             {
                 "name": "path",
+                "type": "path",
                 "ask": {
                     "en": "Choose a path for Seafile",
                     "fr": "Choisissez un chemin pour Seafile"
@@ -44,6 +52,7 @@
             },
             {
                 "name": "admin",
+                "type": "user",
                 "ask": {
                     "en": "Choose the admin user for Seafile",
                     "fr": "Choisissez l'administrateur de Seafile"
@@ -52,6 +61,7 @@
             },
             {
                 "name": "admin_password",
+                "type": "password",
                 "ask": {
                     "en": "Enter a password for the administrator",
                     "fr": "Entrez un mot de passe pour l'administrateur"
@@ -60,12 +70,12 @@
             },
             {
                 "name": "public_site",
+                "type": "boolean",
                 "ask": {
                     "en": "Is it a public site ? If you want to use a desktop client or the smartphone app, make Seafile public.",
                     "fr": "Est-ce un site public ? Pour utiliser un client sur PC ou l'application mobile, Seafile doit être public"
                 },
-                "choices": ["Yes", "No"],
-                "default": "Yes"
+                "default": "1"
             },
             {
                 "name": "architecture",
