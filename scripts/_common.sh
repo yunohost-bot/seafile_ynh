@@ -1,11 +1,11 @@
 #!/bin/bash 
 
-seafile_version=6.0.7
+seafile_version=6.0.8
 
 ## Adapt md5sum while you update app
-x86_64sum="4ca3c1fc93e5b786eb5d3509f4a3b01a"
-i386sum="743565be00189698318c8def0fbdaac0"
-armsum="ee3ef5330a51498faf861594e0fe744a"
+x86_64sum="353de460ed8a08f176103e96f1384ff3"
+i386sum="9a4bc83576ec74b46a907ca081d4914d"
+armsum="d7a0bd1d0a3948e1d3bc175e6d1ddca8"
 
 init_script() {
     # Exit on command errors and treat unset variables as an error
