@@ -41,7 +41,7 @@ set_configuration() {
 
 get_source() {
     if [[ $1 == 'arm' ]]
-    then
+    theng
         wget -q -O '/tmp/seafile_src.tar.gz' 'https://github.com/haiwen/seafile-rpi/releases/download/v'$2'/seafile-server_'$2'_stable_pi.tar.gz'
         md5sum=$armsum
     elif [[ $1 == 'x86-64' ]]
@@ -72,15 +72,6 @@ CHECK_PATH () {	# Vérifie la présence du / en début de path. Et son absence �
 	if [ "${path:${#path}-1}" == "/" ] && [ ${#path} -gt 1 ]; then    # Si le dernier caractère est un / et que ce n'est pas le seul caractère.
 		path="${path:0:${#path}-1}"	# Supprime le dernier caractère
 	fi
-}
-
-FIND_PORT () {	# Cherche un port libre.
-# $1 = Numéro de port pour débuter la recherche.
-	port=$1
-	while ! sudo yunohost app checkport $port ; do
-		port=$((port+1))
-	done
-	CHECK_VAR "$port" "port empty"
 }
 
 ######## End of common fonctions
