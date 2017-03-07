@@ -41,7 +41,7 @@ set_configuration() {
 
 get_source() {
     if [[ $1 == 'arm' ]]
-    theng
+    then
         wget -q -O '/tmp/seafile_src.tar.gz' 'https://github.com/haiwen/seafile-rpi/releases/download/v'$2'/seafile-server_'$2'_stable_pi.tar.gz'
         md5sum=$armsum
     elif [[ $1 == 'x86-64' ]]
