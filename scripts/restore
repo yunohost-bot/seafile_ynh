@@ -74,6 +74,15 @@ CHECK_PATH () {	# Vérifie la présence du / en début de path. Et son absence �
 	fi
 }
 
+FIND_PORT () {	# Cherche un port libre.
+# $1 = Numéro de port pour débuter la recherche.
+	port=$1
+	while ! sudo yunohost app checkport $port ; do
+		port=$((port+1))
+	done
+	CHECK_VAR "$port" "port empty"
+}
+
 ######## End of common fonctions
 
 # Init script
