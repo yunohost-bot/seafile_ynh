@@ -58,20 +58,6 @@ CHECK_VAR () {	# Vérifie que la variable n'est pas vide.
 	test -n "$1" || (echo "$2" >&2 && false)
 }
 
-# Ignore the yunohost-cli log to prevent errors with conditionals commands
-# usage: NO_LOG COMMAND
-# Simply duplicate the log, execute the yunohost command and replace the log without the result of this command
-# It's a very badly hack...
-# Petite copie perso à mon usage ;)
-NO_LOG () {
-  ynh_cli_log=/var/log/yunohost/yunohost-cli.log
-  sudo cp -a ${ynh_cli_log} ${ynh_cli_log}-move
-  eval $@
-  exit_code=$?
-  sudo mv ${ynh_cli_log}-move ${ynh_cli_log}
-  return $?
-}
-
 CHECK_PATH () {	# Vérifie la présence du / en début de path. Et son absence à la fin.
 	if [ "${path:0:1}" != "/" ]; then    # Si le premier caractère n'est pas un /
 		path="/$path"    # Ajoute un / en début de path
@@ -81,11 +67,18 @@ CHECK_PATH () {	# Vérifie la présence du / en début de path. Et son absence �
 	fi
 }
 
-FIND_PORT () {	# Cherche un port libre.
-# $1 = Numéro de port pour débuter la recherche.
+# Find a free port and return it
+#
+# example: port=$(ynh_find_port 8080)
+#
+# usage: ynh_find_port begin_port
+# | arg: begin_port - port to start to search
+ynh_find_port () {
 	port=$1
-	while ! sudo yunohost app checkport $port ; do
-		port=$((port+1))
+	test -n "$port" || ynh_die "The argument of ynh_find_port must be a valid port."
+	while netcat -z 127.0.0.1 $port       # Check if the port is free
+	do
+		port=$((port+1))	# Else, pass to next port
 	done
-	CHECK_VAR "$port" "port empty"
+	echo $port
 }
