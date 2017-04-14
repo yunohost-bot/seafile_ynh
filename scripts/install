@@ -24,6 +24,14 @@ CHECK_PATH
 # Check domain/path availability
 sudo yunohost app checkurl "${domain}${path}" -a "$app" \
     || ynh_die "Path not available: ${domain}${path}"
+    
+# Create special path with / at the end
+if [[ $path == '/' ]]
+then
+    path2=$path
+else
+    path2=$path'/'
+fi
 
 # Download new version from sources
 get_source $architecture $seafile_version
@@ -77,12 +85,12 @@ sudo ../conf/install.exp $final_path/seafile-server-$seafile_version $server_nam
 sudo sed -i "s@http://@https://@g" $final_path/conf/ccnet.conf
 sudo sed -i "s@:8000@$path@g" $final_path/conf/ccnet.conf
 echo 'FILE_SERVER_ROOT = "https://'$domain'/seafhttp"' | sudo tee -a $final_path/conf/seahub_settings.py
-echo 'SITE_ROOT = "'$path'/"' | sudo tee -a $final_path/conf/seahub_settings.py
+echo 'SITE_ROOT = "'$path2'"' | sudo tee -a $final_path/conf/seahub_settings.py
 echo 'SERVE_STATIC = False' | sudo tee -a $final_path/conf/seahub_settings.py
-echo 'MEDIA_URL = "'$path'/media/"' | sudo tee -a $final_path/conf/seahub_settings.py
+echo 'MEDIA_URL = "'$path2'media/"' | sudo tee -a $final_path/conf/seahub_settings.py
 echo 'COMPRESS_URL = MEDIA_URL' | sudo tee -a $final_path/conf/seahub_settings.py
 echo "STATIC_URL = MEDIA_URL + 'assets/'" | sudo tee -a $final_path/conf/seahub_settings.py
-echo "LOGIN_URL = '"$path"/accounts/login/'" | sudo tee -a $final_path/conf/seahub_settings.py
+echo "LOGIN_URL = '"$path2"accounts/login/'" | sudo tee -a $final_path/conf/seahub_settings.py
 
 # Email configuration
 echo 'EMAIL_USE_TLS = False' | sudo tee -a $final_path/conf/seahub_settings.py
@@ -107,7 +115,8 @@ sudo chmod +x /etc/init.d/seafile-server
 sudo update-rc.d seafile-server defaults
 
 # Modify Nginx configuration file and copy it to Nginx conf directory
-sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
+sed -i "s@PATHTOCHANGE1@$path@g" ../conf/nginx.conf
+sed -i "s@PATHTOCHANGE2@$path2@g" ../conf/nginx.conf
 sed -i "s@ALIASTOCHANGE@$final_path/@g" ../conf/nginx.conf
 sed -i "s@SEAHUB_PORT@$seahub_port@g" ../conf/nginx.conf
 sed -i "s@SEAFILE_FILESERVER_PORT@$fileserver_port@g" ../conf/nginx.conf
