@@ -7,7 +7,7 @@
 		    server_name="Seafile"
 		    admin="john"	(USER)
 		    admin_password="Sup3rS3cr3t"	(PASSWORD)
-        is_public="Yes"	(PUBLIC|public=Yes|private=No)
+        is_public="1"	(PUBLIC|public=1|private=0)
 		    architecture="x86-64"
 	  ; Checks
 		    pkg_linter=1
