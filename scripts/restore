@@ -7,12 +7,12 @@
 
 ######## We implement manually this fonctions 
 
-seafile_version=6.0.7
+seafile_version=6.0.9
 
 ## Adapt md5sum while you update app
-x86_64sum="4ca3c1fc93e5b786eb5d3509f4a3b01a"
-i386sum="743565be00189698318c8def0fbdaac0"
-armsum="ee3ef5330a51498faf861594e0fe744a"
+x86_64sum="8d1547c51feecaff757eb64381ce154c"
+i386sum="8a0b9e08d9c80790752b435c3e148328"
+armsum="15ca4b69585a990e00474e4cfc4be9eb"
 
 init_script() {
     # Exit on command errors and treat unset variables as an error
@@ -40,7 +40,7 @@ set_configuration() {
 }
 
 get_source() {
-    if [[ $1 == 'arm' ]]
+    if [[ $1 == 'rpi' ]]
     then
         wget -q -O '/tmp/seafile_src.tar.gz' 'https://github.com/haiwen/seafile-rpi/releases/download/v'$2'/seafile-server_'$2'_stable_pi.tar.gz'
         md5sum=$armsum
