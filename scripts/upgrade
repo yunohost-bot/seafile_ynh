@@ -29,65 +29,40 @@ sudo mv seafile-server-$seafile_version/* $final_path/seafile-server-$seafile_ve
 sudo mv '/tmp/seafile_src.tar.gz' $final_path/installed/seafile-server_${seafile_version}.tar.gz
 
 # permission to execute update script and expect helper
-sudo chmod +x ../conf/upgrade_4.1.1.exp
-sudo chmod +x ../conf/upgrade_4.2.1.exp
-sudo chmod +x ../conf/upgrade_4.3.2.exp
-sudo chmod +x ../conf/upgrade_4.4.3.exp
-sudo chmod +x ../conf/upgrade_5.0.3.exp
-sudo chmod +x ../conf/upgrade_5.1.exp
-sudo chmod +x ../conf/upgrade_6.0.exp
-sudo chmod +x $final_path/seafile-server-$seafile_version/upgrade/upgrade_4.0_4.1.sh
-sudo chmod +x $final_path/seafile-server-$seafile_version/upgrade/upgrade_4.1_4.2.sh
-sudo chmod +x $final_path/seafile-server-$seafile_version/upgrade/upgrade_4.2_4.3.sh
-sudo chmod +x $final_path/seafile-server-$seafile_version/upgrade/upgrade_4.3_4.4.sh
-sudo chmod +x $final_path/seafile-server-$seafile_version/upgrade/upgrade_4.4_5.0.sh
-sudo chmod +x $final_path/seafile-server-$seafile_version/upgrade/upgrade_5.0_5.1.sh
-sudo chmod +x $final_path/seafile-server-$seafile_version/upgrade/upgrade_5.1_6.0.sh
-# do the upgrade
+sudo chmod +x ../conf/upgrade_*.exp
+sudo chmod +x ../conf/minor-upgrade.exp
+sudo chmod +x $final_path/seafile-server-$seafile_version/upgrade/upgrade_*.sh
+sudo chmod +x $final_path/seafile-server-$seafile_version/upgrade/minor-upgrade.sh
+
+# do the upgrade    ( the ";&" syntax mean when it go in the frist cas how are true it do the next case)
 case $installed_version in
 "4.0."* )
 	# Update seafile by script
 	sudo ../conf/upgrade_4.1.1.exp $final_path/seafile-server-$seafile_version $root_pwd
-	sudo ../conf/upgrade_4.2.1.exp $final_path/seafile-server-$seafile_version $root_pwd
-	sudo ../conf/upgrade_4.3.2.exp $final_path/seafile-server-$seafile_version $root_pwd
-	sudo ../conf/upgrade_4.4.3.exp $final_path/seafile-server-$seafile_version $root_pwd
-	sudo ../conf/upgrade_5.0.3.exp $final_path/seafile-server-$seafile_version $root_pwd
-	sudo ../conf/upgrade_5.1.exp $final_path/seafile-server-$seafile_version $root_pwd
-	sudo ../conf/upgrade_6.0.exp $final_path/seafile-server-$seafile_version $root_pwd
-;;
+;&
 "4.1."* )
 	# Update seafile by script
 	sudo ../conf/upgrade_4.2.1.exp $final_path/seafile-server-$seafile_version $root_pwd
-	sudo ../conf/upgrade_4.3.2.exp $final_path/seafile-server-$seafile_version $root_pwd
-	sudo ../conf/upgrade_4.4.3.exp $final_path/seafile-server-$seafile_version $root_pwd
-	sudo ../conf/upgrade_5.0.3.exp $final_path/seafile-server-$seafile_version $root_pwd
-	sudo ../conf/upgrade_5.1.exp $final_path/seafile-server-$seafile_version $root_pwd
-	sudo ../conf/upgrade_6.0.exp $final_path/seafile-server-$seafile_version $root_pwd
-;;
+;&
 "4.3."* )
 	# Update seafile by script
 	sudo ../conf/upgrade_4.4.3.exp $final_path/seafile-server-$seafile_version $root_pwd
-	sudo ../conf/upgrade_5.0.3.exp $final_path/seafile-server-$seafile_version $root_pwd
-	sudo ../conf/upgrade_5.1.exp $final_path/seafile-server-$seafile_version $root_pwd
-	sudo ../conf/upgrade_6.0.exp $final_path/seafile-server-$seafile_version $root_pwd
-;;
+;&
 "4.4."* )
 	# Update seafile by script
 	sudo ../conf/upgrade_5.0.3.exp $final_path/seafile-server-$seafile_version $root_pwd
-	sudo ../conf/upgrade_5.1.exp $final_path/seafile-server-$seafile_version $root_pwd
-	sudo ../conf/upgrade_6.0.exp $final_path/seafile-server-$seafile_version $root_pwd
-;;
+;&
 "5.0."* )
 	# Update seafile by script
 	sudo ../conf/upgrade_5.1.exp $final_path/seafile-server-$seafile_version $root_pwd
-	sudo ../conf/upgrade_6.0.exp $final_path/seafile-server-$seafile_version $root_pwd
-;;
+;&
 "5.1."* )
 	# Update seafile by script
-	sudo ../conf/upgrade_5.1.exp $final_path/seafile-server-$seafile_version $root_pwd
 	sudo ../conf/upgrade_6.0.exp $final_path/seafile-server-$seafile_version $root_pwd
-;;
+;&
 esac
+
+sudo ../conf/minor-upgrade.exp $final_path/seafile-server-$seafile_version $root_pwd
 
 ## Install webdav and logrotate if not installed
 if [[ $installed_version = "4.0."* ]] || [[ $installed_version = "4.1."* ]]
