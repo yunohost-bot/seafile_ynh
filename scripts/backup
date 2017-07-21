@@ -1,70 +1,47 @@
 #!/bin/bash
 
-######## Actually we cant use common script in backup / restore script see this issue for more informations : https://dev.yunohost.org/issues/621
-# # Import common cmd
-# source ./_common.sh
-#
+# Source YunoHost helpers
+source /usr/share/yunohost/helpers
 
-######## We implement manually this fonctions 
+# Stop script if errors
+ynh_abort_if_errors
 
-init_script() {
-    # Exit on command errors and treat unset variables as an error
-    set -eu
-
-    # Source YunoHost helpers
-    source /usr/share/yunohost/helpers
-
-    # Retrieve arguments
-    app=$YNH_APP_INSTANCE_NAME
-}
-
-set_configuration() {
-    if [[ -e /var/www/$app ]]
-    then
-        final_path=/var/www/$app
-        seafile_user=www-data
-    elif [[ -e /opt/yunohost/$app ]]
-    then
-        final_path=/opt/yunohost/$app
-        seafile_user=seafile
-    else
-        ynh_die "Error : can't find seafile path"
-    fi
-}
-
-######## End of common fonctions
-
-# Init script
-init_script
+# Import common cmd
+source ../settings/scripts/_common.sh
 
 # Set configuration for user and final path
-set_configuration
+get_configuration
 
 # The parameter $1 is the backup directory location dedicated to the app
 BACKUP_DIR=$1
 
-# The parameter $2 is the id of the app instance ex: strut__2
-APP=$2
-
 # retrieve useful param
-domain=$(ynh_app_setting_get ${APP} domain)
-db_pwd=$(ynh_app_setting_get ${APP} mysqlpwd)
+domain=$(ynh_app_setting_get ${app} domain)
+db_pwd=$(ynh_app_setting_get ${app} mysqlpwd)
 
-# Backup app files
-sudo mkdir -p "${BACKUP_DIR}/www"
-sudo cp -a $final_path/. "${BACKUP_DIR}/www"
+# # Backup app files
 
-# Backup conf files
-sudo mkdir -p "${BACKUP_DIR}/conf"
-sudo cp -a /etc/nginx/conf.d/$domain.d/${APP}.conf "${BACKUP_DIR}/conf/${APP}.conf"
-sudo cp -a /etc/logrotate.d/${APP} "${BACKUP_DIR}/conf/${APP}"
-sudo cp -a /etc/init.d/seafile-server "${BACKUP_DIR}/conf/seafile-server"
+# mkdir -p "${BACKUP_DIR}/www"
+# cp -a $final_path/. "${BACKUP_DIR}/www"
+# 
+# # Backup conf files
+# mkdir -p "${BACKUP_DIR}/conf"
+# cp -a /etc/nginx/conf.d/$domain.d/${APP}.conf "${BACKUP_DIR}/conf/${APP}.conf"
+# cp -a /etc/init.d/seafile-server "${BACKUP_DIR}/conf/seafile-server"
+# 
+# # Backup data
+# mkdir -p "${BACKUP_DIR}/data"
+# cp -a /home/yunohost.app/seafile-data/. "${BACKUP_DIR}/data"
 
-# Backup data
-sudo mkdir -p "${BACKUP_DIR}/data"
-sudo cp -a /home/yunohost.app/seafile-data/. "${BACKUP_DIR}/data"
+
+ynh_backup $final_path
+ynh_backup /home/yunohost.app/seafile-data "data" 1
+ynh_backup /etc/nginx/conf.d/$domain.d/${APP}.conf
+ynh_backup /etc/init.d/seafile-server
 
 # Backup mysql
-mysqldump -u ${APP} -p$db_pwd ccnetdb | sudo dd of=${BACKUP_DIR}/ccnetdb.dmp
-mysqldump -u ${APP} -p$db_pwd seafiledb | sudo dd of=${BACKUP_DIR}/seafiledb.dmp
-mysqldump -u ${APP} -p$db_pwd seahubdb | sudo dd of=${BACKUP_DIR}/seahubdb.dmp
+ynh_mysql_dump_db 
+
+ynh_mysql_dump_db ccnetdb > ${YNH_CWD}/ccnetdb.dmp
+ynh_mysql_dump_db seafiledb > ${YNH_CWD}/seafiledb.dmp
+ynh_mysql_dump_db seahubdb > ${YNH_CWD}/seahubdb.dmp

@@ -1,32 +1,46 @@
 #!/bin/bash
 
+# Source YunoHost helpers
+source /usr/share/yunohost/helpers
+
+# Stop script if errors
+set -u
+
 # Import common cmd
 source ./_common.sh
 
-# Init script
-init_script
+# Init get Final path
+get_configuration
 
-sudo service seafile-server stop || true
+# Retrieve arguments
+domain=$(ynh_app_setting_get $app domain)
+
+systemctl stop seafile-server.service
 
 # remove sso config to unprotect domain.tld/seafhttp in /etc/ssowat/conf.json.persistent
-test -e /var/www/$app/remove_sso_conf.py && sudo python /var/www/$app/remove_sso_conf.py
-test -e /opt/yunohost/$app/remove_sso_conf.py && sudo python /opt/yunohost/$app/remove_sso_conf.py
-sudo rm -rf /var/www/$app 
-sudo rm -rf /opt/yunohost/$app
-sudo rm -f /etc/init.d/seafile-server
-sudo rm -rf /home/yunohost.app/seafile-data
-sudo rm -rf /tmp/seahub_cache
+test -e /var/www/$app/remove_sso_conf.py && python /var/www/$app/remove_sso_conf.py
+test -e /opt/yunohost/$app/remove_sso_conf.py && python /opt/yunohost/$app/remove_sso_conf.py
+ynh_secure_remove /var/www/$app
+ynh_secure_remove /opt/yunohost/$app
+ynh_secure_remove /etc/init.d/seafile-server
+ynh_secure_remove /home/yunohost.app/seafile-data
+ynh_secure_remove /tmp/seahub_cache
 
 # Remove databases
-root_pwd=$(sudo cat /etc/yunohost/mysql)
-mysql -u root -p$root_pwd -e "DROP DATABASE ccnetdb ; DROP DATABASE seafiledb ; DROP DATABASE seahubdb ; DROP USER seafile@localhost ;" || true
+ynh_mysql_drop_db ccnetdb
+ynh_mysql_drop_db seafiledb
+ynh_mysql_drop_db seahubdb
+
+# Remove depandance
+ynh_remove_app_dependencies
 
 # Remove domain config
-domain=$(ynh_app_setting_get seafile domain)
-sudo rm -f /etc/nginx/conf.d/$domain.d/seafile.conf
+ynh_secure_remove /etc/nginx/conf.d/$domain.d/seafile.conf
 
-sudo yunohost service remove seafile-server
+# Remove logrotate
+ynh_remove_logrotate
 
-# Restart services
-sudo service nginx reload
-sudo yunohost app ssowatconf
+yunohost service remove seafile-server
+
+# Reload nginx
+systemctl reload nginx.service

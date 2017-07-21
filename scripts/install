@@ -1,30 +1,48 @@
 #!/bin/bash
 
+# Source YunoHost helpers
+source /usr/share/yunohost/helpers
+
+# Stop script if errors
+ynh_abort_if_errors
+
 # Import common cmd
 source ./_common.sh
 
-# Init script
-init_script
-
 # Retrieve arguments
 domain=$YNH_APP_ARG_DOMAIN
-path=$YNH_APP_ARG_PATH
+path=$(ynh_normalize_url_path $YNH_APP_ARG_PATH)
 server_name=$YNH_APP_ARG_SERVER_NAME
 admin=$YNH_APP_ARG_ADMIN
 admin_password=$YNH_APP_ARG_ADMIN_PASSWORD
 is_public=$YNH_APP_ARG_PUBLIC_SITE
-architecture=$YNH_APP_ARG_ARCHITECTURE
 seafile_data=/home/yunohost.app/seafile-data
 final_path=/var/www/$app
 seafile_user=www-data
 
-# Correct path if it is not correct
-CHECK_PATH
-
 # Check domain/path availability
-sudo yunohost app checkurl "${domain}${path}" -a "$app" \
-    || ynh_die "Path not available: ${domain}${path}"
-    
+test $(ynh_webpath_available $domain $path) == 'True' || ynh_die "$domain$path is not available, please use an other domain or path."
+ynh_webpath_register $app $domain $path
+
+# Check Final Path availability
+test ! -e "$final_path" || ynh_die "This path already contains a folder"
+
+# Find available ports
+seahub_port=$(ynh_find_port 8000)
+fileserver_port=$(ynh_find_port 8082)
+webdav_port=$(ynh_find_port 8080)
+
+# store config in yunohost
+ynh_app_setting_set $app server_name $server_name
+ynh_app_setting_set $app final_path $final_path
+ynh_app_setting_set $app seafile_user $seafile_user
+ynh_app_setting_set $app admin $admin
+ynh_app_setting_set $app seahub_port $seahub_port
+ynh_app_setting_set $app fileserver_port $fileserver_port
+ynh_app_setting_set $app webdav_port $webdav_port
+ynh_app_setting_set $app is_public $is_public
+ynh_app_setting_set $app installed_version $seafile_version
+
 # Create special path with / at the end
 if [[ $path == '/' ]]
 then
@@ -37,36 +55,19 @@ fi
 get_source $architecture $seafile_version
 
 # Retrieve admin email
-admin_email=$(sudo yunohost user info $admin | grep mail: | sed "s/mail: //g")
+admin_email=$(yunohost user info $admin | grep mail: | sed "s/mail: //g")
 
 # Check dependencies
-sudo apt-get update
-sudo apt-get install -qq python2.7 python-setuptools python-simplejson python-imaging python-mysqldb python-flup expect
+install_dependance
 
 # Copy files to the right place
-test -e $final_path && sudo rm -rf "$final_path"
-test -e $seafile_data && sudo rm -rf "$seafile_data"
-sudo mkdir -p $final_path
-sudo mkdir -p $final_path/installed
-sudo mkdir -p $final_path/logs
-sudo mkdir -p $final_path/seafile-data
-sudo mkdir -p $final_path/seafile-server-$seafile_version
-sudo tar xzf '/tmp/seafile_src.tar.gz'
-sudo mv seafile-server-$seafile_version/* $final_path/seafile-server-$seafile_version
-sudo mv '/tmp/seafile_src.tar.gz' $final_path/installed/seafile-server_${seafile_version}.tar.gz
-
-# Find available ports
-seahub_port=$(ynh_find_port 8000)
-fileserver_port=$(ynh_find_port 8082)
-webdav_port=$(ynh_find_port 8080)
-
-# store config in yunohost
-ynh_app_setting_set $app seahub_port $seahub_port
-ynh_app_setting_set $app fileserver_port $fileserver_port
-ynh_app_setting_set $app webdav_port $webdav_port
-ynh_app_setting_set $app is_public $is_public
-ynh_app_setting_set $app architecture $architecture
-ynh_app_setting_set $app installed_version $seafile_version
+test -e $final_path && rm -rf "$final_path"
+test -e $seafile_data && rm -rf "$seafile_data"
+mkdir -p $final_path
+mkdir -p $final_path/installed
+mkdir -p $final_path/logs
+mkdir -p $final_path/seafile-data
+extract_source
 
 # init databases
 dbuser=seafile
@@ -77,72 +78,69 @@ ynh_mysql_create_db seafiledb "$dbuser" "$db_pwd"
 ynh_mysql_create_db seahubdb "$dbuser" "$db_pwd"
 
 # Run install script
-sudo chmod +x ../conf/install.exp
-sudo chmod +x $final_path/seafile-server-$seafile_version/setup-seafile-mysql.sh
-sudo ../conf/install.exp $final_path/seafile-server-$seafile_version $server_name $domain $seafile_data $fileserver_port $db_pwd
+chmod +x ../conf/install.exp
+chmod +x $final_path/seafile-server-$seafile_version/setup-seafile-mysql.sh
+../conf/install.exp $final_path/seafile-server-$seafile_version $server_name $domain $seafile_data $fileserver_port $db_pwd
 
 # Update seafile config
-sudo sed -i "s@http://@https://@g" $final_path/conf/ccnet.conf
-sudo sed -i "s@:8000@$path@g" $final_path/conf/ccnet.conf
-echo 'FILE_SERVER_ROOT = "https://'$domain'/seafhttp"' | sudo tee -a $final_path/conf/seahub_settings.py
-echo 'SITE_ROOT = "'$path2'"' | sudo tee -a $final_path/conf/seahub_settings.py
-echo 'SERVE_STATIC = False' | sudo tee -a $final_path/conf/seahub_settings.py
-echo 'MEDIA_URL = "'$path2'media/"' | sudo tee -a $final_path/conf/seahub_settings.py
-echo 'COMPRESS_URL = MEDIA_URL' | sudo tee -a $final_path/conf/seahub_settings.py
-echo "STATIC_URL = MEDIA_URL + 'assets/'" | sudo tee -a $final_path/conf/seahub_settings.py
-echo "LOGIN_URL = '"$path2"accounts/login/'" | sudo tee -a $final_path/conf/seahub_settings.py
+ynh_replace_string http:// https:// $final_path/conf/ccnet.conf
+ynh_replace_string :8000 $path $final_path/conf/ccnet.conf
+echo 'FILE_SERVER_ROOT = "https://'$domain'/seafhttp"' | tee -a $final_path/conf/seahub_settings.py
+echo 'SITE_ROOT = "'$path2'"' | tee -a $final_path/conf/seahub_settings.py
+echo 'SERVE_STATIC = False' | tee -a $final_path/conf/seahub_settings.py
+echo 'MEDIA_URL = "'$path2'media/"' | tee -a $final_path/conf/seahub_settings.py
+echo 'COMPRESS_URL = MEDIA_URL' | tee -a $final_path/conf/seahub_settings.py
+echo "STATIC_URL = MEDIA_URL + 'assets/'" | tee -a $final_path/conf/seahub_settings.py
+echo "LOGIN_URL = '"$path2"accounts/login/'" | tee -a $final_path/conf/seahub_settings.py
 
 # Email configuration
-echo 'EMAIL_USE_TLS = False' | sudo tee -a $final_path/conf/seahub_settings.py
-echo 'EMAIL_HOST = "localhost"' | sudo tee -a $final_path/conf/seahub_settings.py
-echo 'EMAIL_HOST_USER = "seafile@'$domain'"' | sudo tee -a $final_path/conf/seahub_settings.py
-echo 'EMAIL_HOST_PASSWORD = ""' | sudo tee -a $final_path/conf/seahub_settings.py
-echo 'EMAIL_PORT = "25"' | sudo tee -a $final_path/conf/seahub_settings.py
-echo 'DEFAULT_FROM_EMAIL = "seafile@'$domain'"' | sudo tee -a $final_path/conf/seahub_settings.py
-echo 'SERVER_EMAIL = "seafile@'$domain'"' | sudo tee -a $final_path/conf/seahub_settings.py
+echo 'EMAIL_USE_TLS = False' | tee -a $final_path/conf/seahub_settings.py
+echo 'EMAIL_HOST = "localhost"' | tee -a $final_path/conf/seahub_settings.py
+echo 'EMAIL_HOST_USER = "seafile@'$domain'"' | tee -a $final_path/conf/seahub_settings.py
+echo 'EMAIL_HOST_PASSWORD = ""' | tee -a $final_path/conf/seahub_settings.py
+echo 'EMAIL_PORT = "25"' | tee -a $final_path/conf/seahub_settings.py
+echo 'DEFAULT_FROM_EMAIL = "seafile@'$domain'"' | tee -a $final_path/conf/seahub_settings.py
+echo 'SERVER_EMAIL = "seafile@'$domain'"' | tee -a $final_path/conf/seahub_settings.py
 
 # LDAP configuration
-echo '[LDAP]' | sudo tee -a $final_path/conf/ccnet.conf
-echo 'HOST = ldap://localhost:389' | sudo tee -a $final_path/conf/ccnet.conf
-echo 'BASE = ou=users,dc=yunohost,dc=org' | sudo tee -a $final_path/conf/ccnet.conf
-echo 'LOGIN_ATTR = mail' | sudo tee -a $final_path/conf/ccnet.conf
+echo '[LDAP]' | tee -a $final_path/conf/ccnet.conf
+echo 'HOST = ldap://localhost:389' | tee -a $final_path/conf/ccnet.conf
+echo 'BASE = ou=users,dc=yunohost,dc=org' | tee -a $final_path/conf/ccnet.conf
+echo 'LOGIN_ATTR = mail' | tee -a $final_path/conf/ccnet.conf
 
-# Add Seafile Server to startup
-sudo cp ../conf/seafile-server /etc/init.d
-sudo sed -i "s@SEAHUB_PORT@$seahub_port@g" /etc/init.d/seafile-server
-sudo sed -i "s@SEAFILE_DIR@$final_path@g" /etc/init.d/seafile-server
-sudo chmod +x /etc/init.d/seafile-server
-sudo update-rc.d seafile-server defaults
-
-# Modify Nginx configuration file and copy it to Nginx conf directory
-sed -i "s@PATHTOCHANGE1@$path@g" ../conf/nginx.conf
-sed -i "s@PATHTOCHANGE2@$path2@g" ../conf/nginx.conf
-sed -i "s@ALIASTOCHANGE@$final_path/@g" ../conf/nginx.conf
-sed -i "s@SEAHUB_PORT@$seahub_port@g" ../conf/nginx.conf
-sed -i "s@SEAFILE_FILESERVER_PORT@$fileserver_port@g" ../conf/nginx.conf
-sed -i "s@WEBDAV_PORT@$webdav_port@g" ../conf/nginx.conf
-sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/seafile.conf
+# Fix local warning
+ynh_replace_string en_US.UTF-8 $LANG $final_path/seafile-server-$seafile_version/seahub.sh
 
 # Add webdav
-sudo cp ../conf/seafdav.conf $final_path/conf/seafdav.conf
-sudo sed -i "s@WEBDAV_PORT@$webdav_port@g" $final_path/conf/seafdav.conf
+cp ../conf/seafdav.conf $final_path/conf/seafdav.conf
+ynh_replace_string WEBDAV_PORT $webdav_port $final_path/conf/seafdav.conf
+
+# Add Seafile Server to startup
+cp ../conf/seafile-server /etc/init.d
+ynh_replace_string SEAHUB_PORT $seahub_port /etc/init.d/seafile-server
+ynh_replace_string SEAFILE_DIR $final_path /etc/init.d/seafile-server
+chmod +x /etc/init.d/seafile-server
+update-rc.d seafile-server defaults
+
+# Config nginx
+config_nginx
 
 # Copy first launch script
-sudo cp ../conf/first_launch.exp $final_path
-sudo chmod +x $final_path/first_launch.exp
+cp ../conf/first_launch.exp $final_path
+chmod +x $final_path/first_launch.exp
 
 # Set permissions to seafile directory
-sudo chown -R $seafile_user:$seafile_user $final_path
-sudo chown -R $seafile_user:$seafile_user $seafile_data
+chown -R $seafile_user:$seafile_user $final_path
+chown -R $seafile_user:$seafile_user $seafile_data
 
 # Start seafile, seahub and populate admin account
-sudo su - $seafile_user -s /bin/bash -c "$final_path/seafile-server-$seafile_version/seafile.sh start"
-sudo su - $seafile_user -s /bin/bash -c "$final_path/first_launch.exp $final_path/seafile-server-$seafile_version $admin_email $admin_password"
+su - $seafile_user -s /bin/bash -c "$final_path/seafile-server-$seafile_version/seafile.sh start"
+su - $seafile_user -s /bin/bash -c "$final_path/first_launch.exp $final_path/seafile-server-$seafile_version $admin_email $admin_password"
 
 # Add sso config to unprotect domain.tld/seafhttp + domain.tld/seafdav do in /etc/ssowat/conf.json.persistent
-sudo cp ../conf/add_sso_conf.py $final_path
-sudo cp ../conf/remove_sso_conf.py $final_path
-sudo python $final_path/add_sso_conf.py
+cp ../conf/add_sso_conf.py $final_path
+cp ../conf/remove_sso_conf.py $final_path
+python $final_path/add_sso_conf.py
 
 # unprotect media
 ynh_app_setting_set seafile unprotected_uris "/media"
@@ -151,22 +149,17 @@ if [ "$is_public" = "0" ]
 then
 	ynh_app_setting_delete seafile unprotected_uris
 else
-        ynh_app_setting_set seafile unprotected_uris "/"
+	ynh_app_setting_set seafile unprotected_uris "/"
 fi
 
 # Add logrotate
-sudo cp ../conf/logrotate /etc/logrotate.d/seafile
-sudo sed -i "s@SEAFILE_DIR@$final_path@g" /etc/logrotate.d/seafile
-sudo service rsyslog restart
+ynh_use_logrotate $final_path/logs/seaf-server.log
+ynh_use_logrotate $final_path/logs/ccnet.log
 
 # register yunohost service
-sudo yunohost service add seafile-server
-
-# Reload Nginx and regenerate SSOwat conf
-sudo service nginx reload
-sudo yunohost app ssowatconf
+yunohost service add seafile-server
 
 # Restart seafile
-sudo su - $seafile_user -s /bin/bash -c "$final_path/seafile-server-latest/seahub.sh stop"
-sudo service seafile-server stop
-sudo service seafile-server start
+su - $seafile_user -s /bin/bash -c "$final_path/seafile-server-latest/seahub.sh stop"
+systemctl stop seafile-server.service
+systemctl start seafile-server.service # || (sleep 2 && systemctl start seafile-server.service)

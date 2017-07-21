@@ -1,145 +1,73 @@
 #!/bin/bash
 
-######## Actually we cant use common script in backup / restore script see this issue for more informations : https://dev.yunohost.org/issues/621
-# # Import common cmd
-# source ./_common.sh
-#
+# Source YunoHost helpers
+source /usr/share/yunohost/helpers
 
-######## We implement manually this fonctions 
+# Stop script if errors
+ynh_abort_if_errors
 
-seafile_version=6.0.9
+# Import common cmd
+source ../settings/scripts/_common.sh
 
-## Adapt md5sum while you update app
-x86_64sum="8d1547c51feecaff757eb64381ce154c"
-i386sum="8a0b9e08d9c80790752b435c3e148328"
-armsum="15ca4b69585a990e00474e4cfc4be9eb"
-
-init_script() {
-    # Exit on command errors and treat unset variables as an error
-    set -eu
-
-    # Source YunoHost helpers
-    source /usr/share/yunohost/helpers
-
-    # Retrieve arguments
-    app=$YNH_APP_INSTANCE_NAME
-}
-
-set_configuration() {
-    if [[ -e /var/www/$app ]]
-    then
-        final_path=/var/www/$app
-        seafile_user=www-data
-    elif [[ -e /opt/yunohost/$app ]]
-    then
-        final_path=/opt/yunohost/$app
-        seafile_user=seafile
-    else
-        ynh_die "Error : can't find seafile path"
-    fi
-}
-
-get_source() {
-    if [[ $1 == 'rpi' ]]
-    then
-        wget -q -O '/tmp/seafile_src.tar.gz' 'https://github.com/haiwen/seafile-rpi/releases/download/v'$2'/seafile-server_'$2'_stable_pi.tar.gz'
-        md5sum=$armsum
-    elif [[ $1 == 'x86-64' ]]
-    then
-        wget -q -O '/tmp/seafile_src.tar.gz' 'https://bintray.com/artifact/download/seafile-org/seafile/seafile-server_'$2'_x86-64.tar.gz'
-        md5sum=$x86_64sum
-    else
-        wget -q -O '/tmp/seafile_src.tar.gz' 'https://bintray.com/artifact/download/seafile-org/seafile/seafile-server_'$2'_i386.tar.gz'
-        md5sum=$i386sum
-    fi
-
-    if [[ ! -e '/tmp/seafile_src.tar.gz' ]] || [[ $(md5sum '/tmp/seafile_src.tar.gz' | cut -d' ' -f1) != $md5sum ]]
-    then
-        ynh_die "Error : can't get seafile source"
-    fi
-}
-
-CHECK_VAR () {	# Vérifie que la variable n'est pas vide.
-# $1 = Variable à vérifier
-# $2 = Texte à afficher en cas d'erreur
-	test -n "$1" || (echo "$2" >&2 && false)
-}
-
-CHECK_PATH () {	# Vérifie la présence du / en début de path. Et son absence à la fin.
-	if [ "${path:0:1}" != "/" ]; then    # Si le premier caractère n'est pas un /
-		path="/$path"    # Ajoute un / en début de path
-	fi
-	if [ "${path:${#path}-1}" == "/" ] && [ ${#path} -gt 1 ]; then    # Si le dernier caractère est un / et que ce n'est pas le seul caractère.
-		path="${path:0:${#path}-1}"	# Supprime le dernier caractère
-	fi
-}
-
-######## End of common fonctions
-
-# Init script
-init_script
+# Init get Final path
+get_configuration
 
 # Retrieve arguments
+domain=$(ynh_app_setting_get $app domain)
+path=$(ynh_normalize_url_path $(ynh_app_setting_get $app path))
+db_pwd=$(ynh_app_setting_get ${app} mysqlpwd)
 final_path=/var/www/$app
 seafile_user=www-data
-
-# The parameter $1 is the backup directory location dedicated to the app
 BACKUP_DIR=$1
 
-# retrieve useful param
-domain=$(ynh_app_setting_get ${app} domain)
-db_pwd=$(ynh_app_setting_get ${app} mysqlpwd)
-path=$(ynh_app_setting_get ${app} path)
-
-# Correct path if it is not correct
-CHECK_PATH
-
 # Check domain/path availability
-sudo yunohost app checkurl $domain$path -a ${app}  \
-    || (echo "Path not available: $domain$path" && ynh_die "Error : path not available")
-    
+ynh_webpath_available $domain $path || ynh_die "$domain/$path is not available, please use an other domain or path."
+
 # Restore dependencies
-sudo apt-get update
-sudo apt-get install -qq python2.7 python-setuptools python-simplejson python-imaging python-mysqldb python-flup expect
+install_dependance
 
-# Restore app files
-final_path=$final_path
-sudo mkdir -p $final_path
-sudo cp -a "${BACKUP_DIR}/www/." $final_path
-sudo chown -R $seafile_user:$seafile_user $final_path
+# # Restore app files
+# final_path=$final_path
+# mkdir -p $final_path
+# cp -a "${BACKUP_DIR}/www/." $final_path
+# chown -R $seafile_user:$seafile_user $final_path
+# 
+# # Restore conf files
+# cp -a "${BACKUP_DIR}/conf/${app}.conf" /etc/nginx/conf.d/$domain.d/${app}.conf
+# cp -a "${BACKUP_DIR}/conf/${app}" /etc/logrotate.d/${app}
+# cp -a "${BACKUP_DIR}/conf/seafile-server" /etc/init.d/seafile-server
+# chmod +x /etc/init.d/seafile-server
+# 
+# # Restore data
+# seafile_data=/home/yunohost.app/seafile-data
+# mkdir -p $seafile_data
+# cp -a "${BACKUP_DIR}/data/." /home/yunohost.app/seafile-data/.
+# chown -R $seafile_user:$seafile_user $seafile_data
 
-# Restore conf files
-sudo cp -a "${BACKUP_DIR}/conf/${app}.conf" /etc/nginx/conf.d/$domain.d/${app}.conf
-sudo cp -a "${BACKUP_DIR}/conf/${app}" /etc/logrotate.d/${app}
-sudo cp -a "${BACKUP_DIR}/conf/seafile-server" /etc/init.d/seafile-server
-sudo chmod +x /etc/init.d/seafile-server
-
-# Restore data
-seafile_data=/home/yunohost.app/seafile-data
-sudo mkdir -p $seafile_data
-sudo cp -a "${BACKUP_DIR}/data/." /home/yunohost.app/seafile-data/.
-sudo chown -R $seafile_user:$seafile_user $seafile_data
+# Restore all config and data
+ynh_restore
 
 # Restore mysql dump
 dbuser=seafile
 ynh_mysql_create_db ccnetdb "$dbuser" "$db_pwd"
 ynh_mysql_create_db seafiledb "$dbuser" "$db_pwd"
 ynh_mysql_create_db seahubdb "$dbuser" "$db_pwd"
-sudo su -c "mysql -u ${app} -p$db_pwd ccnetdb < ${BACKUP_DIR}/ccnetdb.dmp"
-sudo su -c "mysql -u ${app} -p$db_pwd seafiledb < ${BACKUP_DIR}/seafiledb.dmp"
-sudo su -c "mysql -u ${app} -p$db_pwd seahubdb < ${BACKUP_DIR}/seahubdb.dmp"
+su -c "mysql -u ${app} -p$db_pwd ccnetdb < ${YNH_CWD}/ccnetdb.dmp"
+su -c "mysql -u ${app} -p$db_pwd seafiledb < ${YNH_CWD}/seafiledb.dmp"
+su -c "mysql -u ${app} -p$db_pwd seahubdb < ${YNH_CWD}/seahubdb.dmp"
 
 # Restore sso persistent config
-sudo python $final_path/add_sso_conf.py
+python $final_path/add_sso_conf.py
+
+# Add logrotate
+ynh_use_logrotate $final_path/logs/seaf-server.log
+ynh_use_logrotate $final_path/logs/ccnet.log
 
 # Add Seafile to YunoHost's monitored services
-sudo yunohost service add seafile-server
+yunohost service add seafile-server
 
-# Reload/restart services
-sudo update-rc.d seafile-server defaults
-sudo service rsyslog restart
-sudo yunohost app ssowatconf
-sudo service nginx reload
+# Reload nginx
+systemctl reload nginx.service
 
 # start seafile
-sudo service seafile-server start
+systemctl start seafile-server.service

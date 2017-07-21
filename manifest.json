@@ -4,6 +4,7 @@
     "packaging_format": 1,
     "license": "free",
     "url": "https://www.seafile.com",
+	"version": "6.1.1",
     "description": {
         "en": "Open Source Cloud Storage",
         "fr": "Stockage Cloud Open Source"
@@ -18,7 +19,7 @@
         "mysql"
     ],
     "requirements": {
-        "yunohost": ">= 2.4.0"
+        "yunohost": ">= 2.6.4"
     },
     "arguments": {
         "install": [
@@ -76,15 +77,6 @@
                     "fr": "Est-ce un site public ? Pour utiliser un client sur PC ou l'application mobile, Seafile doit être public"
                 },
                 "default": "1"
-            },
-            {
-                "name": "architecture",
-                "ask": {
-                    "en": "What is the server architecture?",
-                    "fr": "Quelle est l'architecture du serveur ?"
-                },
-                "choices": ["x86-64", "i386", "rpi"],
-                "default": "x86-64"
             }
         ]
     }

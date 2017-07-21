@@ -8,7 +8,6 @@
 		    admin="john"	(USER)
 		    admin_password="Sup3rS3cr3t"	(PASSWORD)
         public_site="1"	(PUBLIC|public=1|private=0)
-		    architecture="x86-64"
 	  ; Checks
 		    pkg_linter=1
 		    setup_sub_dir=1
