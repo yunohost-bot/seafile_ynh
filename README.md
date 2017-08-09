@@ -27,13 +27,20 @@ From command line:
 Infos
 -----
 
-Seafile server v6.0.6
+Seafile server v6.1.0
 
 Available for x64, i386, and Raspberry Pi architecture but only tested for x64 (feedback are welcome)
 
 Seafile no longer distribute binary for generic armhf architectures but rpi binary could work.
 
 /!\ To login use your yunohost email not your username.
+
+Change URL
+----------
+
+Since now it's possible to change domain or the url of seafile but use it with precaution because it has not been tested enought for a big production installation. For the authentification and user every email for authentification will have the new domain name. For example `toto@old_domain.tld` will be `toto@new_domain.tld`.
+
+To do this run : `yunohost app change-url seafile -d new_domain.tld -p PATH new_path
 
 License
 -------
@@ -52,7 +59,7 @@ TODO
  - Auto login/logout, see #1
  - Test of backup/restore script
 
-Use a spial user and put seafile binary in /opt dir :
+Use a special user and put seafile binary in /opt dir :
 --------------------------------------
 
 With this new package for a better security, it's possible to run seafile with a special user (seafile) put all seafile file in /opt/yunohost dir.
