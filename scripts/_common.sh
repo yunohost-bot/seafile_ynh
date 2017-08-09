@@ -91,8 +91,8 @@ install_dependance() {
 }
 
 ynh_clean_setup () {
-	killall seafile-controller
-	killall seaf-server
-	killall ccnet-server
-	kill $(ps -C python2.7 -o pid,cmd | grep "python2.7 $final_path/seafile-server-$seafile_version/seahub/manage.py" | cut -d' ' -f1)
+	pkill -f seafile-controller
+	pkill -f seaf-server
+	pkill -f ccnet-server
+	pkill -f "seahub"
 }

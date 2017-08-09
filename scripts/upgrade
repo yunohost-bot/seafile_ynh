@@ -69,6 +69,9 @@ case $installed_version in
 	
 	# Update seafile by script
 	../conf/upgrade_6.1.exp $final_path/seafile-server-$seafile_version $root_pwd
+	
+	# Enable manually wiki
+	echo 'ENABLE_WIKI = True' | tee -a $final_path/conf/seahub_settings.py
 ;&
 esac
 

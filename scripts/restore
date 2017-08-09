@@ -69,5 +69,7 @@ yunohost service add seafile-server
 # Reload nginx
 systemctl reload nginx.service
 
-# start seafile
+# Enable service and start seafile
+systemctl daemon-reload
+update-rc.d seafile-server defaults
 systemctl start seafile-server.service

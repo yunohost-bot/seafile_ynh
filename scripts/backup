@@ -36,12 +36,10 @@ db_pwd=$(ynh_app_setting_get ${app} mysqlpwd)
 
 ynh_backup $final_path
 ynh_backup /home/yunohost.app/seafile-data "data" 1
-ynh_backup /etc/nginx/conf.d/$domain.d/${APP}.conf
+ynh_backup /etc/nginx/conf.d/$domain.d/${app}.conf
 ynh_backup /etc/init.d/seafile-server
 
 # Backup mysql
-ynh_mysql_dump_db 
-
 ynh_mysql_dump_db ccnetdb > ${YNH_CWD}/ccnetdb.dmp
 ynh_mysql_dump_db seafiledb > ${YNH_CWD}/seafiledb.dmp
 ynh_mysql_dump_db seahubdb > ${YNH_CWD}/seahubdb.dmp
