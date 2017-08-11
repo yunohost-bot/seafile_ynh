@@ -83,10 +83,14 @@ extract_source() {
 	tar xzf '/tmp/seafile_src.tar.gz'
 	mv seafile-server-$seafile_version/* $final_path/seafile-server-$seafile_version
 	mv '/tmp/seafile_src.tar.gz' $final_path/installed/seafile-server_${seafile_version}.tar.gz
+	
+	local old_dir=$(pwd)
+    (cd "$final_path/seafile-server-$seafile_version" && patch -p1 < $YNH_CWD/../sources/sso_auth.patch) || ynh_die "Unable to apply patches"
+    cd $old_dir
 }
 
 install_dependance() {
-	ynh_install_app_dependencies python2.7 python-setuptools python-simplejson python-imaging python-mysqldb python-flup expect ffmpeg python-requests
+	ynh_install_app_dependencies python2.7 python-setuptools python-simplejson python-imaging python-mysqldb python-flup expect ffmpeg python-requests python-dev
 	pip install pillow moviepy
 }
 

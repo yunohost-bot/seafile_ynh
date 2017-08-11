@@ -12,9 +12,6 @@ source ../settings/scripts/_common.sh
 # Set configuration for user and final path
 get_configuration
 
-# The parameter $1 is the backup directory location dedicated to the app
-BACKUP_DIR=$1
-
 # retrieve useful param
 domain=$(ynh_app_setting_get ${app} domain)
 db_pwd=$(ynh_app_setting_get ${app} mysqlpwd)

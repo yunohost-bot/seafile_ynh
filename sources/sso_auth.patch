@@ -1,0 +1,91 @@
+diff -Naur a/seahub/seahub/auth/middleware.py b/seahub/seahub/auth/middleware.py
+--- a/seahub/seahub/auth/middleware.py	2017-06-13 07:49:44.000000000 +0200
++++ b/seahub/seahub/auth/middleware.py	2017-08-11 19:13:54.000000000 +0200
+@@ -1,5 +1,6 @@
+ # Copyright (c) 2012-2016 Seafile Ltd.
+-from django.contrib import auth
++#from django.contrib import auth
++from seahub import auth
+ from django.core.exceptions import ImproperlyConfigured
+ 
+ 
+@@ -50,7 +51,7 @@
+                 " 'django.contrib.auth.middleware.AuthenticationMiddleware'"
+                 " before the RemoteUserMiddleware class.")
+         try:
+-            username = request.META[self.header]
++            username = request.META[self.header] + '@' + request.META["HTTP_HOST"]
+         except KeyError:
+             # If specified header doesn't exist then return (leaving
+             # request.user set to AnonymousUser by the
+diff -Naur a/seahub/seahub/base/accounts.py b/seahub/seahub/base/accounts.py
+--- a/seahub/seahub/base/accounts.py	2017-06-13 07:49:44.000000000 +0200
++++ b/seahub/seahub/base/accounts.py	2017-08-11 20:28:30.000000000 +0200
+@@ -396,6 +396,48 @@
+         if user.check_password(password):
+             return user
+ 
++class RemoteUserBackend(AuthBackend):
++    """
++    This backend is to be used in conjunction with the ``RemoteUserMiddleware``
++    found in the middleware module of this package, and is used when the server
++    is handling authentication outside of Django.
++    By default, the ``authenticate`` method creates ``User`` objects for
++    usernames that don't already exist in the database.  Subclasses can disable
++    this behavior by setting the ``create_unknown_user`` attribute to
++    ``False``.
++    """
++
++    # Create a User object if not already in the database?
++    create_unknown_user = True
++
++    def authenticate(self, remote_user):
++        """
++        The username passed as ``remote_user`` is considered trusted.  This
++        method simply returns the ``User`` object with the given username,
++        creating a new ``User`` object if ``create_unknown_user`` is ``True``.
++        Returns None if ``create_unknown_user`` is ``False`` and a ``User``
++        object with the given username is not found in the database.
++        """
++        if not remote_user:
++            return
++        user = None
++        username = self.clean_username(remote_user)
++
++        # Note that this could be accomplished in one try-except clause, but
++        # instead we use get_or_create when creating unknown users since it has
++        # built-in safeguards for multiple threads.
++
++        user = self.get_user(username)
++        return user
++
++    def clean_username(self, username):
++        """
++        Performs any cleaning on the "username" prior to using it to get or
++        create the user object.  Returns the cleaned username.
++        By default, returns the username unchanged.
++        """
++        return username
++
+ ########## Register related
+ class RegistrationBackend(object):
+     """
+diff -Naur a/seahub/seahub/settings.py b/seahub/seahub/settings.py
+--- a/seahub/seahub/settings.py	2017-06-13 07:52:41.000000000 +0200
++++ b/seahub/seahub/settings.py	2017-08-11 21:48:59.397330029 +0200
+@@ -114,6 +114,7 @@
+     'django.middleware.csrf.CsrfViewMiddleware',
+     'django.contrib.messages.middleware.MessageMiddleware',
+     'seahub.auth.middleware.AuthenticationMiddleware',
++    'seahub.auth.middleware.RemoteUserMiddleware',
+     'seahub.base.middleware.BaseMiddleware',
+     'seahub.base.middleware.InfobarMiddleware',
+     'seahub.password_session.middleware.CheckPasswordHash',
+@@ -232,6 +233,7 @@
+ CONSTANCE_DATABASE_CACHE_BACKEND = 'default'
+ 
+ AUTHENTICATION_BACKENDS = (
++    'seahub.base.accounts.RemoteUserBackend',
+     'seahub.base.accounts.AuthBackend',
+ )
+ LOGIN_REDIRECT_URL = '/profile/'
