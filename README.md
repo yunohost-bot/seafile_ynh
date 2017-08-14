@@ -53,12 +53,6 @@ The Seafile server's web end, i.e. Seahub, is published under the Apache License
 
 This package is published under MIT License
 
-TODO
------
-
- - Auto login/logout, see #1
- - Test of backup/restore script
-
 Use a special user and put seafile binary in /opt dir :
 --------------------------------------
 
