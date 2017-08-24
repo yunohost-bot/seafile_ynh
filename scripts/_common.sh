@@ -3,12 +3,12 @@
 # Retrieve arguments
 app=$YNH_APP_INSTANCE_NAME
 
-seafile_version=6.1.1
+seafile_version=6.1.2
 
-## Adapt md5sum while you update app
-x86_64sum="3f887d018bd7eaa8b4e1e7830f365802311686636227f1c08a8c48e89aefc35c"
-i386sum="6d236c93f5a5f674c52b943428995cfe046965f17f2df9f644e17a704072603b"
-armsum="e40a8f3a91a4629428288aaabe4a2d6906dd00afc08faf08916f30b8c5a312e4"
+## Adapt sha256sum while you update app
+x86_64sum="31f7294782dd8e63b3d441402460036be6f19c9b7471784a274a0fefb4553125"
+i386sum="5c5860d796788e45ed015d592637c8958110ab059b1176b58b3c676c4c74e99e"
+armsum="673a378e68b1b91b48edb7d03416d24f21d74af3bab26dc4832b7ea06fcc31f2"
 
 # Detect the system architecture to download the right tarball
 # NOTE: `uname -m` is more accurate and universal than `arch`
