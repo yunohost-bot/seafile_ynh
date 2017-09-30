@@ -16,6 +16,9 @@ get_configuration
 domain=$(ynh_app_setting_get $app domain)
 path=$(ynh_normalize_url_path $(ynh_app_setting_get $app path))
 installed_version=$(ynh_app_setting_get $app installed_version)
+seahub_port=$(ynh_app_setting_get $app seahub_port)
+fileserver_port=$(ynh_app_setting_get $app fileserver_port)
+webdav_port=$(ynh_app_setting_get $app webdav_port)
 root_pwd=$(cat /etc/yunohost/mysql)
 
 # Get configuration for user and final path
@@ -73,6 +76,10 @@ case $installed_version in
 	# Enable manually wiki
 	echo 'ENABLE_WIKI = True' | tee -a $final_path/conf/seahub_settings.py
 ;&
+"6.1."* )
+	# Update seafile by script
+	../conf/upgrade_6.2.exp $final_path/seafile-server-$seafile_version $root_pwd
+;&
 esac
 
 ../conf/minor-upgrade.exp $final_path/seafile-server-$seafile_version $root_pwd
@@ -88,10 +95,6 @@ then
 	seafile_port=$(ynh_app_setting_get $app seafile_port)
 	yunohost firewall disallow Both $ccnet_port
 	yunohost firewall disallow Both $seafile_port
-	
-	# Add webdav to nginx config
-	ynh_replace_string WEBDAV_PORT $webdav_port ../conf/nginx_add_webdav
-	echo $(cat ../conf/nginx_add_webdav) | tee -a /etc/nginx/conf.d/$domain.d/seafile.conf
 	
 	# Add webdav config
 	cp ../conf/seafdav.conf $final_path/conf/seafdav.conf
@@ -120,6 +123,16 @@ fi
 
 # Fix local warning
 ynh_replace_string en_US.UTF-8 $LANG $final_path/seafile-server-$seafile_version/seahub.sh
+
+# Config nginx
+config_nginx
+
+# Update init file
+cp ../conf/seafile-server /etc/init.d
+ynh_replace_string SEAHUB_PORT $seahub_port /etc/init.d/seafile-server
+ynh_replace_string SEAFILE_DIR $final_path /etc/init.d/seafile-server
+chmod +x /etc/init.d/seafile-server
+systemctl daemon-reload
 
 # restore correct permissions
 chown -R $seafile_user:$seafile_user $final_path

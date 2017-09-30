@@ -3,12 +3,12 @@
 # Retrieve arguments
 app=$YNH_APP_INSTANCE_NAME
 
-seafile_version=6.1.2
+seafile_version=6.2.2
 
 ## Adapt sha256sum while you update app
-x86_64sum="31f7294782dd8e63b3d441402460036be6f19c9b7471784a274a0fefb4553125"
-i386sum="5c5860d796788e45ed015d592637c8958110ab059b1176b58b3c676c4c74e99e"
-armsum="673a378e68b1b91b48edb7d03416d24f21d74af3bab26dc4832b7ea06fcc31f2"
+x86_64sum="4c77721001b1173b11bbc6904dad8d010b7ebe8c0e0d34b5fe60f2158b49c98f"
+i386sum="35442c6455da3c76c130dabe12d83f57a50cd080b87f12e4904203dfcffa7900"
+armsum="ac153648d6d0e2913c6777604364700cc7ae9d6ebf2bf8de4622c04cfafd0ae6"
 
 # Detect the system architecture to download the right tarball
 # NOTE: `uname -m` is more accurate and universal than `arch`
@@ -47,6 +47,19 @@ get_configuration() {
 }
 
 config_nginx() {
+
+
+	# In the 3.x seafile version package the seahub_port and fileserver_port wasn't saved in the settings. If the settings is empty we try to get it and save in the settings
+
+	if [[ -z $seahub_port ]] || [[ -z $fileserver_port ]]
+	then
+		seahub_port=$(head -n 20 /etc/nginx/conf.d/$domain.d/seafile.conf | grep -E "fastcgi_pass.*127.0.0.1:" | cut -d':' -f2 | cut -d';' -f1)
+		fileserver_port=$(head -n 20 /etc/nginx/conf.d/$domain.d/seafile.conf | grep -E "proxy_pass.*127.0.0.1:" | cut -d':' -f3 | cut -d';' -f1 | cut -d'/' -f1)
+
+		ynh_app_setting_set $app seahub_port $seahub_port
+		ynh_app_setting_set $app fileserver_port $fileserver_port
+	fi
+
 	ynh_replace_string PATHTOCHANGE1 $path ../conf/nginx.conf
 	ynh_replace_string PATHTOCHANGE2 $path2 ../conf/nginx.conf
 	ynh_replace_string ALIASTOCHANGE $final_path/ ../conf/nginx.conf
