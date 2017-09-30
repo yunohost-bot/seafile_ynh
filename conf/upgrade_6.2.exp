@@ -4,7 +4,7 @@ set timeout 5
 set seafile_dir [lindex $argv 0]
 set mysql_password [lindex $argv 1]
 
-spawn $seafile_dir/upgrade/upgrade_6.0_6.1.sh
+spawn $seafile_dir/upgrade/upgrade_6.1_6.2.sh
 
 expect "to contiune"
 send "\r";

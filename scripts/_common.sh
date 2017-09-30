@@ -46,6 +46,15 @@ get_configuration() {
     fi
 }
 
+set_path_2() {
+	if [[ $path == '/' ]]
+	then
+		path2=$path
+	else
+		path2=$path'/'
+	fi
+}
+
 config_nginx() {
 
 
@@ -54,7 +63,7 @@ config_nginx() {
 	if [[ -z $seahub_port ]] || [[ -z $fileserver_port ]]
 	then
 		seahub_port=$(head -n 20 /etc/nginx/conf.d/$domain.d/seafile.conf | grep -E "fastcgi_pass.*127.0.0.1:" | cut -d':' -f2 | cut -d';' -f1)
-		fileserver_port=$(head -n 20 /etc/nginx/conf.d/$domain.d/seafile.conf | grep -E "proxy_pass.*127.0.0.1:" | cut -d':' -f3 | cut -d';' -f1 | cut -d'/' -f1)
+		fileserver_port=$(head -n 50 /etc/nginx/conf.d/$domain.d/seafile.conf | grep -E "proxy_pass.*127.0.0.1:" | cut -d':' -f3 | cut -d';' -f1 | cut -d'/' -f1)
 
 		ynh_app_setting_set $app seahub_port $seahub_port
 		ynh_app_setting_set $app fileserver_port $fileserver_port

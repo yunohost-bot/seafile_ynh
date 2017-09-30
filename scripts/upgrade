@@ -24,6 +24,9 @@ root_pwd=$(cat /etc/yunohost/mysql)
 # Get configuration for user and final path
 get_configuration
 
+# Create special path with / at the end
+set_path_2
+
 # Download new version from sources
 get_source $architecture $seafile_version
 

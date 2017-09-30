@@ -24,6 +24,9 @@ seafile_user=www-data
 test $(ynh_webpath_available $domain $path) == 'True' || ynh_die "$domain$path is not available, please use an other domain or path."
 ynh_webpath_register $app $domain $path
 
+# Create special path with / at the end
+set_path_2
+
 # Check Final Path availability
 test ! -e "$final_path" || ynh_die "This path already contains a folder"
 
@@ -42,14 +45,6 @@ ynh_app_setting_set $app fileserver_port $fileserver_port
 ynh_app_setting_set $app webdav_port $webdav_port
 ynh_app_setting_set $app is_public $is_public
 ynh_app_setting_set $app installed_version $seafile_version
-
-# Create special path with / at the end
-if [[ $path == '/' ]]
-then
-    path2=$path
-else
-    path2=$path'/'
-fi
 
 # Download new version from sources
 get_source $architecture $seafile_version
