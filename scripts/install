@@ -117,6 +117,7 @@ ynh_replace_string WEBDAV_PORT $webdav_port $final_path/conf/seafdav.conf
 cp ../conf/seafile-server /etc/init.d
 ynh_replace_string SEAHUB_PORT $seahub_port /etc/init.d/seafile-server
 ynh_replace_string SEAFILE_DIR $final_path /etc/init.d/seafile-server
+ynh_replace_string SEAFILE_USER $seafile_user /etc/init.d/seafile-server
 chmod +x /etc/init.d/seafile-server
 systemctl daemon-reload
 update-rc.d seafile-server defaults

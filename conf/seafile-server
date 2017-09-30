@@ -11,7 +11,7 @@
 ### END INIT INFO
 
 # Change the value of "user" to your linux user name
-user=www-data
+user=SEAFILE_USER
 
 # Change the value of "script_path" to your path of seafile installation
 seafile_dir=SEAFILE_DIR
