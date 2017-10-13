@@ -2,7 +2,7 @@
     "name": "Seafile",
     "id": "seafile",
     "packaging_format": 1,
-    "license": "free",
+    "license": "AGPL-3.0,Apache-2.0,MIT,GPL-2.0",
     "url": "https://www.seafile.com",
 	"version": "6.1.1",
     "description": {
