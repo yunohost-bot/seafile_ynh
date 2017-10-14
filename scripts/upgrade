@@ -121,7 +121,7 @@ fi
 # Update seahub config for old version to version 5.0.4
 if [[ $(grep -c "LOGIN_URL" $final_path/conf/seahub_settings.py) == 0 ]]
 then
-        echo "LOGIN_URL = '"$path"/accounts/login/'" | tee -a $final_path/conf/seahub_settings.py
+        echo "LOGIN_URL = '$path/accounts/login/'" | tee -a $final_path/conf/seahub_settings.py
 fi
 
 # Fix local warning
