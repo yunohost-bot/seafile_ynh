@@ -112,7 +112,7 @@ extract_source() {
 }
 
 install_dependance() {
-	ynh_install_app_dependencies python2.7 python-setuptools python-simplejson python-imaging python-mysqldb python-flup expect python-requests python-dev
+	ynh_install_app_dependencies python2.7 python-pip python-setuptools python-simplejson python-imaging python-mysqldb python-flup expect python-requests python-dev
 	pip install pillow moviepy
 }
 
