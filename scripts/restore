@@ -16,8 +16,6 @@ get_configuration
 domain=$(ynh_app_setting_get $app domain)
 path=$(ynh_normalize_url_path $(ynh_app_setting_get $app path))
 db_pwd=$(ynh_app_setting_get ${app} mysqlpwd)
-final_path=/var/www/$app
-seafile_user=www-data
 
 # Check domain/path availability
 ynh_webpath_available $domain $path || ynh_die "$domain/$path is not available, please use an other domain or path."
@@ -27,6 +25,9 @@ install_dependance
 
 # Restore all config and data
 ynh_restore
+
+# Get configuration for user and final path
+get_configuration
 
 # Restore mysql dump
 dbuser=seafile
@@ -41,8 +42,7 @@ su -c "mysql -u ${app} -p$db_pwd seahubdb < ${YNH_CWD}/seahubdb.dmp"
 python $final_path/add_sso_conf.py
 
 # Add logrotate
-ynh_use_logrotate $final_path/logs/seaf-server.log
-ynh_use_logrotate $final_path/logs/ccnet.log
+ynh_use_logrotate $final_path/logs
 
 # Add Seafile to YunoHost's monitored services
 yunohost service add seafile-server

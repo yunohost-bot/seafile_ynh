@@ -56,7 +56,9 @@ This package is published under MIT License
 Use a special user and put seafile binary in /opt dir :
 --------------------------------------
 
-With this new package for a better security, it's possible to run seafile with a special user (seafile) put all seafile file in /opt/yunohost dir.
+~~With this new package for a better security, it's possible to run seafile with a special user (seafile) put all seafile file in /opt/yunohost dir.~~
+In the new package version the install is by default in /opt dir, so it section is only usefull for user how as already installed seafile.  
+
 To do this open a console and do this command :
 
 ```

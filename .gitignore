@@ -222,3 +222,5 @@ pip-log.txt
 .kateproject
 .kateproject.d
 .directory
+*-swp
+
