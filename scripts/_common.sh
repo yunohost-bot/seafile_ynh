@@ -3,12 +3,10 @@
 # Retrieve arguments
 app=$YNH_APP_INSTANCE_NAME
 
-seafile_version=6.2.2
-
 ## Adapt sha256sum while you update app
-x86_64sum="4c77721001b1173b11bbc6904dad8d010b7ebe8c0e0d34b5fe60f2158b49c98f"
-i386sum="35442c6455da3c76c130dabe12d83f57a50cd080b87f12e4904203dfcffa7900"
-armsum="ac153648d6d0e2913c6777604364700cc7ae9d6ebf2bf8de4622c04cfafd0ae6"
+x86_64sum="166a022786c8bb85d5890741f9632f10df3ba299736c59576ab1f6e4f6597ac8"
+i386sum="4439e13211a4c0dd7831d728fc50371d9be0e31dfa344b1c951de90b42afe0bf"
+armsum="e23af4882e8b20c8ded8c052e9863a52dbb685f16deff0322e21d6e9ded35b56"
 
 # Detect the system architecture to download the right tarball
 # NOTE: `uname -m` is more accurate and universal than `arch`
@@ -23,6 +21,15 @@ else
 	ynh_die "Unable to detect your achitecture, please open a bug describing \
         your hardware and the result of the command \"uname -m\"." 1
 fi
+
+get_app_version_from_json() {
+   manifest_path="../manifest.json"
+    if [ ! -e "$manifest_path" ]; then
+    	manifest_path="../settings/manifest.json"	# Into the restore script, the manifest is not at the same place
+    fi
+    echo $(grep '\"version\": ' "$manifest_path" | cut -d '"' -f 4)	# Retrieve the version number in the manifest file.
+}
+seafile_version=$(get_app_version_from_json)
 
 get_configuration() {
 	final_path=$(ynh_app_setting_get $app final_path)
@@ -179,4 +186,16 @@ $logfile {
 EOF
 	sudo mkdir -p $(dirname "$logfile")	# Create the log directory, if not exist
 	cat ${app}-logrotate | sudo $customtee /etc/logrotate.d/$app > /dev/null	# Append this config to the existing config file, or replace the whole config file (depending on $customtee)
+}
+
+
+# Get application version from manifest
+#
+# usage: ynh_app_version
+ynh_app_version() {
+   manifest_path="../manifest.json"
+    if [ ! -e "$manifest_path" ]; then
+    	manifest_path="../settings/manifest.json"	# Into the restore script, the manifest is not at the same place
+    fi
+    echo $(grep '\"version\": ' "$manifest_path" | cut -d '"' -f 4)	# Retrieve the version number in the manifest file.
 }
