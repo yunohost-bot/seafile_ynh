@@ -81,7 +81,7 @@ ynh_replace_string 'SITE_ROOT = "'"$old_path2"'"' 'SITE_ROOT = "'"$new_path2"'"'
 ynh_replace_string 'MEDIA_URL = "'"$old_path2"'media/"' 'MEDIA_URL = "'"$new_path2"'media/"' $final_path/conf/seahub_settings.py
 ynh_replace_string "LOGIN_URL = '${old_path2}accounts/login/'" "LOGIN_URL = '${new_path2}accounts/login/'" $final_path/conf/seahub_settings.py
 ynh_replace_string ' = "seafile@'"$old_domain"'"' ' = "seafile@'"$new_domain"'"' $final_path/conf/seahub_settings.py
-
+sed --in-place "s@ALLOWED_HOSTS = \['${old_domain}'\]@ALLOWED_HOSTS = \['${new_domain}'\]@g" $final_path/conf/seahub_settings.py
 # Update database
 
 # This fonction relplace all old domain name by the new domain name.
