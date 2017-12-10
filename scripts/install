@@ -158,7 +158,7 @@ fi
 
 # Add logrotate
 ynh_use_logrotate $final_path/logs
-ln -s $final_path/logs /var/log/seafile-server
+ln -s $final_path/logs /var/log/seafile
 
 # register yunohost service
 yunohost service add seafile-server
