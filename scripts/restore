@@ -9,9 +9,6 @@ ynh_abort_if_errors
 # Import common cmd
 source ../settings/scripts/_common.sh
 
-# Init get Final path
-get_configuration
-
 # Retrieve arguments
 domain=$(ynh_app_setting_get $app domain)
 path=$(ynh_normalize_url_path $(ynh_app_setting_get $app path))
@@ -28,6 +25,9 @@ ynh_restore
 
 # Get configuration for user and final path
 get_configuration
+
+# Create user if it need
+[[ $seafile_user = "seafile" ]] && ynh_system_user_create $seafile_user $final_path
 
 # Restore mysql dump
 dbuser=seafile

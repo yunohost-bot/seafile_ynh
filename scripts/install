@@ -72,6 +72,9 @@ ynh_mysql_create_db ccnetdb "$dbuser" "$db_pwd"
 ynh_mysql_create_db seafiledb "$dbuser" "$db_pwd"
 ynh_mysql_create_db seahubdb "$dbuser" "$db_pwd"
 
+# Create User
+ynh_system_user_create $seafile_user $final_path
+
 # Run install script
 chmod +x ../conf/install.exp
 chmod +x $final_path/seafile-server-$seafile_version/setup-seafile-mysql.sh
@@ -155,6 +158,7 @@ fi
 
 # Add logrotate
 ynh_use_logrotate $final_path/logs
+ln -s $final_path/logs /var/log/seafile-server
 
 # register yunohost service
 yunohost service add seafile-server

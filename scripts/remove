@@ -25,11 +25,15 @@ ynh_secure_remove /opt/yunohost/$app
 ynh_secure_remove /etc/init.d/seafile-server
 ynh_secure_remove /home/yunohost.app/seafile-data
 ynh_secure_remove /tmp/seahub_cache
+ynh_secure_remove /var/log/seafile-server
 
 # Remove databases
 ynh_mysql_drop_db ccnetdb
 ynh_mysql_drop_db seafiledb
 ynh_mysql_drop_db seahubdb
+
+# Remove user
+ynh_system_user_delete seafile
 
 # Remove depandance
 ynh_remove_app_dependencies
