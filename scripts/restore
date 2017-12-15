@@ -13,6 +13,7 @@ source ../settings/scripts/_common.sh
 domain=$(ynh_app_setting_get $app domain)
 path=$(ynh_normalize_url_path $(ynh_app_setting_get $app path))
 db_pwd=$(ynh_app_setting_get ${app} mysqlpwd)
+seafile_data=/home/yunohost.app/seafile-data
 
 # Check domain/path availability
 ynh_webpath_available $domain $path || ynh_die "$domain/$path is not available, please use an other domain or path."
@@ -43,6 +44,11 @@ python $final_path/add_sso_conf.py
 
 # Add logrotate
 ynh_use_logrotate $final_path/logs
+ln -s $final_path/logs /var/log/seafile
+
+# Set permissions to seafile directory
+chown -R $seafile_user:$seafile_user $final_path
+chown -R $seafile_user:$seafile_user $seafile_data
 
 # Add Seafile to YunoHost's monitored services
 yunohost service add seafile-server
