@@ -61,7 +61,7 @@ nginx_conf_path=/etc/nginx/conf.d/$old_domain.d/$app.conf
 if [ $change_path -eq 1 ]
 then
 	ynh_replace_string "location $old_path {" "location $new_path {" "$nginx_conf_path"
-	ynh_replace_string "location ${old_path2}media {" "location ${new_path2}media {" "$nginx_conf_path"
+	ynh_replace_string "location ${old_path2}media/ {" "location ${new_path2}media/ {" "$nginx_conf_path"
 fi
 
 # Change the domain for nginx
