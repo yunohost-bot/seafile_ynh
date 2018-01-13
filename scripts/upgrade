@@ -154,8 +154,10 @@ rm -rf /tmp/seahub_cache
 systemctl start seafile-server.service
 
 # remove old version files
-rm -f $final_path/installed/seafile-server_${installed_version}*.tar*
-rm -f $final_path/seafile-server_${installed_version}_$architecture
+ynh_secure_remove $final_path/seafile-server-4.*
+ynh_secure_remove $final_path/seafile-server-5.*
+ynh_secure_remove $final_path/seafile-server-6.0.*
+ynh_secure_remove $final_path/seafile-server-6.1.*
 
 # store new installed version
 ynh_app_setting_set $app installed_version $seafile_version
