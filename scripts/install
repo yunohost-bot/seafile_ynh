@@ -46,9 +46,6 @@ ynh_app_setting_set $app webdav_port $webdav_port
 ynh_app_setting_set $app is_public $is_public
 ynh_app_setting_set $app installed_version $seafile_version
 
-# Download new version from sources
-get_source $architecture $seafile_version
-
 # Retrieve admin email
 admin_email=$(yunohost user info $admin | grep mail: | sed "s/mail: //g")
 
@@ -56,13 +53,14 @@ admin_email=$(yunohost user info $admin | grep mail: | sed "s/mail: //g")
 install_dependance
 
 # Copy files to the right place
-test -e $final_path && rm -rf "$final_path"
-test -e $seafile_data && rm -rf "$seafile_data"
+test -e $seafile_data && ynh_secure_remove "$seafile_data"
 mkdir -p $final_path
 mkdir -p $final_path/installed
 mkdir -p $final_path/logs
 mkdir -p $final_path/seafile-data
-extract_source
+
+# Download new version from sources
+install_source
 
 # init databases
 dbuser=seafile

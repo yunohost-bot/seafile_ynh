@@ -3,11 +3,6 @@
 # Retrieve arguments
 app=$YNH_APP_INSTANCE_NAME
 
-## Adapt sha256sum while you update app
-x86_64sum="166a022786c8bb85d5890741f9632f10df3ba299736c59576ab1f6e4f6597ac8"
-i386sum="4439e13211a4c0dd7831d728fc50371d9be0e31dfa344b1c951de90b42afe0bf"
-armsum="e23af4882e8b20c8ded8c052e9863a52dbb685f16deff0322e21d6e9ded35b56"
-
 # Detect the system architecture to download the right tarball
 # NOTE: `uname -m` is more accurate and universal than `arch`
 # See https://en.wikipedia.org/wiki/Uname
@@ -64,7 +59,6 @@ set_path_2() {
 
 config_nginx() {
 
-
 	# In the 3.x seafile version package the seahub_port and fileserver_port wasn't saved in the settings. If the settings is empty we try to get it and save in the settings
 
 	if [[ -z $seahub_port ]] || [[ -z $fileserver_port ]]
@@ -87,35 +81,9 @@ config_nginx() {
 	systemctl reload nginx.service
 }
 
-get_source() {
-    if [[ $1 == 'arm' ]]
-    then
-        wget -q -O '/tmp/seafile_src.tar.gz' 'https://github.com/haiwen/seafile-rpi/releases/download/v'$2'/seafile-server_'$2'_stable_pi.tar.gz'
-        sha256sum=$armsum
-    elif [[ $1 == 'x86-64' ]]
-    then
-        wget -q -O '/tmp/seafile_src.tar.gz' 'https://download.seadrive.org/seafile-server_'$2'_x86-64.tar.gz'
-        sha256sum=$x86_64sum
-    else
-        wget -q -O '/tmp/seafile_src.tar.gz' 'https://download.seadrive.org/seafile-server_'$2'_i386.tar.gz'
-        sha256sum=$i386sum
-    fi
-
-    if [[ ! -e '/tmp/seafile_src.tar.gz' ]] || [[ $(sha256sum '/tmp/seafile_src.tar.gz' | cut -d' ' -f1) != $sha256sum ]]
-    then
-        ynh_die "Error : can't get seafile source"
-    fi
-}
-
-extract_source() {
-	mkdir -p $final_path/seafile-server-$seafile_version
-	tar xzf '/tmp/seafile_src.tar.gz'
-	mv seafile-server-$seafile_version/* $final_path/seafile-server-$seafile_version
-	mv '/tmp/seafile_src.tar.gz' $final_path/installed/seafile-server_${seafile_version}.tar.gz
-	
-	local old_dir=$(pwd)
-    (cd "$final_path/seafile-server-$seafile_version" && patch -p1 < $YNH_CWD/../sources/sso_auth.patch) || ynh_die "Unable to apply patches"
-    cd $old_dir
+install_source() {
+    mkdir "$final_path/seafile-server-$seafile_version"
+    ynh_setup_source "$final_path/seafile-server-$seafile_version" "$architecture"
 }
 
 install_dependance() {
@@ -128,15 +96,4 @@ ynh_clean_setup () {
 	pkill -f seaf-server
 	pkill -f ccnet-server
 	pkill -f "seahub"
-}
-
-# Get application version from manifest
-#
-# usage: ynh_app_version
-ynh_app_version() {
-   manifest_path="../manifest.json"
-    if [ ! -e "$manifest_path" ]; then
-    	manifest_path="../settings/manifest.json"	# Into the restore script, the manifest is not at the same place
-    fi
-    echo $(grep '\"version\": ' "$manifest_path" | cut -d '"' -f 4)	# Retrieve the version number in the manifest file.
 }

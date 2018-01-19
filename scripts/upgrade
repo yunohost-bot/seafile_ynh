@@ -27,15 +27,12 @@ get_configuration
 # Create special path with / at the end
 set_path_2
 
-# Download new version from sources
-get_source $architecture $seafile_version
-
 # stop seafile server
 systemctl stop seafile-server.service
 
 # extract new version
-test -e $final_path/seafile-server-$seafile_version && rm -rf "$final_path/seafile-server-$seafile_version"
-extract_source
+test -e $final_path/seafile-server-$seafile_version && ynh_secure_remove "$final_path/seafile-server-$seafile_version"
+install_source
 
 # permission to execute update script and expect helper
 chmod +x ../conf/upgrade_*.exp
@@ -148,7 +145,7 @@ systemctl daemon-reload
 chown -R $seafile_user:$seafile_user $final_path
 
 # delete seafile cache
-rm -rf /tmp/seahub_cache
+ynh_secure_remove /tmp/seahub_cache
 
 # restart seafile server
 systemctl start seafile-server.service
