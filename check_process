@@ -16,6 +16,8 @@
 		    setup_private=1
 		    setup_public=1
 		    upgrade=1
+            upgrade=1    from_commit=8bf60f706d81ea6138cedddef0fac6695d0326b9
+            upgrade=1    from_commit=0fdafb9aa7ea85ccabb066a9596da91ab9229905
 		    backup_restore=1
 		    multi_instance=0
 		    wrong_user=1
@@ -37,3 +39,9 @@
   	Level 8=0
   	Level 9=0
   	Level 10=0
+
+;;; Upgrade options
+	; commit=8bf60f706d81ea6138cedddef0fac6695d0326b9
+		name=The oldest installable version
+	; commit=0fdafb9aa7ea85ccabb066a9596da91ab9229905
+		name=Before move main dir to /opt
