@@ -1,5 +1,5 @@
-SOURCE_URL=https://github.com/haiwen/seafile-rpi/releases/download/v6.2.3/seafile-server_6.2.3_stable_pi.tar.gz
-SOURCE_SUM=e23af4882e8b20c8ded8c052e9863a52dbb685f16deff0322e21d6e9ded35b56
+SOURCE_URL=https://github.com/haiwen/seafile-rpi/releases/download/v6.2.5/seafile-server_6.2.5_stable_pi.tar.gz
+SOURCE_SUM=dbd65f6bb4557bbc271759facb4a2e298192b244d6cee47f3072ba3792f574e0
 # (Optional) Program to check the integrity (sha256sum, md5sum...)
 # default: sha256
 SOURCE_SUM_PRG=sha256sum
