@@ -11,9 +11,11 @@ expect "for the admin account?"
 send "$admin_email\r";
 
 expect "for the admin account?"
-send "$admin_password\r";
+send {__ADMIN_PASSWORD__};
+send '\r';
 
 expect "Enter the"
-send "$admin_password\r";
+send {__ADMIN_PASSWORD__};
+send '\r';
 
 interact

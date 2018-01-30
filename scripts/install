@@ -137,7 +137,10 @@ chown -R $seafile_user:$seafile_user $seafile_data
 
 # Start seafile, seahub and populate admin account
 su - $seafile_user -s /bin/bash -c "$final_path/seafile-server-$seafile_version/seafile.sh start"
-su - $seafile_user -s /bin/bash -c "$final_path/first_launch.exp $final_path/seafile-server-$seafile_version $admin_email $admin_password"
+# We escape all char witch needed.
+ynh_replace_special_string "__ADMIN_PASSWORD__" $admin_password "$final_path/first_launch.exp"
+su - $seafile_user -s /bin/bash -c "$final_path/first_launch.exp $final_path/seafile-server-$seafile_version $admin_email"
+ynh_secure_remove "$final_path/first_launch.exp"
 
 # Add sso config to unprotect domain.tld/seafhttp + domain.tld/seafdav do in /etc/ssowat/conf.json.persistent
 cp ../conf/add_sso_conf.py $final_path
