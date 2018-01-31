@@ -88,7 +88,7 @@ set_path_2() {
 	then
 		path2=$path
 	else
-		path2=$path'/'
+		path2=$path"/"
 	fi
 }
 
