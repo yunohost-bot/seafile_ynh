@@ -17,14 +17,49 @@ else
         your hardware and the result of the command \"uname -m\"." 1
 fi
 
-get_app_version_from_json() {
-   manifest_path="../manifest.json"
-    if [ ! -e "$manifest_path" ]; then
-    	manifest_path="../settings/manifest.json"	# Into the restore script, the manifest is not at the same place
-    fi
-    echo $(grep '\"version\": ' "$manifest_path" | cut -d '"' -f 4)	# Retrieve the version number in the manifest file.
+# Read the value of a key in a ynh manifest file
+#
+# usage: ynh_read_manifest manifest key
+# | arg: manifest - Path of the manifest to read
+# | arg: key - Name of the key to find
+ynh_read_manifest () {
+	manifest="$1"
+	key="$2"
+	python3 -c "import sys, json;print(json.load(open('$manifest'))['$key'])"
 }
-seafile_version=$(get_app_version_from_json)
+
+# Read the upstream version from the manifest 
+# The version number in the manifest is defined by <upstreamversion>~ynh<packageversion>
+# For example : 4.3-2~ynh3
+# This include the number before ~ynh
+# In the last example it return 4.3-2
+#
+# usage: ynh_app_upstream_version
+ynh_app_upstream_version () {
+    manifest_path="../manifest.json"
+    if [ ! -e "$manifest_path" ]; then
+        manifest_path="../settings/manifest.json"	# Into the restore script, the manifest is not at the same place
+    fi
+    version_key=$(ynh_read_manifest "$manifest_path" "version")
+    echo "${version_key/~ynh*/}"
+}
+
+# Read package version from the manifest
+# The version number in the manifest is defined by <upstreamversion>~ynh<packageversion>
+# For example : 4.3-2~ynh3
+# This include the number after ~ynh
+# In the last example it return 3
+#
+# usage: ynh_app_package_version
+ynh_app_package_version () {
+    manifest_path="../manifest.json"
+    if [ ! -e "$manifest_path" ]; then
+        manifest_path="../settings/manifest.json"	# Into the restore script, the manifest is not at the same place
+    fi
+    version_key=$(ynh_read_manifest "$manifest_path" "version")
+    echo "${version_key/*~ynh/}"
+}
+seafile_version=$(ynh_app_upstream_version)
 
 get_configuration() {
 	final_path=$(ynh_app_setting_get $app final_path)
