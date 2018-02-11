@@ -76,7 +76,7 @@
                     "en": "Is it a public site ? If you want to use a desktop client or the smartphone app, make Seafile public.",
                     "fr": "Est-ce un site public ? Pour utiliser un client sur PC ou l'application mobile, Seafile doit être public"
                 },
-                "default": "1"
+                "default": true
             }
         ]
     }
