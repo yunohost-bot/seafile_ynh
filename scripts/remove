@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#=================================================
+# GENERIC START
+#=================================================
+
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
@@ -7,6 +11,7 @@ source /usr/share/yunohost/helpers
 set -u
 
 # Import common cmd
+source ./experimental_helper.sh
 source ./_common.sh
 
 # Init get Final path
@@ -14,6 +19,10 @@ get_configuration
 
 # Retrieve arguments
 domain=$(ynh_app_setting_get $app domain)
+
+#=================================================
+# STANDARD REMOVE
+#=================================================
 
 systemctl stop seafile-server.service
 

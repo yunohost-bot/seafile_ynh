@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#=================================================
+# GENERIC START
+#=================================================
+
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
@@ -7,6 +11,7 @@ source /usr/share/yunohost/helpers
 ynh_abort_if_errors
 
 # Import common cmd
+source ./experimental_helper.sh
 source ./_common.sh
 
 # Retrieve arguments
@@ -48,6 +53,10 @@ ynh_app_setting_set $app installed_version $seafile_version
 
 # Retrieve admin email
 admin_email=$(yunohost user info $admin | grep mail: | sed "s/mail: //g")
+
+#=================================================
+# STANDARD MODIFICATIONS
+#=================================================
 
 # Check dependencies
 install_dependance
@@ -141,6 +150,10 @@ su - $seafile_user -s /bin/bash -c "$final_path/seafile-server-$seafile_version/
 ynh_replace_special_string "__ADMIN_PASSWORD__" $admin_password "$final_path/first_launch.exp"
 su - $seafile_user -s /bin/bash -c "$final_path/first_launch.exp $final_path/seafile-server-$seafile_version $admin_email"
 ynh_secure_remove "$final_path/first_launch.exp"
+
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
 
 # Add sso config to unprotect domain.tld/seafhttp + domain.tld/seafdav do in /etc/ssowat/conf.json.persistent
 cp ../conf/add_sso_conf.py $final_path

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#=================================================
+# GENERIC START
+#=================================================
+
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
@@ -7,6 +11,7 @@ source /usr/share/yunohost/helpers
 ynh_abort_if_errors
 
 # Import common cmd
+source ../settings/scripts/experimental_helper.sh
 source ../settings/scripts/_common.sh
 
 # Set configuration for user and final path
@@ -15,6 +20,10 @@ get_configuration
 # retrieve useful param
 domain=$(ynh_app_setting_get ${app} domain)
 db_pwd=$(ynh_app_setting_get ${app} mysqlpwd)
+
+#=================================================
+# STANDARD BACKUP STEPS
+#=================================================
 
 # # Backup app files
 ynh_backup $final_path
