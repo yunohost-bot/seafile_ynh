@@ -52,6 +52,6 @@ send "seahubdb\r";
 expect "Press ENTER to continue, or Ctrl-C to abort"
 send "\r";
 
-sleep 8
-
 interact
+
+wait
