@@ -168,10 +168,11 @@ ynh_secure_remove /tmp/seahub_cache
 systemctl start seafile-server.service
 
 # remove old version files
-ynh_secure_remove $final_path/seafile-server-4.*
-ynh_secure_remove $final_path/seafile-server-5.*
-ynh_secure_remove $final_path/seafile-server-6.0.*
-ynh_secure_remove $final_path/seafile-server-6.1.*
+ls $final_path | grep "seafile-server-" | egrep -v "(${seafile_version//./\\.})|(latest)" | \
+while read f
+do
+    ynh_secure_remove $final_path/$f
+done
 
 # store new installed version
 ynh_app_setting_set $app installed_version $seafile_version
