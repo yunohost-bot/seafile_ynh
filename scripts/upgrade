@@ -76,7 +76,7 @@ case $installed_version in
 	../conf/upgrade_6.0.exp $final_path/seafile-server-$seafile_version $root_pwd
 ;&
 "6.0."* )
-	python ../conf/update_sso_conf.py || true
+	python3 ../conf/update_sso_conf.py || true
 	install_dependance
 	
 	# Update seafile by script
@@ -120,7 +120,7 @@ then
 	cp ../conf/add_sso_conf.py $final_path
 	cp ../conf/add_sso_conf_webdav.py $final_path
 	cp ../conf/remove_sso_conf.py $final_path
-	python $final_path/add_sso_conf_webdav.py
+	python3 $final_path/add_sso_conf_webdav.py
 	
 	# Update seafile config
 	echo 'COMPRESS_URL = MEDIA_URL' | tee -a $final_path/conf/seahub_settings.py

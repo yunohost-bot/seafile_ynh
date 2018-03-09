@@ -27,8 +27,8 @@ domain=$(ynh_app_setting_get $app domain)
 systemctl stop seafile-server.service
 
 # remove sso config to unprotect domain.tld/seafhttp in /etc/ssowat/conf.json.persistent
-test -e /var/www/$app/remove_sso_conf.py && python /var/www/$app/remove_sso_conf.py
-test -e /opt/yunohost/$app/remove_sso_conf.py && python /opt/yunohost/$app/remove_sso_conf.py
+test -e /var/www/$app/remove_sso_conf.py && python3 /var/www/$app/remove_sso_conf.py
+test -e /opt/yunohost/$app/remove_sso_conf.py && python3 /opt/yunohost/$app/remove_sso_conf.py
 ynh_secure_remove /var/log/seafile
 ynh_secure_remove /var/www/$app
 ynh_secure_remove /opt/yunohost/$app

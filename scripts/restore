@@ -53,7 +53,7 @@ su -c "mysql -u ${app} -p$db_pwd seahubdb < ${YNH_CWD}/seahubdb.dmp"
 #=================================================
 
 # Restore sso persistent config
-python $final_path/add_sso_conf.py
+python3 $final_path/add_sso_conf.py
 
 # Add logrotate
 ynh_use_logrotate $final_path/logs

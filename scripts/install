@@ -158,7 +158,7 @@ ynh_secure_remove "$final_path/first_launch.exp"
 # Add sso config to unprotect domain.tld/seafhttp + domain.tld/seafdav do in /etc/ssowat/conf.json.persistent
 cp ../conf/add_sso_conf.py $final_path
 cp ../conf/remove_sso_conf.py $final_path
-python $final_path/add_sso_conf.py
+python3 $final_path/add_sso_conf.py
 
 # unprotect media
 ynh_app_setting_set seafile unprotected_uris "/media"
