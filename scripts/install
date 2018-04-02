@@ -85,7 +85,7 @@ ynh_system_user_create $seafile_user $final_path
 # Run install script
 chmod +x ../conf/install.exp
 chmod +x $final_path/seafile-server-$seafile_version/setup-seafile-mysql.sh
-../conf/install.exp $final_path/seafile-server-$seafile_version $server_name $domain $seafile_data $fileserver_port $db_pwd
+../conf/install.exp "$final_path/seafile-server-$seafile_version" "$server_name" "$domain" "$seafile_data" "$fileserver_port" "$db_pwd"
 
 # Update seafile config
 ynh_replace_string http:// https:// $final_path/conf/ccnet.conf
