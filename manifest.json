@@ -45,8 +45,8 @@
             {
                 "name": "server_name",
                 "ask": {
-                    "en": "Choose a name",
-                    "fr": "Choisissez un nom"
+                    "en": "Choose a name (3 - 15 letters or digits)",
+                    "fr": "Choisissez un nom (3 - 15 letters or digits)"
                 },
                 "example": "Seafile",
                 "default": "Seafile"
