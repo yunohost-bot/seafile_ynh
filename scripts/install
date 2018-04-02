@@ -17,7 +17,7 @@ source ./_common.sh
 # Retrieve arguments
 domain=$YNH_APP_ARG_DOMAIN
 path=$(ynh_normalize_url_path $YNH_APP_ARG_PATH)
-server_name=$YNH_APP_ARG_SERVER_NAME
+server_name="$YNH_APP_ARG_SERVER_NAME"
 admin=$YNH_APP_ARG_ADMIN
 admin_password=$YNH_APP_ARG_ADMIN_PASSWORD
 is_public=$YNH_APP_ARG_PUBLIC_SITE
@@ -41,7 +41,7 @@ fileserver_port=$(ynh_find_port 8082)
 webdav_port=$(ynh_find_port 8080)
 
 # store config in yunohost
-ynh_app_setting_set $app server_name $server_name
+ynh_app_setting_set $app server_name "$server_name"
 ynh_app_setting_set $app final_path $final_path
 ynh_app_setting_set $app seafile_user $seafile_user
 ynh_app_setting_set $app admin $admin
