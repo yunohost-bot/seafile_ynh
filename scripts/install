@@ -118,7 +118,7 @@ echo 'LOGIN_ATTR = mail' | tee -a $final_path/conf/ccnet.conf
 echo 'ENABLE_WIKI = True' | tee -a $final_path/conf/seahub_settings.py
 
 # Fix local warning
-ynh_replace_string en_US.UTF-8 $LANG $final_path/seafile-server-$seafile_version/seahub.sh
+ynh_replace_string en_US.UTF-8 ${LANG:-'en_US.UTF-8'} $final_path/seafile-server-$seafile_version/seahub.sh
 
 # Add webdav
 cp ../conf/seafdav.conf $final_path/conf/seafdav.conf
