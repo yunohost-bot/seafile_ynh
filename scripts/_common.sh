@@ -113,6 +113,8 @@ extract_source() {
 
 install_dependance() {
 	ynh_install_app_dependencies python2.7 python-pip python-setuptools python-simplejson python-imaging python-mysqldb python-flup expect python-requests python-dev
+	# Upgrade setuptools for jessie because the new moviepy package is not compatible with setuptools 5.x
+	[ "$(lsb_release --codename --short)" = "jessie" ] && pip install --upgrade setuptools
 	pip install pillow moviepy
 }
 
