@@ -26,6 +26,12 @@ domain=$(ynh_app_setting_get $app domain)
 
 systemctl stop seafile-server.service
 
+# Force to kill all process in case of a process is not stoped cleanly
+pkill -f seafile-controller || true
+pkill -f seaf-server || true
+pkill -f ccnet-server || true
+pkill -f seahub || true
+
 # remove sso config to unprotect domain.tld/seafhttp in /etc/ssowat/conf.json.persistent
 test -e /var/www/$app/remove_sso_conf.py && python3 /var/www/$app/remove_sso_conf.py
 test -e /opt/yunohost/$app/remove_sso_conf.py && python3 /opt/yunohost/$app/remove_sso_conf.py
