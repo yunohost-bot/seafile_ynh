@@ -32,14 +32,14 @@ get_configuration() {
     fi
 }
 
-set_path_2() {
-	if [[ $path == '/' ]]
-	then
-		path2=$path
-	else
-		path2=$path"/"
-	fi
-}
+# set_path_2() {
+# 	if [[ $path == '/' ]]
+# 	then
+# 		path2=$path
+# 	else
+# 		path2=$path"/"
+# 	fi
+# }
 
 config_nginx() {
 
@@ -54,15 +54,17 @@ config_nginx() {
 		ynh_app_setting_set $app fileserver_port $fileserver_port
 	fi
 
-	ynh_replace_string PATHTOCHANGE1 $path ../conf/nginx.conf
-	ynh_replace_string PATHTOCHANGE2 $path2 ../conf/nginx.conf
-	ynh_replace_string ALIASTOCHANGE $final_path/ ../conf/nginx.conf
-	ynh_replace_string SEAHUB_PORT $seahub_port ../conf/nginx.conf
-	ynh_replace_string SEAFILE_FILESERVER_PORT $fileserver_port ../conf/nginx.conf
-	ynh_replace_string WEBDAV_PORT $webdav_port ../conf/nginx.conf
-	cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/seafile.conf
-	
-	systemctl reload nginx.service
+# 	ynh_replace_string PATHTOCHANGE1 $path ../conf/nginx.conf
+# 	ynh_replace_string PATHTOCHANGE2 $path2 ../conf/nginx.conf
+# 	ynh_replace_string ALIASTOCHANGE $final_path/ ../conf/nginx.conf
+# 	ynh_replace_string SEAHUB_PORT $seahub_port ../conf/nginx.conf
+# 	ynh_replace_string SEAFILE_FILESERVER_PORT $fileserver_port ../conf/nginx.conf
+# 	ynh_replace_string WEBDAV_PORT $webdav_port ../conf/nginx.conf
+# 	cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/seafile.conf
+# 	
+# 	systemctl reload nginx.service
+
+    ynh_add_nginx_config 'seahub_port fileserver_port webdav_port'
 }
 
 install_source() {
@@ -71,10 +73,11 @@ install_source() {
 }
 
 install_dependance() {
-	ynh_install_app_dependencies python2.7 python-pip python-setuptools python-simplejson python-imaging python-mysqldb python-flup expect python-requests python-dev
+	ynh_install_app_dependencies python2.7 python-pip python-setuptools python-simplejson python-imaging python-mysqldb python-flup expect python-requests python-dev \
+        libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev libharfbuzz-dev libfribidi-dev tcl8.6-dev tk8.6-dev python-tk # For building pillow
 	# Upgrade setuptools for jessie because the new moviepy package is not compatible with setuptools 5.x
 	[ "$(lsb_release --codename --short)" = "jessie" ] && pip install --upgrade setuptools
-	pip install pillow moviepy
+	pip install --upgrade pillow moviepy
 }
 
 ynh_clean_setup () {

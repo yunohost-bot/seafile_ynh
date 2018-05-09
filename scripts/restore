@@ -16,12 +16,12 @@ source ../settings/scripts/_common.sh
 
 # Retrieve arguments
 domain=$(ynh_app_setting_get $app domain)
-path=$(ynh_normalize_url_path $(ynh_app_setting_get $app path))
+path_url=$(ynh_normalize_url_path $(ynh_app_setting_get $app path))
 db_pwd=$(ynh_app_setting_get ${app} mysqlpwd)
 seafile_data=/home/yunohost.app/seafile-data
 
 # Check domain/path availability
-ynh_webpath_available $domain $path || ynh_die "$domain/$path is not available, please use an other domain or path."
+ynh_webpath_available $domain $path_url || ynh_die "$domain/$path_url is not available, please use an other domain or path."
 
 #=================================================
 # STANDARD RESTORATION STEPS

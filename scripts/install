@@ -16,7 +16,7 @@ source ./_common.sh
 
 # Retrieve arguments
 domain=$YNH_APP_ARG_DOMAIN
-path=$(ynh_normalize_url_path $YNH_APP_ARG_PATH)
+path_url=$(ynh_normalize_url_path $YNH_APP_ARG_PATH)
 server_name="$YNH_APP_ARG_SERVER_NAME"
 admin=$YNH_APP_ARG_ADMIN
 admin_password=$YNH_APP_ARG_ADMIN_PASSWORD
@@ -26,11 +26,16 @@ final_path=/opt/yunohost/$app
 seafile_user=seafile
 
 # Create special path with / at the end
-set_path_2
+if [[ $path_url == '/' ]]
+then
+    path_url2=$path_url
+else
+    path_url2=$path_url"/"
+fi
 
 # Check domain/path availability
-test $(ynh_webpath_available $domain $path) == 'True' || ynh_die "$domain$path is not available, please use an other domain or path."
-ynh_webpath_register $app $domain $path
+test $(ynh_webpath_available $domain $path_url) == 'True' || ynh_die "$domain$path_url is not available, please use an other domain or path."
+ynh_webpath_register $app $domain $path_url
 
 # Check Final Path availability
 test ! -e "$final_path" || ynh_die "This path already contains a folder"
@@ -89,11 +94,11 @@ chmod +x $final_path/seafile-server-$seafile_version/setup-seafile-mysql.sh
 
 # Update seafile config
 ynh_replace_string http:// https:// $final_path/conf/ccnet.conf
-ynh_replace_string :8000 $path $final_path/conf/ccnet.conf
+ynh_replace_string :8000 $path_url $final_path/conf/ccnet.conf
 echo 'FILE_SERVER_ROOT = "https://'$domain'/seafhttp"' | tee -a $final_path/conf/seahub_settings.py
-echo 'SITE_ROOT = "'$path2'"' | tee -a $final_path/conf/seahub_settings.py
+echo 'SITE_ROOT = "'$path_url2'"' | tee -a $final_path/conf/seahub_settings.py
 echo 'SERVE_STATIC = False' | tee -a $final_path/conf/seahub_settings.py
-echo 'MEDIA_URL = "'$path2'media/"' | tee -a $final_path/conf/seahub_settings.py
+echo 'MEDIA_URL = "'$path_url2'media/"' | tee -a $final_path/conf/seahub_settings.py
 echo 'COMPRESS_URL = MEDIA_URL' | tee -a $final_path/conf/seahub_settings.py
 echo "STATIC_URL = MEDIA_URL + 'assets/'" | tee -a $final_path/conf/seahub_settings.py
 echo "LOGIN_URL = '"$path2"accounts/login/'" | tee -a $final_path/conf/seahub_settings.py
