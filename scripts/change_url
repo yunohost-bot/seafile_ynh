@@ -16,7 +16,7 @@ source ./_common.sh
 
 # Retrive arguments
 old_domain=$YNH_APP_OLD_DOMAIN
-domain=$YNH_APP_OLD_DOMAIN
+domain=$YNH_APP_NEW_DOMAIN
 old_path=$(ynh_normalize_url_path ${YNH_APP_OLD_PATH:-'/'})
 path_url=$(ynh_normalize_url_path ${YNH_APP_NEW_PATH:-'/'})
 seahub_port=$(ynh_app_setting_get $app seahub_port)

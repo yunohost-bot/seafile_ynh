@@ -101,7 +101,7 @@ echo 'SERVE_STATIC = False' | tee -a $final_path/conf/seahub_settings.py
 echo 'MEDIA_URL = "'$path_url2'media/"' | tee -a $final_path/conf/seahub_settings.py
 echo 'COMPRESS_URL = MEDIA_URL' | tee -a $final_path/conf/seahub_settings.py
 echo "STATIC_URL = MEDIA_URL + 'assets/'" | tee -a $final_path/conf/seahub_settings.py
-echo "LOGIN_URL = '"$path2"accounts/login/'" | tee -a $final_path/conf/seahub_settings.py
+echo "LOGIN_URL = '"$path_url2"accounts/login/'" | tee -a $final_path/conf/seahub_settings.py
 echo "ALLOWED_HOSTS = ['"$domain"']" | tee -a $final_path/conf/seahub_settings.py
 
 # Email configuration
