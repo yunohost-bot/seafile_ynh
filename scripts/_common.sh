@@ -32,15 +32,6 @@ get_configuration() {
     fi
 }
 
-# set_path_2() {
-# 	if [[ $path == '/' ]]
-# 	then
-# 		path2=$path
-# 	else
-# 		path2=$path"/"
-# 	fi
-# }
-
 config_nginx() {
 
 	# In the 3.x seafile version package the seahub_port and fileserver_port wasn't saved in the settings. If the settings is empty we try to get it and save in the settings
@@ -53,16 +44,6 @@ config_nginx() {
 		ynh_app_setting_set $app seahub_port $seahub_port
 		ynh_app_setting_set $app fileserver_port $fileserver_port
 	fi
-
-# 	ynh_replace_string PATHTOCHANGE1 $path ../conf/nginx.conf
-# 	ynh_replace_string PATHTOCHANGE2 $path2 ../conf/nginx.conf
-# 	ynh_replace_string ALIASTOCHANGE $final_path/ ../conf/nginx.conf
-# 	ynh_replace_string SEAHUB_PORT $seahub_port ../conf/nginx.conf
-# 	ynh_replace_string SEAFILE_FILESERVER_PORT $fileserver_port ../conf/nginx.conf
-# 	ynh_replace_string WEBDAV_PORT $webdav_port ../conf/nginx.conf
-# 	cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/seafile.conf
-# 	
-# 	systemctl reload nginx.service
 
     ynh_add_nginx_config 'seahub_port fileserver_port webdav_port'
 }
