@@ -74,7 +74,7 @@ install_source() {
 
 install_dependance() {
 	ynh_install_app_dependencies python2.7 python-pip python-setuptools python-simplejson python-imaging python-mysqldb python-flup expect python-requests python-dev \
-        libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev libharfbuzz-dev libfribidi-dev tcl8.6-dev tk8.6-dev python-tk # For building pillow
+        libjpeg62-turbo-dev zlib1g-dev # For building pillow
 	# Upgrade setuptools for jessie because the new moviepy package is not compatible with setuptools 5.x
 	[ "$(lsb_release --codename --short)" = "jessie" ] && pip install --upgrade setuptools
 	pip install --upgrade pillow moviepy
