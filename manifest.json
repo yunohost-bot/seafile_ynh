@@ -9,10 +9,14 @@
         "en": "Open Source Cloud Storage",
         "fr": "Stockage Cloud Open Source"
     },
-	"maintainer": {
-		"name": "Josué Tille",
-		"email": "josue@tille.ch"
-	},
+    "maintainer": {
+        "name": "Josué Tille",
+        "email": "josue@tille.ch"
+    },
+    "previous_maintainers": {
+        "name": "mbugeia",
+        "email": "maxime@max.privy.place"
+    },
     "multi_instance": false,
     "services": [
         "nginx",
