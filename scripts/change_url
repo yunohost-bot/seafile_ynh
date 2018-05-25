@@ -140,4 +140,4 @@ sleep 1
 
 # Reload services
 sudo systemctl reload nginx.service
-sudo systemctl start seafile-server.service
+ynh_system_reload seafile-server start

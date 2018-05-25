@@ -191,4 +191,4 @@ sleep 2
 pkill -f seafile-controller || true
 pkill -f seaf-server || true
 
-systemctl start seafile-server.service
+ynh_system_reload seafile-server start
