@@ -136,7 +136,7 @@ mysql_relpace_db seahubdb two_factor_totpdevice user
 mysql_relpace_db seahubdb wiki_personalwiki username
 
 # Avoid the current effect
-sleep 1
+sleep 5
 
 # Reload services
 sudo systemctl reload nginx.service

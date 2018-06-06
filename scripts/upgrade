@@ -162,6 +162,7 @@ chown -R $seafile_user:$seafile_user $final_path
 ynh_secure_remove /tmp/seahub_cache
 
 # restart seafile server
+sleep 5
 ynh_system_reload seafile-server start
 
 # remove old version files
