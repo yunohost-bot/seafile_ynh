@@ -67,3 +67,20 @@ ynh_clean_setup () {
 	pkill -f ccnet-server
 	pkill -f "seahub"
 }
+
+# Reload (or other actions) a service and print a log in case of failure.
+#
+# usage: system_reload service_name [action]
+# | arg: service_name - Name of the service to reload
+# | arg: action - Action to perform with systemctl. Default: reload
+system_reload () {
+    local service_name=$1
+    local action=${2:-reload}
+
+    # Reload, restart or start and print the log if the service fail to start or reload
+    systemctl $action $service_name || (
+        journalctl --lines=20 -u $service_name >&2
+        tail -n 50 $final_path/logs/*.log
+        false
+    )
+}

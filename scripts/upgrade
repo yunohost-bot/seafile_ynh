@@ -31,6 +31,11 @@ get_configuration
 
 # stop seafile server
 systemctl stop seafile-server.service
+sleep 2
+pkill -f seafile-controller || true
+pkill -f seaf-server || true
+pkill -f ccnet-server || true
+pkill -f seahub || true
 
 #=================================================
 # MIGRATION FROM OLD VERSION
@@ -163,7 +168,7 @@ ynh_secure_remove /tmp/seahub_cache
 
 # restart seafile server
 sleep 5
-ynh_system_reload seafile-server start
+system_reload seafile-server start
 
 # remove old version files
 ls $final_path | grep "seafile-server-" | egrep -v "(${seafile_version//./\\.})|(latest)" | \

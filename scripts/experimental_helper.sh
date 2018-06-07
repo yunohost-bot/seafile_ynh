@@ -127,16 +127,3 @@ ynh_delete_file_checksum () {
 	local checksum_setting_name=checksum_${1//[\/ ]/_}	# Replace all '/' and ' ' by '_'
 	ynh_app_setting_delete $app $checksum_setting_name
 }
-
-# Reload (or other actions) a service and print a log in case of failure.
-#
-# usage: ynh_system_reload service_name [action]
-# | arg: service_name - Name of the service to reload
-# | arg: action - Action to perform with systemctl. Default: reload
-ynh_system_reload () {
-        local service_name=$1
-        local action=${2:-reload}
-
-        # Reload, restart or start and print the log if the service fail to start or reload
-        systemctl $action $service_name || ( journalctl --lines=20 -u $service_name >&2 && false)
-}

@@ -72,4 +72,4 @@ systemctl reload nginx.service
 # Enable service and start seafile
 systemctl daemon-reload
 update-rc.d seafile-server defaults
-ynh_system_reload seafile-server start
+system_reload seafile-server start

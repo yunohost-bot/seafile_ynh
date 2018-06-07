@@ -61,6 +61,11 @@ ynh_add_nginx_config 'seahub_port fileserver_port webdav_port'
 
 # Stop service before any change
 sudo systemctl stop seafile-server.service
+sleep 2
+pkill -f seafile-controller || true
+pkill -f seaf-server || true
+pkill -f ccnet-server || true
+pkill -f seahub || true
 
 # Update Seafile Config
 ynh_replace_string "SERVICE_URL = https://$old_domain$old_path" "SERVICE_URL = https://$domain$path_url" $final_path/conf/ccnet.conf
@@ -136,8 +141,8 @@ mysql_relpace_db seahubdb two_factor_totpdevice user
 mysql_relpace_db seahubdb wiki_personalwiki username
 
 # Avoid the current effect
-sleep 5
+sleep 2
 
 # Reload services
 sudo systemctl reload nginx.service
-ynh_system_reload seafile-server start
+system_reload seafile-server start
