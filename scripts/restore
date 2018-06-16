@@ -72,4 +72,9 @@ systemctl reload nginx.service
 # Enable service and start seafile
 systemctl daemon-reload
 update-rc.d seafile-server defaults
+
+# Avoid the current effect
+sleep 5
+
+# Restart service
 system_reload seafile-server start
