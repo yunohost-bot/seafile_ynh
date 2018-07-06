@@ -88,9 +88,9 @@ ynh_mysql_create_db seahubdb "$dbuser" "$db_pwd"
 ynh_system_user_create $seafile_user $final_path
 
 # Run install script
-chmod +x ../conf/install.exp
+chmod +x expect_scripts/install.exp
 chmod +x $final_path/seafile-server-$seafile_version/setup-seafile-mysql.sh
-../conf/install.exp "$final_path/seafile-server-$seafile_version" "$server_name" "$domain" "$seafile_data" "$fileserver_port" "$db_pwd"
+expect_scripts/install.exp "$final_path/seafile-server-$seafile_version" "$server_name" "$domain" "$seafile_data" "$fileserver_port" "$db_pwd"
 
 # Update seafile config
 ynh_replace_string http:// https:// $final_path/conf/ccnet.conf
@@ -142,7 +142,7 @@ update-rc.d seafile-server defaults
 config_nginx
 
 # Copy first launch script
-cp ../conf/first_launch.exp $final_path
+cp expect_scripts/first_launch.exp $final_path
 chmod +x $final_path/first_launch.exp
 
 # Set permissions to seafile directory

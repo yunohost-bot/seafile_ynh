@@ -3,7 +3,6 @@ set timeout 10
 
 set seafile_dir [lindex $argv 0]
 set admin_email [lindex $argv 1]
-set admin_password [lindex $argv 2]
 
 spawn $seafile_dir/seahub.sh start-fastcgi
 
