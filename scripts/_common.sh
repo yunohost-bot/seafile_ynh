@@ -50,6 +50,10 @@ config_nginx() {
 
 install_source() {
     mkdir "$final_path/seafile-server-$seafile_version"
+    if [[ $architecture == "i386" ]]
+    then
+        ynh_die "Error : this architecture is no longer supported by the upstream. Please create en issue here : https://github.com/YunoHost-Apps/seafile_ynh/issues to ask to discuss about a support of this architecture"
+    fi
     ynh_setup_source "$final_path/seafile-server-$seafile_version" "$architecture"
 }
 
