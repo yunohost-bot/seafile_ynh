@@ -125,6 +125,9 @@ echo 'ENABLE_WIKI = True' | tee -a $final_path/conf/seahub_settings.py
 # Fix local warning
 ynh_replace_string en_US.UTF-8 ${LANG:-'en_US.UTF-8'} $final_path/seafile-server-$seafile_version/seahub.sh
 
+# Update gunicorn config
+sed --in-place -r "s@bind = \"0\.0\.0\.0:[[:digit:]]+\"@bind = \"0.0.0.0:$seahub_port\"@g" $final_path/conf/gunicorn.conf
+
 # Add webdav
 cp ../conf/seafdav.conf $final_path/conf/seafdav.conf
 ynh_replace_string WEBDAV_PORT $webdav_port $final_path/conf/seafdav.conf
