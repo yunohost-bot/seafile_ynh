@@ -1,5 +1,5 @@
-SOURCE_URL=https://download.seadrive.org/seafile-server_6.3.2_x86-64.tar.gz
-SOURCE_SUM=ca643a1b4ef245b9a1517733830679c9fe7cdcf4a2f4688540fc5d696c41294a
+SOURCE_URL=https://download.seadrive.org/seafile-server_6.3.4_x86-64.tar.gz
+SOURCE_SUM=afdf347bd61ce9ea6c5e511e5a45d082c7b8643415a306d7710a3bd3818cf8c0
 # (Optional) Program to check the integrity (sha256sum, md5sum...)
 # default: sha256
 SOURCE_SUM_PRG=sha256sum
