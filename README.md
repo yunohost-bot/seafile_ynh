@@ -1,7 +1,7 @@
 Seafile For yunohost
 =================
 
-[![Integration level](https://dash.yunohost.org/integration/seafile.svg)](https://ci-apps.yunohost.org/jenkins/job/seafile%20%28Community%29/lastBuild/consoleFull)  
+[![Integration level](https://dash.yunohost.org/integration/seafile.svg)](https://ci-apps.yunohost.org/ci/apps/seafile%20%28Community%29/lastBuild/consoleFull)  
 [![Install seafile with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=seafile)
 
 > *This package allow you to install seafile quickly and simply on a YunoHost server.  
@@ -57,9 +57,9 @@ Since seafile 6.3 the i386 architecture is no more supported.
 
 Seafile no longer distribute binary for generic armhf architectures but rpi binary could work.
 
-* x86-64b - [![Build Status](https://ci-apps.yunohost.org/jenkins/job/seafile%20(Community)/badge/icon)](https://ci-apps.yunohost.org/jenkins/job/seafile%20(Community)/)
-* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/jenkins/job/seafile%20(Community)%20(%7EARM%7E)/badge/icon)](https://ci-apps-arm.yunohost.org/jenkins/job/seafile%20(Community)%20(%7EARM%7E)/)
-* Jessie x86-64b - [![Build Status](https://ci-stretch.nohost.me/jenkins/job/seafile%20(Community)/badge/icon)](https://ci-stretch.nohost.me/jenkins/job/seafile%20(Community)/)
+* x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/seafile%20(Community).svg)](https://ci-apps.yunohost.org/ci/apps/seafile/)
+* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/seafile%20(Community).svg)](https://ci-apps-arm.yunohost.org/ci/apps/seafile/)
+* Jessie x86-64b - [![Build Status](https://ci-stretch.nohost.me/jenkins/job/seafile%20(Community).svg)](https://ci-stretch.nohost.me/jenkins/job/seafile/)
 
 <!--Limitations
 ------------
