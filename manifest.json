@@ -23,7 +23,7 @@
         "mysql"
     ],
     "requirements": {
-        "yunohost": ">= 2.7.14"
+        "yunohost": ">= 3.4.2"
     },
     "arguments": {
         "install": [
