@@ -27,9 +27,6 @@ ynh_webpath_available $domain $path_url || ynh_die "$domain/$path_url is not ava
 # STANDARD RESTORATION STEPS
 #=================================================
 
-# Restore dependencies
-install_dependance
-
 # Restore all config and data
 ynh_restore
 
@@ -38,6 +35,9 @@ get_configuration
 
 # Create user if it need
 [[ $seafile_user = "seafile" ]] && ynh_system_user_create $seafile_user $final_path
+
+# Restore dependencies
+install_dependance
 
 # Restore mysql dump
 dbuser=seafile

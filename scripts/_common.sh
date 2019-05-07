@@ -60,7 +60,11 @@ install_source() {
 install_dependance() {
 	ynh_install_app_dependencies python2.7 python-pip libpython2.7 python-setuptools python-ldap python-urllib3 python-simplejson python-imaging python-mysqldb python-flup expect python-requests python-dev ffmpeg python-memcache \
         libjpeg62-turbo-dev zlib1g-dev # For building pillow
-	pip install --upgrade Pillow 'moviepy<1.0'
+    if [[ "$seafile_user" == seafile ]] && [[ "$final_path" == "/opt/yunohost/$app" ]] ; then
+		sudo -u $seafile_user pip install --user --upgrade Pillow 'moviepy<1.0'
+	else
+		pip install --upgrade Pillow 'moviepy<1.0'
+	fi
 }
 
 ynh_clean_setup () {
