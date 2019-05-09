@@ -45,6 +45,9 @@ pkill -f seahub || true
 test -e $final_path/seafile-server-$seafile_version && ynh_secure_remove "$final_path/seafile-server-$seafile_version"
 install_source
 
+# Upgrade dependances
+install_dependance
+
 # permission to execute update script and expect helper
 chmod +x expect_scripts/upgrade_*.exp
 chmod +x expect_scripts/minor-upgrade.exp
@@ -79,7 +82,6 @@ case $installed_version in
 ;&
 "6.0."* )
 	python3 ../conf/update_sso_conf.py || true
-	install_dependance
 	
 	# Update seafile by script
 	expect_scripts/upgrade_6.1.exp $final_path/seafile-server-$seafile_version $root_pwd
