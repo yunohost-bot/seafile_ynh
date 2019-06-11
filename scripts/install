@@ -14,16 +14,20 @@ ynh_abort_if_errors
 source ./experimental_helper.sh
 source ./_common.sh
 
+ynh_script_progression --message="Validating installation parameters..."
+
 # Retrieve arguments
 domain=$YNH_APP_ARG_DOMAIN
 path_url=$(ynh_normalize_url_path $YNH_APP_ARG_PATH)
 server_name="$YNH_APP_ARG_SERVER_NAME"
 admin=$YNH_APP_ARG_ADMIN
-admin_password=$YNH_APP_ARG_ADMIN_PASSWORD
 is_public=$YNH_APP_ARG_PUBLIC_SITE
 seafile_data=/home/yunohost.app/seafile-data
 final_path=/opt/yunohost/$app
 seafile_user=seafile
+ynh_print_OFF
+admin_password=$YNH_APP_ARG_ADMIN_PASSWORD
+ynh_print_ON
 
 # Create special path with / at the end
 if [[ $path_url == '/' ]]
@@ -33,68 +37,77 @@ else
     path_url2=$path_url"/"
 fi
 
-# Check domain/path availability
-test $(ynh_webpath_available $domain $path_url) == 'True' || ynh_die "$domain$path_url is not available, please use an other domain or path."
-ynh_webpath_register $app $domain $path_url
+# Register (book) web path
+ynh_webpath_register --app $app --domain $domain --path_url $path_url
 
 # Check Final Path availability
-test ! -e "$final_path" || ynh_die "This path already contains a folder"
+test ! -e "$final_path" || ynh_die --message "This path already contains a folder"
 
 # Find available ports
+ynh_script_progression --message="Finding available ports..."
 seahub_port=$(ynh_find_port 8000)
 fileserver_port=$(ynh_find_port 8082)
 webdav_port=$(ynh_find_port 8080)
 
 # store config in yunohost
-ynh_app_setting_set $app server_name "$server_name"
-ynh_app_setting_set $app final_path $final_path
-ynh_app_setting_set $app seafile_user $seafile_user
-ynh_app_setting_set $app admin $admin
-ynh_app_setting_set $app seahub_port $seahub_port
-ynh_app_setting_set $app fileserver_port $fileserver_port
-ynh_app_setting_set $app webdav_port $webdav_port
-ynh_app_setting_set $app is_public $is_public
-ynh_app_setting_set $app installed_version $seafile_version
-
-# Retrieve admin email
-admin_email=$(yunohost user info $admin | grep mail: | sed "s/mail: //g")
+ynh_script_progression --message="Storing installation settings..."
+ynh_app_setting_set --app $app --key server_name --value "$server_name"
+ynh_app_setting_set --app $app --key final_path --value $final_path
+ynh_app_setting_set --app $app --key seafile_user --value $seafile_user
+ynh_app_setting_set --app $app --key admin --value $admin
+ynh_app_setting_set --app $app --key seahub_port --value $seahub_port
+ynh_app_setting_set --app $app --key fileserver_port --value $fileserver_port
+ynh_app_setting_set --app $app --key webdav_port --value $webdav_port
+ynh_app_setting_set --app $app --key is_public --value $is_public
+ynh_app_setting_set --app $app --key installed_version --value $seafile_version
 
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================
 
 # Create User
-ynh_system_user_create $seafile_user $final_path
+ynh_script_progression --message="Configuring system user..."
+ynh_system_user_create --username $seafile_user --home_dir $final_path
 
 # Check dependencies
+ynh_script_progression --message="Installing dependencies..." --weight=7
 install_dependance
 
 # Copy files to the right place
-test -e $seafile_data && ynh_secure_remove "$seafile_data"
+ynh_script_progression --message="Cleaning data directory..."
+test -e $seafile_data && ynh_secure_remove --file="$seafile_data"
+
+ynh_script_progression --message="Creating base directory..."
 mkdir -p $final_path
 mkdir -p $final_path/installed
 mkdir -p $final_path/logs
 mkdir -p $final_path/seafile-data
 
 # Download new version from sources
+ynh_script_progression --message="Installing sources files..." --weight=7
 install_source
 
 # init databases
-dbuser=seafile
-db_pwd=$(ynh_string_random 15)
-ynh_app_setting_set "$app" mysqlpwd "$db_pwd"
-ynh_mysql_create_db ccnetdb "$dbuser" "$db_pwd"
-ynh_mysql_create_db seafiledb "$dbuser" "$db_pwd"
-ynh_mysql_create_db seahubdb "$dbuser" "$db_pwd"
+ynh_script_progression --message="Configuring MySQL database..."
+db_user=seafile
+ynh_print_OFF
+ynh_mysql_setup_db --db_user $db_user --db_name ccnetdb
+ynh_mysql_setup_db --db_user $db_user --db_name seafiledb --db_pwd "$db_pwd"
+ynh_mysql_setup_db --db_user $db_user --db_name seahubdb --db_pwd "$db_pwd"
+ynh_print_ON
+
+ynh_script_progression --message="Configuring application..." --weight=3
 
 # Run install script
 chmod +x expect_scripts/install.exp
 chmod +x $final_path/seafile-server-$seafile_version/setup-seafile-mysql.sh
+ynh_print_OFF
 expect_scripts/install.exp "$final_path/seafile-server-$seafile_version" "$server_name" "$domain" "$seafile_data" "$fileserver_port" "$db_pwd"
+ynh_print_ON
 
 # Update seafile config
-ynh_replace_string http:// https:// $final_path/conf/ccnet.conf
-ynh_replace_string :8000 $path_url $final_path/conf/ccnet.conf
+ynh_replace_string --match_string http:// --replace_string https://  --target_file $final_path/conf/ccnet.conf
+ynh_replace_string --match_string :8000   --replace_string $path_url --target_file $final_path/conf/ccnet.conf
 echo 'FILE_SERVER_ROOT = "https://'$domain'/seafhttp"' | tee -a $final_path/conf/seahub_settings.py
 echo 'SITE_ROOT = "'$path_url2'"' | tee -a $final_path/conf/seahub_settings.py
 echo 'SERVE_STATIC = False' | tee -a $final_path/conf/seahub_settings.py
@@ -108,10 +121,10 @@ echo "ALLOWED_HOSTS = ['"$domain"']" | tee -a $final_path/conf/seahub_settings.p
 echo 'EMAIL_USE_TLS = False' | tee -a $final_path/conf/seahub_settings.py
 echo 'EMAIL_HOST = "localhost"' | tee -a $final_path/conf/seahub_settings.py
 echo 'EMAIL_HOST_USER = "seafile@'$domain'"' | tee -a $final_path/conf/seahub_settings.py
-echo 'EMAIL_HOST_PASSWORD = ""' | tee -a $final_path/conf/seahub_settings.py
 echo 'EMAIL_PORT = "25"' | tee -a $final_path/conf/seahub_settings.py
 echo 'DEFAULT_FROM_EMAIL = "seafile@'$domain'"' | tee -a $final_path/conf/seahub_settings.py
 echo 'SERVER_EMAIL = "seafile@'$domain'"' | tee -a $final_path/conf/seahub_settings.py
+echo 'EMAIL_HOST_PASSWORD = ""' | tee -a $final_path/conf/seahub_settings.py
 
 # LDAP configuration
 echo '[LDAP]' | tee -a $final_path/conf/ccnet.conf
@@ -123,26 +136,22 @@ echo 'LOGIN_ATTR = mail' | tee -a $final_path/conf/ccnet.conf
 echo 'ENABLE_WIKI = True' | tee -a $final_path/conf/seahub_settings.py
 
 # Fix local warning
-ynh_replace_string en_US.UTF-8 ${LANG:-'en_US.UTF-8'} $final_path/seafile-server-$seafile_version/seahub.sh
+ynh_replace_string --match_string en_US.UTF-8 --replace_string ${LANG:-'en_US.UTF-8'} --target_file $final_path/seafile-server-$seafile_version/seahub.sh
 
 # Update gunicorn config
 sed --in-place -r "s@bind = \"0\.0\.0\.0:[[:digit:]]+\"@bind = \"0.0.0.0:$seahub_port\"@g" $final_path/conf/gunicorn.conf
 
 # Add webdav
 cp ../conf/seafdav.conf $final_path/conf/seafdav.conf
-ynh_replace_string WEBDAV_PORT $webdav_port $final_path/conf/seafdav.conf
+ynh_replace_string --match_string __WEBDAV_PORT__ --replace_string $webdav_port --target_file $final_path/conf/seafdav.conf
 
 # Add Seafile Server to startup
-cp ../conf/seafile-server /etc/init.d
-ynh_replace_string SEAHUB_PORT $seahub_port /etc/init.d/seafile-server
-ynh_replace_string SEAFILE_DIR $final_path /etc/init.d/seafile-server
-ynh_replace_string SEAFILE_USER $seafile_user /etc/init.d/seafile-server
-chmod +x /etc/init.d/seafile-server
-systemctl daemon-reload
-update-rc.d seafile-server defaults
+ynh_add_systemd_config --service seafile --template seafile.service
+ynh_add_systemd_config --service seahub --template seahub.service
 
 # Config nginx
-config_nginx
+ynh_script_progression --message="Configuring a systemd service..." --weight=2
+ynh_add_nginx_config 'seahub_port fileserver_port webdav_port'
 
 # Copy first launch script
 cp expect_scripts/first_launch.exp $final_path
@@ -155,43 +164,59 @@ chown -R $seafile_user:$seafile_user $seafile_data
 # Start seafile, seahub and populate admin account
 su - $seafile_user -s /bin/bash -c "$final_path/seafile-server-$seafile_version/seafile.sh start"
 # We escape all char witch needed.
-ynh_replace_special_string "__ADMIN_PASSWORD__" $admin_password "$final_path/first_launch.exp"
-su - $seafile_user -s /bin/bash -c "$final_path/first_launch.exp $final_path/seafile-server-$seafile_version $admin_email"
-ynh_secure_remove "$final_path/first_launch.exp"
+ynh_print_OFF
+ynh_replace_special_string --match_string __ADMIN_PASSWORD__ --replace_string "$admin_password" --target_file $final_path/first_launch.exp
+ynh_print_ON
+su - $seafile_user -s /bin/bash -c "$final_path/first_launch.exp $final_path/seafile-server-$seafile_version $admin@$domain"
+ynh_secure_remove --file="$final_path/first_launch.exp"
 
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
 
+# Set all permissions
+ynh_script_progression --message="Protecting directory..."
+set_permission
+
+ynh_script_progression --message="Configuring permissions..."
+
 # Add sso config to unprotect domain.tld/seafhttp + domain.tld/seafdav do in /etc/ssowat/conf.json.persistent
-cp ../conf/add_sso_conf.py $final_path
-cp ../conf/remove_sso_conf.py $final_path
-python3 $final_path/add_sso_conf.py
+python3 ../conf/add_sso_conf.py || ynh_die --message="Your file /etc/ssowat/conf.json.persistent doesn't respect the json syntax. Please fix the syntax to install this app."
 
 # unprotect media
-ynh_app_setting_set seafile unprotected_uris "/media"
+ynh_app_setting_set --app $app --key unprotected_uris --value "/media"
 
 if [ "$is_public" = "0" ]
 then
-	ynh_app_setting_delete seafile unprotected_uris
+	ynh_app_setting_delete --app seafile --key unprotected_uris
 else
-	ynh_app_setting_set seafile unprotected_uris "/"
+	ynh_app_setting_set --app $app --key unprotected_uris --value "/"
 fi
 
 # Add logrotate
+ynh_script_progression --message="Configuring log rotation..."
 ynh_use_logrotate $final_path/logs
 ln -s $final_path/logs /var/log/seafile
 
 # register yunohost service
-yunohost service add seafile-server
+yunohost service add seafile
+yunohost service add seahub
 
-# Restart seafile
+ynh_script_progression --message="Starting starting services..." --weight=3
+
+# Kill all services launched for initialisation
 su - $seafile_user -s /bin/bash -c "$final_path/seafile-server-latest/seahub.sh stop"
-systemctl stop seafile-server.service
+systemctl kill seafile
+systemctl kill seahub
 sleep 2
 
 # We kill all process lunched by the script
 pkill -f seafile-controller || true
 pkill -f seaf-server || true
 
-system_reload seafile-server start
+# Start service
+ynh_script_progression --message="Starting seafile services..." --weight=3
+ynh_systemd_action --service_name seafile
+ynh_systemd_action --service_name seahub
+
+ynh_script_progression --message="Installation of $app completed" --last

@@ -1,0 +1,14 @@
+[Unit]
+Description=Seafile
+After=network.target
+After=mysql.service
+
+[Service]
+Type=forking
+ExecStart=/opt/yunohost/__APP__/seafile-server-latest/seafile.sh start
+ExecStop=/opt/yunohost/__APP__/seafile-server-latest/seafile.sh stop
+User=__APP__
+Group=__APP__
+
+[Install]
+WantedBy=multi-user.target

@@ -14,17 +14,23 @@ set -u
 source ./experimental_helper.sh
 source ./_common.sh
 
+ynh_script_progression --message="Loading installation settings..."
+
 # Init get Final path
 get_configuration
 
 # Retrieve arguments
-domain=$(ynh_app_setting_get $app domain)
+domain=$(ynh_app_setting_get --app $app --key domain)
 
 #=================================================
 # STANDARD REMOVE
 #=================================================
 
-systemctl stop seafile-server.service
+ynh_script_progression --message="Stoping services..."
+
+# Stop all services
+ynh_systemd_action --service_name seafile --action stop
+ynh_systemd_action --service_name seahub --action stop
 
 # Force to kill all process in case of a process is not stoped cleanly
 pkill -f seafile-controller || true
@@ -33,33 +39,48 @@ pkill -f ccnet-server || true
 pkill -f seahub || true
 
 # remove sso config to unprotect domain.tld/seafhttp in /etc/ssowat/conf.json.persistent
-test -e /var/www/$app/remove_sso_conf.py && python3 /var/www/$app/remove_sso_conf.py
-test -e /opt/yunohost/$app/remove_sso_conf.py && python3 /opt/yunohost/$app/remove_sso_conf.py
-ynh_secure_remove /var/log/seafile
-ynh_secure_remove /var/www/$app
-ynh_secure_remove /opt/yunohost/$app
-ynh_secure_remove /etc/init.d/seafile-server
-ynh_secure_remove /home/yunohost.app/seafile-data
-ynh_secure_remove /tmp/seahub_cache
+ynh_script_progression --message="Cleaning SSO configuration..."
+python3 ../conf/remove_sso_conf.py
+
+ynh_script_progression --message="Removing logs..."
+ynh_secure_remove --file=/var/log/seafile
+ynh_script_progression --message="Removing code..."
+ynh_secure_remove --file=/var/www/$app
+ynh_secure_remove --file=/opt/yunohost/$app
+ynh_script_progression --message="Backing up user data..." --weight=10
+ynh_secure_remove --file=/home/yunohost.app/seafile-data
+ynh_secure_remove --file=/tmp/seahub_cache
 
 # Remove databases
-ynh_mysql_drop_db ccnetdb
-ynh_mysql_drop_db seafiledb
-ynh_mysql_drop_db seahubdb
+ynh_script_progression --message="Removing databases..."
+ynh_mysql_remove_db --db_name ccnetdb --db_user seafile
+ynh_mysql_remove_db --db_name seafiledb --db_user seafile
+ynh_mysql_remove_db --db_name seahubdb --db_user seafile
+
+# Remove systemd service
+ynh_script_progression --message="Removing systemd units..."
+ynh_remove_systemd_config --service seafile
+ynh_remove_systemd_config --service seahub
 
 # Remove user
-ynh_system_user_delete seafile
+ynh_script_progression --message="Removing the dedicated system user..."
+ynh_system_user_delete --username seafile
 
 # Remove depandance
+ynh_script_progression --message="Removing dependencies" --weight=10
 ynh_remove_app_dependencies
 
-# Remove domain config
-ynh_secure_remove /etc/nginx/conf.d/$domain.d/seafile.conf
+# Remove nginx config
+ynh_script_progression --message="Removing configuration..."
+ynh_remove_nginx_config
 
 # Remove logrotate
 ynh_remove_logrotate
 
-yunohost service remove seafile-server
+# Remove the dedicated fail2ban config
+ynh_remove_fail2ban_config
 
-# Reload nginx
-systemctl reload nginx.service
+yunohost service remove seafile
+yunohost service remove seahub
+
+ynh_script_progression --message="Removal of $app completed" --last

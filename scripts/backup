@@ -14,24 +14,37 @@ ynh_abort_if_errors
 source ../settings/scripts/experimental_helper.sh
 source ../settings/scripts/_common.sh
 
+ynh_script_progression --message="Loading installation settings..."
+
 # Set configuration for user and final path
 get_configuration
 
 # retrieve useful param
-domain=$(ynh_app_setting_get ${app} domain)
-db_pwd=$(ynh_app_setting_get ${app} mysqlpwd)
+domain=$(ynh_app_setting_get --app $app --key domain)
+ynh_print_OFF
+db_pwd=$(ynh_app_setting_get --app $app --key mysqlpwd)
+ynh_print_ON
 
 #=================================================
 # STANDARD BACKUP STEPS
 #=================================================
 
 # # Backup app files
-ynh_backup $final_path
-ynh_backup /home/yunohost.app/seafile-data "data" 1
-ynh_backup /etc/nginx/conf.d/$domain.d/${app}.conf
-ynh_backup /etc/init.d/seafile-server
+ynh_script_progression --message="Backing up code..." --weight=3
+ynh_backup --src_path $final_path
+ynh_script_progression --message="Backing up user data..." --weight=10
+ynh_backup --src_path /home/yunohost.app/seafile-data --dest_path "data"
+ynh_script_progression --message="Backing configuration..."
+ynh_backup --src_path /etc/nginx/conf.d/$domain.d/${app}.conf
+ynh_backup --src_path /etc/systemd/system/seafile.service
+ynh_backup --src_path /etc/systemd/system/seahub.service
 
 # Backup mysql
-ynh_mysql_dump_db ccnetdb > ${YNH_CWD}/ccnetdb.dmp
-ynh_mysql_dump_db seafiledb > ${YNH_CWD}/seafiledb.dmp
-ynh_mysql_dump_db seahubdb > ${YNH_CWD}/seahubdb.dmp
+ynh_script_progression --message="Backing database"
+ynh_print_OFF
+ynh_mysql_dump_db --database ccnetdb > ${YNH_CWD}/ccnetdb.dmp
+ynh_mysql_dump_db --database seafiledb > ${YNH_CWD}/seafiledb.dmp
+ynh_mysql_dump_db --database seahubdb > ${YNH_CWD}/seahubdb.dmp
+ynh_print_ON
+
+ynh_script_progression --message="Backup script completed for $app. (YunoHost will then actually copy those files to the archive)." --last
