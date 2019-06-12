@@ -125,6 +125,7 @@ echo 'EMAIL_PORT = "25"' | tee -a $final_path/conf/seahub_settings.py
 echo 'DEFAULT_FROM_EMAIL = "seafile@'$domain'"' | tee -a $final_path/conf/seahub_settings.py
 echo 'SERVER_EMAIL = "seafile@'$domain'"' | tee -a $final_path/conf/seahub_settings.py
 echo 'EMAIL_HOST_PASSWORD = ""' | tee -a $final_path/conf/seahub_settings.py
+echo "TIME_ZONE = \"$(cat /etc/timezone)\"" | tee -a $final_path/conf/seahub_settings.py
 
 # LDAP configuration
 echo '[LDAP]' | tee -a $final_path/conf/ccnet.conf
@@ -197,6 +198,10 @@ fi
 ynh_script_progression --message="Configuring log rotation..."
 ynh_use_logrotate $final_path/logs
 ln -s $final_path/logs /var/log/seafile
+
+# Add fail2ban
+ynh_script_progression --message="Configuring fail2ban..." --weight=10
+ynh_add_fail2ban_config --use_template --others_var 'final_path'
 
 # register yunohost service
 yunohost service add seafile

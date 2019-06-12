@@ -38,6 +38,8 @@ ynh_script_progression --message="Backing configuration..."
 ynh_backup --src_path /etc/nginx/conf.d/$domain.d/${app}.conf
 ynh_backup --src_path /etc/systemd/system/seafile.service
 ynh_backup --src_path /etc/systemd/system/seahub.service
+ynh_backup --src_path /etc/fail2ban/jail.d/$app.conf
+ynh_backup --src_path /etc/fail2ban/filter.d/$app.conf
 
 # Backup mysql
 ynh_script_progression --message="Backing database"

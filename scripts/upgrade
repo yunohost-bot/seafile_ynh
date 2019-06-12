@@ -176,6 +176,11 @@ then
         echo "LOGIN_URL = '$path_url/accounts/login/'" | tee -a $final_path/conf/seahub_settings.py
 fi
 
+if [ $(grep -c "TIME_ZONE" $final_path/conf/seahub_settings.py) == 0 ]
+then
+    echo "TIME_ZONE = \"$(cat /etc/timezone)\"" | tee -a $final_path/conf/seahub_settings.py
+fi
+
 # Fix local warning
 ynh_replace_string --match_string en_US.UTF-8 --replace_string ${LANG:-'en_US.UTF-8'} --target_file $final_path/seafile-server-$seafile_version/seahub.sh
 
@@ -216,6 +221,10 @@ set_permission
 # Add logrotate
 ynh_script_progression --message="Configuring log rotation..."
 ynh_use_logrotate $final_path/logs --nonappend
+
+# Add fail2ban
+ynh_script_progression --message="Configuring fail2ban..." --weight=10
+ynh_add_fail2ban_config --use_template --others_var 'final_path'
 
 # register yunohost service
 ynh_script_progression --message="Register seafile service..."

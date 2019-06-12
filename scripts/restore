@@ -73,18 +73,23 @@ ln -s $final_path/logs /var/log/seafile
 ynh_script_progression --message="Protecting directory..."
 set_permission
 
-# Add Seafile to YunoHost's monitored services
-yunohost service add seafile
-yunohost service add seahub
-
-# Reload nginx
-systemctl reload nginx.service
-
 # Enable service and start seafile
 ynh_script_progression --message="Reconfiguring application..."
 systemctl daemon-reload
 systemctl enable seafile
 systemctl enable seahub
+
+# Add Seafile to YunoHost's monitored services
+yunohost service add seafile
+yunohost service add seahub
+
+ynh_script_progression --message="Reloading services..."
+
+# Reload nginx
+systemctl reload nginx.service
+
+# Reload fail2ban
+ynh_systemd_action --service_name=fail2ban --action=reload
 
 # Avoid the current effect
 sleep 5
