@@ -47,9 +47,11 @@ YunoHost specific features
 
 This app support LDAP and the SSO authentification.
 
-The restriction is that the user ID in this app is an email adress. So it's potentially possible to have multiple user account with the same username. By example you can have `john@yunohost.org` and `john@seafile.org`. You can see the issue [#5](https://github.com/YunoHost-Apps/seafile_ynh/issues/5) wich describe this problem. You can check that you are not in this case if by going in seafile admin page in the user tab can see all account.
+The restriction is that the user ID in this app is an email address. So it's potentially possible to have multiple user account with the same username. By example you can have `john@yunohost.org` and `john@seafile.org`. You can see the issue [#5](https://github.com/YunoHost-Apps/seafile_ynh/issues/5) wich describe this problem. You can check that you are not in this case if by going in seafile admin page in the user tab can see all account.
 
 The best configuration is to give to each user an email which contains the domain used by seafile.
+
+**To fix this issue seahub don't allow any authentication from a user different than "username@seafile_domain.tld".**
 
 ### Supported architectures
 
@@ -156,4 +158,3 @@ TODO
 ----
 
 - Find a way to fix the issue https://github.com/YunoHost-Apps/seafile_ynh/issues/5
-
