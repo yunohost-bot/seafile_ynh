@@ -84,6 +84,8 @@ ynh_replace_string --match_string 'MEDIA_URL = "'"$old_path2"'media/"' --replace
 ynh_replace_string --match_string "LOGIN_URL = '${old_path2}accounts/login/'" --replace_string "LOGIN_URL = '${path_url2}accounts/login/'" --target_file $final_path/conf/seahub_settings.py
 ynh_replace_string --match_string ' = "seafile@'"$old_domain"'"' --replace_string ' = "seafile@'"$domain"'"' --target_file $final_path/conf/seahub_settings.py
 sed --in-place "s@ALLOWED_HOSTS = \['${old_domain}'\]@ALLOWED_HOSTS = \['${domain}'\]@g" --target_file $final_path/conf/seahub_settings.py
+ynh_replace_string --match_string "REMOTE_USER_DOMAIN = '$old_domain'" --replace_string "REMOTE_USER_DOMAIN = '$domain'" --target_file $final_path/conf/seahub_settings.py
+ynh_replace_string --match_string "REMOTE_USER_PROTECTED_PATH = ['$old_path', '$old_path/accounts/login']" --replace_string "REMOTE_USER_PROTECTED_PATH = ['$path_url', '$path_url/accounts/login']" --target_file $final_path/conf/seahub_settings.py
 
 ynh_script_progression --message="Updating seafile database" --weight=7
 
