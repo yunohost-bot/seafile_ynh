@@ -20,9 +20,7 @@ ynh_script_progression --message="Loading settings..."
 domain=$(ynh_app_setting_get --app $app --key domain)
 path_url=$(ynh_normalize_url_path $(ynh_app_setting_get --app $app --key path))
 seafile_data=/home/yunohost.app/seafile-data
-ynh_print_OFF
 db_pwd=$(ynh_app_setting_get --app $app --key mysqlpwd)
-ynh_print_ON
 
 # Check domain/path availability
 ynh_webpath_available $domain $path_url || ynh_die --message "$domain/$path_url is not available, please use an other domain or path."
@@ -47,14 +45,12 @@ install_dependance
 
 # Restore mysql dump
 db_user=seafile
-ynh_print_OFF
 ynh_mysql_setup_db --db_user $db_user --db_name ccnetdb --db_pwd "$db_pwd"
 ynh_mysql_setup_db --db_user $db_user --db_name seafiledb --db_pwd "$db_pwd"
 ynh_mysql_setup_db --db_user $db_user --db_name seahubdb --db_pwd "$db_pwd"
 su -c "mysql -u ${app} -p$db_pwd ccnetdb < ${YNH_CWD}/ccnetdb.dmp"
 su -c "mysql -u ${app} -p$db_pwd seafiledb < ${YNH_CWD}/seafiledb.dmp"
 su -c "mysql -u ${app} -p$db_pwd seahubdb < ${YNH_CWD}/seahubdb.dmp"
-ynh_print_ON
 
 #=================================================
 # GENERIC FINALIZATION

@@ -25,9 +25,7 @@ is_public=$YNH_APP_ARG_PUBLIC_SITE
 seafile_data=/home/yunohost.app/seafile-data
 final_path=/opt/yunohost/$app
 seafile_user=seafile
-ynh_print_OFF
 admin_password=$YNH_APP_ARG_ADMIN_PASSWORD
-ynh_print_ON
 
 # Create special path with / at the end
 if [[ $path_url == '/' ]]
@@ -90,20 +88,16 @@ install_source
 # init databases
 ynh_script_progression --message="Configuring MySQL database..."
 db_user=seafile
-ynh_print_OFF
 ynh_mysql_setup_db --db_user $db_user --db_name ccnetdb
 ynh_mysql_setup_db --db_user $db_user --db_name seafiledb --db_pwd "$db_pwd"
 ynh_mysql_setup_db --db_user $db_user --db_name seahubdb --db_pwd "$db_pwd"
-ynh_print_ON
 
 ynh_script_progression --message="Configuring application..." --weight=3
 
 # Run install script
 chmod +x expect_scripts/install.exp
 chmod +x $final_path/seafile-server-$seafile_version/setup-seafile-mysql.sh
-ynh_print_OFF
 expect_scripts/install.exp "$final_path/seafile-server-$seafile_version" "$server_name" "$domain" "$seafile_data" "$fileserver_port" "$db_pwd"
-ynh_print_ON
 
 # Update seafile config
 ynh_replace_string --match_string http:// --replace_string https://  --target_file $final_path/conf/ccnet.conf
@@ -165,9 +159,7 @@ chown -R $seafile_user:$seafile_user $seafile_data
 # Start seafile, seahub and populate admin account
 su - $seafile_user -s /bin/bash -c "$final_path/seafile-server-$seafile_version/seafile.sh start"
 # We escape all char witch needed.
-ynh_print_OFF
 ynh_replace_special_string --match_string __ADMIN_PASSWORD__ --replace_string "$admin_password" --target_file $final_path/first_launch.exp
-ynh_print_ON
 su - $seafile_user -s /bin/bash -c "$final_path/first_launch.exp $final_path/seafile-server-$seafile_version $admin@$domain"
 ynh_secure_remove --file="$final_path/first_launch.exp"
 

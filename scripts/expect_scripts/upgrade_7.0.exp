@@ -1,0 +1,12 @@
+#!/usr/bin/expect
+set timeout 5
+
+set seafile_dir [lindex $argv 0]
+set mysql_password [lindex $argv 1]
+
+spawn $seafile_dir/upgrade/upgrade_6.3_7.0.sh
+
+expect "to contiune"
+send "\r";
+
+interact

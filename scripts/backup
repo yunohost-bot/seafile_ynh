@@ -21,9 +21,7 @@ get_configuration
 
 # retrieve useful param
 domain=$(ynh_app_setting_get --app $app --key domain)
-ynh_print_OFF
 db_pwd=$(ynh_app_setting_get --app $app --key mysqlpwd)
-ynh_print_ON
 
 #=================================================
 # STANDARD BACKUP STEPS
@@ -43,10 +41,8 @@ ynh_backup --src_path /etc/fail2ban/filter.d/$app.conf
 
 # Backup mysql
 ynh_script_progression --message="Backing database"
-ynh_print_OFF
 ynh_mysql_dump_db --database ccnetdb > ${YNH_CWD}/ccnetdb.dmp
 ynh_mysql_dump_db --database seafiledb > ${YNH_CWD}/seafiledb.dmp
 ynh_mysql_dump_db --database seahubdb > ${YNH_CWD}/seahubdb.dmp
-ynh_print_ON
 
 ynh_script_progression --message="Backup script completed for $app. (YunoHost will then actually copy those files to the archive)." --last

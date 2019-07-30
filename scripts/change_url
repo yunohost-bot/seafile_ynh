@@ -93,9 +93,7 @@ ynh_script_progression --message="Updating seafile database" --weight=7
 # use : mysql_relpace_db db_name table collum
 mysql_relpace_db() {
 	sql_request='UPDATE `'"$2"'` SET '"$3 = replace($3, '$old_domain', '$domain')"
-	ynh_print_OFF
 	ynh_mysql_execute_as_root --sql "$sql_request" --database $1
-	ynh_print_ON
 }
 
 # ccnet DB
