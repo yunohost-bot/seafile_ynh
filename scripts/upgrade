@@ -16,9 +16,6 @@ source ./_common.sh
 
 ynh_script_progression --message="Loading installation settings..."
 
-# Init get Final path
-get_configuration
-
 # Retrieve arguments
 domain=$(ynh_app_setting_get --app $app --key domain)
 path_url=$(ynh_normalize_url_path $(ynh_app_setting_get --app $app --key path))
@@ -27,9 +24,8 @@ seahub_port=$(ynh_app_setting_get --app $app --key seahub_port)
 fileserver_port=$(ynh_app_setting_get --app $app --key fileserver_port)
 webdav_port=$(ynh_app_setting_get --app $app --key webdav_port)
 root_pwd=$(cat /etc/yunohost/mysql)
-
-# Get configuration for user and final path
-get_configuration
+final_path=$(ynh_app_setting_get --app $app --key final_path)
+seafile_user=$app
 
 ynh_script_progression --message="Stoping services..."
 
@@ -54,6 +50,27 @@ pkill -f seahub || true
 #=================================================
 # MIGRATION FROM OLD VERSION
 #=================================================
+
+ynh_script_progression --message="Fixing old settings..." --weight=1
+
+# Get configuration for user and final path
+if [ -z $final_path ]; then
+    if [ -e /var/www/$app ]; then
+        final_path=/var/www/$app
+    elif [ -e /opt/yunohost/$app ]; then
+        final_path=/opt/yunohost/$app
+    else
+        ynh_die --message "Error : can't find seafile path"
+    fi
+fi
+
+if [ $final_path == "/var/www/$app" ]; then
+    final_path="/opt/yunohost/$app"
+    mv /var/www/$app /opt/yunohost/
+    ynh_system_user_create --username $seafile_user --home_dir $final_path
+    ynh_app_setting_set --app $app --key final_path --value $final_path
+    set_permission
+fi
 
 ynh_script_progression --message="Upgrading source files..." --weight=6
 

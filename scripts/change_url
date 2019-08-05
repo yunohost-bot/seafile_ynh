@@ -24,9 +24,8 @@ path_url=$(ynh_normalize_url_path $YNH_APP_NEW_PATH)
 seahub_port=$(ynh_app_setting_get --app $app --key seahub_port)
 fileserver_port=$(ynh_app_setting_get --app $app --key fileserver_port)
 webdav_port=$(ynh_app_setting_get --app $app --key webdav_port)
-
-# Get dest folder and system user
-get_configuration
+final_path=$(ynh_app_setting_get --app $app --key final_path)
+seafile_user=$app
 
 # Create special path with / at the end
 if [[ $old_path == '/' ]]

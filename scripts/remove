@@ -16,9 +16,6 @@ source ./_common.sh
 
 ynh_script_progression --message="Loading installation settings..."
 
-# Init get Final path
-get_configuration
-
 # Retrieve arguments
 domain=$(ynh_app_setting_get --app $app --key domain)
 

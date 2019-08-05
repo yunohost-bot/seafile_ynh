@@ -16,12 +16,11 @@ source ../settings/scripts/_common.sh
 
 ynh_script_progression --message="Loading installation settings..."
 
-# Set configuration for user and final path
-get_configuration
-
 # retrieve useful param
 domain=$(ynh_app_setting_get --app $app --key domain)
 db_pwd=$(ynh_app_setting_get --app $app --key mysqlpwd)
+final_path=$(ynh_app_setting_get --app $app --key final_path)
+seafile_user=$app
 
 #=================================================
 # STANDARD BACKUP STEPS

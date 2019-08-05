@@ -24,7 +24,7 @@ admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_PUBLIC_SITE
 seafile_data=/home/yunohost.app/seafile-data
 final_path=/opt/yunohost/$app
-seafile_user=seafile
+seafile_user=$app
 admin_password=$YNH_APP_ARG_ADMIN_PASSWORD
 
 # Create special path with / at the end
