@@ -140,18 +140,19 @@ echo 'ENABLE_WIKI = True' | tee -a $final_path/conf/seahub_settings.py
 ynh_replace_string --match_string en_US.UTF-8 --replace_string ${LANG:-'en_US.UTF-8'} --target_file $final_path/seafile-server-$seafile_version/seahub.sh
 
 # Update gunicorn config
-sed --in-place -r "s@bind = \"0\.0\.0\.0:[[:digit:]]+\"@bind = \"0.0.0.0:$seahub_port\"@g" $final_path/conf/gunicorn.conf
+sed --in-place -r "s@bind = \"127\.0\.0\.1:[[:digit:]]+\"@bind = \"127.0.0.1:$seahub_port\"@g" $final_path/conf/gunicorn.conf
 
 # Add webdav
 cp ../conf/seafdav.conf $final_path/conf/seafdav.conf
 ynh_replace_string --match_string __WEBDAV_PORT__ --replace_string $webdav_port --target_file $final_path/conf/seafdav.conf
 
 # Add Seafile Server to startup
+ynh_script_progression --message="Configuring a systemd service..." --weight=2
 ynh_add_systemd_config --service seafile --template seafile.service
 ynh_add_systemd_config --service seahub --template seahub.service
 
 # Config nginx
-ynh_script_progression --message="Configuring a systemd service..." --weight=2
+ynh_script_progression --message="Configuring nginx..." --weight=1
 ynh_add_nginx_config 'seahub_port fileserver_port webdav_port'
 
 # Copy first launch script
@@ -205,12 +206,11 @@ ynh_add_fail2ban_config --use_template --others_var 'final_path'
 yunohost service add seafile
 yunohost service add seahub
 
-ynh_script_progression --message="Starting starting services..." --weight=3
+ynh_script_progression --message="Stoping services..." --weight=3
 
 # Kill all services launched for initialisation
+su - $seafile_user -s /bin/bash -c "$final_path/seafile-server-latest/seafile.sh stop"
 su - $seafile_user -s /bin/bash -c "$final_path/seafile-server-latest/seahub.sh stop"
-systemctl kill seafile
-systemctl kill seahub
 sleep 2
 
 # We kill all process lunched by the script
