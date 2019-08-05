@@ -225,5 +225,6 @@ pkill -f seaf-server || true
 ynh_script_progression --message="Starting seafile services..." --weight=3
 ynh_systemd_action --service_name seafile
 ynh_systemd_action --service_name seahub
+sleep 5
 
 ynh_script_progression --message="Installation of $app completed" --last
