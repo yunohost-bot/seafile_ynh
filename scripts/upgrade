@@ -146,7 +146,7 @@ case $installed_version in
     echo "REMOTE_USER_PROTECTED_PATH = ['$path_url', '$path_url/accounts/login']" | tee -a $final_path/conf/seahub_settings.py
 
     # Clean connexion from the SSO. If we don't do this we could have some when the user was loged by the old SSO auth mecanisme
-    ynh_mysql_execute_as_root --sql "DELETE FROM `django_session`" --database seahubdb
+    ynh_mysql_execute_as_root --sql "DELETE FROM \`django_session\`" --database seahubdb
 ;&
 esac
 
