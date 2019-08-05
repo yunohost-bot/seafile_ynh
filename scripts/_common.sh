@@ -27,6 +27,8 @@ install_dependance() {
 
 set_permission() {
     chown -R $seafile_user:$seafile_user $final_path
+    # check that this directory exist because in some really old install the data could still be in the main seafile directory
+    test -e /home/yunohost.app/seafile-data && chown -R $seafile_user:$seafile_user /home/yunohost.app/seafile-data
 }
 
 ynh_clean_setup () {
