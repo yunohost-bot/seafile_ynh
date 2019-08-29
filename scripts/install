@@ -123,8 +123,9 @@ echo "TIME_ZONE = \"$(cat /etc/timezone)\"" | tee -a $final_path/conf/seahub_set
 
 # SSO authentication
 echo 'ENABLE_REMOTE_USER_AUTHENTICATION = True' | tee -a $final_path/conf/seahub_settings.py
+echo "REMOTE_USER_HEADER = 'HTTP_EMAIL'" | tee -a $final_path/conf/seahub_settings.py
 echo 'REMOTE_USER_CREATE_UNKNOWN_USER = False' | tee -a $final_path/conf/seahub_settings.py
-echo "REMOTE_USER_DOMAIN = '$domain'" | tee -a $final_path/conf/seahub_settings.py
+echo "REMOTE_USER_DOMAIN = ''" | tee -a $final_path/conf/seahub_settings.py
 echo "REMOTE_USER_PROTECTED_PATH = ['$path_url', '$path_url/accounts/login']" | tee -a $final_path/conf/seahub_settings.py
 
 # LDAP configuration
@@ -171,7 +172,8 @@ sleep 5
 su - $seafile_user -s /bin/bash -c "$final_path/seafile-server-$seafile_version/seafile.sh start"
 # We escape all char witch needed.
 ynh_replace_special_string --match_string __ADMIN_PASSWORD__ --replace_string "$admin_password" --target_file $final_path/first_launch.exp
-su - $seafile_user -s /bin/bash -c "$final_path/first_launch.exp $final_path/seafile-server-$seafile_version $admin@$domain"
+admin_email=$(ynh_user_get_info $admin 'mail')
+su - $seafile_user -s /bin/bash -c "$final_path/first_launch.exp $final_path/seafile-server-$seafile_version $admin_email"
 ynh_secure_remove --file="$final_path/first_launch.exp"
 
 #=================================================
