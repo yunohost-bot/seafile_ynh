@@ -244,8 +244,9 @@ ynh_secure_remove --file=/tmp/seahub_cache
 # restart seafile server
 ynh_script_progression --message="Starting seafile services..." --weight=3
 sleep 5
-ynh_systemd_action --service_name seafile
-ynh_systemd_action --service_name seahub
+ynh_systemd_action --service_name seafile -l "spawned seaf-server, pid " -p /var/log/seafile/controller.log
+ynh_systemd_action --service_name seahub -l "Started Seafile hub." -p "systemd"
+sleep 2
 
 # remove old version files
 ynh_script_progression --message="Cleaning system and updating settings..."
