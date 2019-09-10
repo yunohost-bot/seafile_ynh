@@ -31,7 +31,7 @@ ynh_script_progression --message="Backing up code..." --weight=3
 ynh_backup --src_path $final_path
 ynh_script_progression --message="Backing up user data..." --weight=10
 ynh_backup --src_path /home/yunohost.app/seafile-data --dest_path "data"
-ynh_script_progression --message="Backing configuration..."
+ynh_script_progression --message="Backing up configuration..."
 ynh_backup --src_path /etc/nginx/conf.d/$domain.d/${app}.conf
 ynh_backup --src_path /etc/systemd/system/seafile.service
 ynh_backup --src_path /etc/systemd/system/seahub.service
@@ -39,7 +39,7 @@ ynh_backup --src_path /etc/fail2ban/jail.d/$app.conf
 ynh_backup --src_path /etc/fail2ban/filter.d/$app.conf
 
 # Backup mysql
-ynh_script_progression --message="Backing database"
+ynh_script_progression --message="Backing up database"
 ynh_mysql_dump_db --database ccnetdb > ${YNH_CWD}/ccnetdb.dmp
 ynh_mysql_dump_db --database seafiledb > ${YNH_CWD}/seafiledb.dmp
 ynh_mysql_dump_db --database seahubdb > ${YNH_CWD}/seahubdb.dmp

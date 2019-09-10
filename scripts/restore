@@ -36,6 +36,7 @@ ynh_script_progression --message="Restoring files..." --weight=10
 ynh_restore
 
 # Create user
+ynh_script_progression --message="Configuring system user..."
 ynh_system_user_create $seafile_user $final_path
 
 # Restore dependencies
@@ -43,6 +44,7 @@ ynh_script_progression --message="Reinstalling dependencies..." --weight=5
 install_dependance
 
 # Restore mysql dump
+ynh_script_progression --message="Restoring database..." --weight=3
 db_user=seafile
 ynh_mysql_setup_db --db_user $db_user --db_name ccnetdb --db_pwd "$db_pwd"
 ynh_mysql_setup_db --db_user $db_user --db_name seafiledb --db_pwd "$db_pwd"
@@ -75,6 +77,7 @@ systemctl enable seafile
 systemctl enable seahub
 
 # Add Seafile to YunoHost's monitored services
+ynh_script_progression --message="Register seafile service..."
 yunohost service add seafile
 yunohost service add seahub
 
