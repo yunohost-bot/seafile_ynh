@@ -166,6 +166,7 @@ chown -R $seafile_user:$seafile_user $seafile_data
 # Sometime we have a current effect. We try to lunch seafile when not all permissions are already set.
 # So wait untils all permissions are cleanly set
 sleep 5
+ynh_debug_exec ls /opt/yunohost/seafile/ccnet
 
 # Start seafile, seahub and populate admin account
 su - $seafile_user -s /bin/bash -c "$final_path/seafile-server-$seafile_version/seafile.sh start"
