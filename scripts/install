@@ -18,7 +18,7 @@ ynh_script_progression --message="Validating installation parameters..."
 
 # Retrieve arguments
 domain=$YNH_APP_ARG_DOMAIN
-path_url=$(ynh_normalize_url_path $YNH_APP_ARG_PATH)
+path_url=$(ynh_normalize_url_path --path_url $YNH_APP_ARG_PATH)
 server_name="$YNH_APP_ARG_SERVER_NAME"
 admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_PUBLIC_SITE
@@ -43,9 +43,9 @@ test ! -e "$final_path" || ynh_die --message "This path already contains a folde
 
 # Find available ports
 ynh_script_progression --message="Finding available ports..."
-seahub_port=$(ynh_find_port 8000)
-fileserver_port=$(ynh_find_port 8082)
-webdav_port=$(ynh_find_port 8080)
+seahub_port=$(ynh_find_port --port 8000)
+fileserver_port=$(ynh_find_port --port 8082)
+webdav_port=$(ynh_find_port --port 8080)
 
 # store config in yunohost
 ynh_script_progression --message="Storing installation settings..."
@@ -200,7 +200,7 @@ fi
 
 # Add logrotate
 ynh_script_progression --message="Configuring log rotation..."
-ynh_use_logrotate $final_path/logs
+ynh_use_logrotate --logfile $final_path/logs
 ln -s $final_path/logs /var/log/seafile
 
 # Add fail2ban

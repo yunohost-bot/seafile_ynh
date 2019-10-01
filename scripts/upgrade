@@ -18,7 +18,7 @@ ynh_script_progression --message="Loading installation settings..."
 
 # Retrieve arguments
 domain=$(ynh_app_setting_get --app $app --key domain)
-path_url=$(ynh_normalize_url_path $(ynh_app_setting_get --app $app --key path))
+path_url=$(ynh_normalize_url_path --path_url $(ynh_app_setting_get --app $app --key path))
 installed_version=$(ynh_app_setting_get --app $app --key installed_version)
 seahub_port=$(ynh_app_setting_get --app $app --key seahub_port)
 fileserver_port=$(ynh_app_setting_get --app $app --key fileserver_port)
@@ -134,7 +134,7 @@ case $installed_version in
 	expect_scripts/upgrade_6.3.exp $final_path/seafile-server-$seafile_version $root_pwd
 	
 	# Update logrotate to have the last version
-	ynh_use_logrotate $final_path/logs --non-append
+	ynh_use_logrotate --logfile $final_path/logs --non-append
 ;&
 "6.3."* )
 	# Update seafile by script
@@ -227,7 +227,7 @@ set_permission
 
 # Add logrotate
 ynh_script_progression --message="Configuring log rotation..."
-ynh_use_logrotate $final_path/logs --nonappend
+ynh_use_logrotate --logfile $final_path/logs --nonappend
 
 # Add fail2ban
 ynh_script_progression --message="Configuring fail2ban..." --weight=10
