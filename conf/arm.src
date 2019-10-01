@@ -1,4 +1,4 @@
-SOURCE_URL=https://github.com/haiwen/seafile-rpi/releases/download/v7.0.4/seafile-server_7.0.4_stable_pi.tar.gz
+SOURCE_URL=https://github.com/haiwen/seafile-rpi/releases/download/v7.0.5/seafile-server_7.0.5_stable_pi.tar.gz
 SOURCE_SUM=2fe13731bfb827004344454a54fd43723cd747d0f8a246e20771fc1a5b335da9
 # (Optional) Program to check the integrity (sha256sum, md5sum...)
 # default: sha256
