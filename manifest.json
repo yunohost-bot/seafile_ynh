@@ -48,6 +48,7 @@
             },
             {
                 "name": "server_name",
+                "type": "string",
                 "ask": {
                     "en": "Choose a name (3 - 15 letters or digits)",
                     "fr": "Choisissez un nom (3 - 15 letters or digits)"
@@ -74,11 +75,15 @@
                 "example": "**Sup3rS3cr3t**"
             },
             {
-                "name": "public_site",
+                "name": "is_public",
                 "type": "boolean",
                 "ask": {
                     "en": "Is it a public site ? If you want to use a desktop client or the smartphone app, make Seafile public.",
                     "fr": "Est-ce un site public ? Pour utiliser un client sur PC ou l'application mobile, Seafile doit être public"
+                },
+                "help": { 
+                    "en": "If it's not public, everybody which want to access to any page of seafile need to be authenticated on the SSO. On the public mode anybody can access to the authentication page. The shared link will be olso accessible by anybody who has this link.",
+                    "fr": "Si n'est pas publique, n'importe qui veux accéder à n'importe quelle page de seafile doit être authentifié dans le SSO. Dans le mode publique n'importe qui peut accéder à la page d'authentification de seafile. Les liens partagé seront aussi accessible par n'import qui qui à ce liens."
                 },
                 "default": true
             }
