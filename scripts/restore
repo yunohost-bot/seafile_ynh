@@ -37,7 +37,7 @@ ynh_restore
 
 # Create user
 ynh_script_progression --message="Configuring system user..."
-ynh_system_user_create --username $seafile_user $final_path
+ynh_system_user_create --username $seafile_user --home_dir $final_path
 
 # Restore dependencies
 ynh_script_progression --message="Reinstalling dependencies..." --weight=5
