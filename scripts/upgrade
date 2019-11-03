@@ -66,12 +66,12 @@ fi
 
 if [ $final_path == "/var/www/$app" ]; then
     final_path="/opt/yunohost/$app"
-    mv /var/www/$app /opt/yunohost/
+    mkdir -p /opt/yunohost
+    mv /var/www/$app /opt/yunohost/$app
     ynh_system_user_create --username $seafile_user --home_dir $final_path
     ynh_app_setting_set --app $app --key final_path --value $final_path
     test -e /var/log/seafile && rm /var/log/$app
     ln -s $final_path/logs /var/log/seafile
-    sleep 2
     set_permission
 fi
 
