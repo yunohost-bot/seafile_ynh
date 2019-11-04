@@ -137,7 +137,7 @@ case $installed_version in
 	expect_scripts/upgrade_6.3.exp $final_path/seafile-server-$seafile_version $root_pwd
 	
 	# Update logrotate to have the last version
-	ynh_use_logrotate --logfile $final_path/logs --non-append
+	ynh_use_logrotate --logfile $final_path/logs --nonappend
 ;&
 "6.3."* )
 	# Update seafile by script
