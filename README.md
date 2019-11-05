@@ -77,37 +77,6 @@ Since now it's possible to change domain or the url of seafile but use it with p
 
 To do this run : `yunohost app change-url seafile -d new_domain.tld -p PATH new_path
 
-### Use a special user and put seafile binary in /opt dir :
-
-In the new package version the install is by default in /opt dir, so it section is only usefull for user how as already installed seafile.  
-
-To do this open a console and do this command :
-
-```
-# stop seafile server
-sudo service seafile-server stop
-
-# Move all data to opt and change user
-sudo mv /var/www/seafile /opt/yunohost/seafile
-sudo addgroup seafile --system --quiet
-sudo adduser seafile --disabled-login --ingroup seafile --system --quiet --shell /bin/bash --home /opt/yunohost/seafile
-
-# Adapt configuration
-sudo sed -i "s@user=www-data@user=seafile@g" /etc/init.d/seafile-server 
-sudo sed -i "s@seafile_dir=/var/www/seafile@seafile_dir=/opt/yunohost/seafile@g" /etc/init.d/seafile-server
-sudo sed -i "s@alias /var/www/seafile/@alias /opt/yunohost/seafile/@g" /etc/nginx/conf.d/$(sudo yunohost app setting seafile domain).d/seafile.conf
-
-# Set the good user for seafile
-sudo chown seafile:seafile -R /opt/yunohost/seafile
-sudo chown seafile:seafile -R /home/yunohost.app/seafile-data/
-
-# Restart services
-sudo rm -rf /tmp/seahub_cache
-sudo systemctl daemon-reload
-sudo service nginx reload
-sudo service seafile-server start
-```
-
 Links
 -----
 
