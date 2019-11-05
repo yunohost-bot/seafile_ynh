@@ -1,0 +1,20 @@
+[{
+        "id": "move_all_libraries",
+        "name": "Move user's libraries",
+        "command": "/opt/yunohost/seafile/seafile_api_loader.sh /opt/yunohost/seafile/move_library.py $YNH_ACTION_USER_TO_MIGRATE",
+        "user": "root",
+        "accepted_return_codes": [0],
+        "description": {
+            "en": "WARNING: Only use this feature if you know what you do.\n This action is only needed if you have installed Seafile before the version 7 AND your Seafile instance was installed under other domain than the user accounts. Move all user's libraries to the correct account, this action exists only for handling old created account with the old SSO behavior.\n See https://github.com/YunoHost-Apps/seafile_ynh/issues/44 for more information."
+        },
+        "arguments": [
+            {
+                "name": "user_to_migrate",
+                "type": "user",
+                "ask": {
+                    "en": "User account to be migrate from the old to the new behavior"
+                },
+                "example": "bob@ynh.local"
+            }
+        ]
+}]
