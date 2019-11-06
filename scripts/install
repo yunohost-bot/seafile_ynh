@@ -172,7 +172,7 @@ sleep 5
 su - $seafile_user -s /bin/bash -c "$final_path/seafile-server-$seafile_version/seafile.sh start"
 # We escape all char witch needed.
 ynh_replace_special_string --match_string __ADMIN_PASSWORD__ --replace_string "$admin_password" --target_file $final_path/first_launch.exp
-admin_email=$(ynh_user_get_info $admin 'mail')
+admin_email=$(ynh_user_get_info --username $admin --key 'mail')
 su - $seafile_user -s /bin/bash -c "$final_path/first_launch.exp $final_path/seafile-server-$seafile_version $admin_email"
 ynh_secure_remove --file="$final_path/first_launch.exp"
 

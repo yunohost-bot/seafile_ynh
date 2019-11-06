@@ -27,3 +27,5 @@ source_repositories = seafile_api.get_owned_repo_list(source_user_email);
 
 for repo in source_repositories:
     seafile_api.set_repo_owner(repo.id, target_user_email)
+
+ccnet_api.remove_emailuser('DB', source_user_email)

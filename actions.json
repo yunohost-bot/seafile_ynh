@@ -14,7 +14,7 @@
                 "ask": {
                     "en": "User account to be migrate from the old to the new behavior"
                 },
-                "example": "bob@ynh.local"
+                "example": "bob@domain.tld"
             }
         ]
 }]
