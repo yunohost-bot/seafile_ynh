@@ -47,11 +47,9 @@ YunoHost specific features
 
 This app support LDAP and the SSO authentification.
 
-The restriction is that the user ID in this app is an email address. So it's potentially possible to have multiple user account with the same username. By example you can have `john@yunohost.org` and `john@seafile.org`. You can see the issue [#5](https://github.com/YunoHost-Apps/seafile_ynh/issues/5) wich describe this problem. You can check that you are not in this case if by going in seafile admin page in the user tab can see all account.
-
-The best configuration is to give to each user an email which contains the domain used by seafile.
-
-**To fix this issue seahub don't allow any authentication from a user different than "username@seafile_domain.tld".**
+If you have Seafile installed before 7.x and you have more than one domain for users in Yunohost or Seafile app is installed on a different domain, you need to migrate accounts.
+You can use the provided action at https://domain.tld/yunohost/admin/#/apps/seafile/actions. See [issue#44](https://github.com/YunoHost-Apps/seafile_ynh/issues/44)
+for more information.
 
 ### Supported architectures
 
@@ -73,7 +71,7 @@ Additional informations
 
 ### Change URL
 
-Since now it's possible to change domain or the url of seafile but use it with precaution because it has not been tested enough for a big production installation. For the authentication and user every email for authentication will have the new domain name. For example `toto@old_domain.tld` will be `toto@new_domain.tld`.
+Since now it's possible to change domain or the url of seafile but use it with precaution because it has not been tested enough for a big production installation.
 
 To do this run : `yunohost app change-url seafile -d new_domain.tld -p PATH new_path
 
