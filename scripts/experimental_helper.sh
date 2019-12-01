@@ -83,7 +83,7 @@ ynh_del_swap () {
 		# Clean the fstab
 		sed -i "/#Swap added by $app/d" /etc/fstab
 		# Desactive the swap file
-		swapoff /swap_$app
+		swapoff /swap_$app || true
 		# And remove it
 		rm /swap_$app
 	fi
