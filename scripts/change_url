@@ -86,8 +86,6 @@ sed --in-place "s@ALLOWED_HOSTS = \['${old_domain}'\]@ALLOWED_HOSTS = \['${domai
 ynh_replace_string --match_string "REMOTE_USER_DOMAIN = '$old_domain'" --replace_string "REMOTE_USER_DOMAIN = '$domain'" --target_file $final_path/conf/seahub_settings.py
 sed --in-place "s@REMOTE_USER_PROTECTED_PATH = \['$old_path', '$old_path/accounts/login'\]@REMOTE_USER_PROTECTED_PATH = \['$path_url', '$path_url/accounts/login'\]@g"  $final_path/conf/seahub_settings.py
 
-ynh_script_progression --message="Updating seafile database" --weight=7
-
 # Avoid the current effect
 sleep 2
 
