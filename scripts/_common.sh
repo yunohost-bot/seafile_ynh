@@ -17,8 +17,6 @@ install_source() {
         ynh_die --message "Error : this architecture is no longer supported by the upstream. Please create en issue here : https://github.com/YunoHost-Apps/seafile_ynh/issues to ask to discuss about a support of this architecture"
     fi
     ynh_setup_source "$final_path/seafile-server-$seafile_version" "$architecture"
-    cp ../sources/seafile_api_loader.sh $final_path/
-    cp ../sources/move_library.py $final_path/
 }
 
 install_dependance() {

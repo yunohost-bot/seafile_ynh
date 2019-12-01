@@ -1,20 +1,37 @@
 [{
-        "id": "move_all_libraries",
-        "name": "Move user's libraries",
-        "command": "/opt/yunohost/seafile/seafile_api_loader.sh /opt/yunohost/seafile/move_library.py $YNH_ACTION_USER_TO_MIGRATE",
+        "id": "migrate_user_email_to_mail_email",
+        "name": "Migrate all user email with seafile domain to main user email",
+        "command": "bash scripts/actions",
         "user": "root",
         "accepted_return_codes": [0],
         "description": {
-            "en": "WARNING: Only use this feature if you know what you do.\n This action is only needed if you have installed Seafile before the version 7 AND your Seafile instance was installed under other domain than the user accounts. Move all user's libraries to the correct account, this action exists only for handling old created account with the old SSO behavior.\n See https://github.com/YunoHost-Apps/seafile_ynh/issues/44 for more information."
+            "en": "Hight level function : Change automatically the email for the user authentication to a the main user email. This function should be run when you migrate from seafile 6 to seafile 7.\nBy example 'toto@seafile-domain.tld' will be renamed to the new email 'toto-main-email@main-yunohost-domain.tld'. Note that when do you this change the email need to be also changed in all client !!"
+        }
+},
+{
+        "id": "change_user_email",
+        "name": "Change user email of user",
+        "command": "bash scripts/actions",
+        "user": "root",
+        "accepted_return_codes": [0],
+        "description": {
+            "en": "Low level function : Change manually the email for the user authentication to a other email.\nBy example 'toto@seafile-domain.tld' will be renamed to the new email 'toto@main-yunohost-domain.tld'. Note that when do you this change the email need to be also changed in all client !!"
         },
         "arguments": [
             {
-                "name": "user_to_migrate",
-                "type": "user",
+                "name": "old_email",
+                "type": "string",
                 "ask": {
-                    "en": "User account to be migrate from the old to the new behavior"
+                    "en": "Old user email"
                 },
-                "example": "bob@domain.tld"
+                "example": "toto@seafile-domain.tld"
+            }, {
+                "name": "new_email",
+                "type": "string",
+                "ask": {
+                    "en": "New user email"
+                },
+                "example": "toto@main-yunohost-domain.tld"
             }
         ]
 }]
