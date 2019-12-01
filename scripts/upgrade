@@ -146,11 +146,12 @@ case $installed_version in
     echo 'ENABLE_REMOTE_USER_AUTHENTICATION = True' | tee -a $final_path/conf/seahub_settings.py
     echo "REMOTE_USER_HEADER = 'HTTP_EMAIL'" | tee -a $final_path/conf/seahub_settings.py
     echo 'REMOTE_USER_CREATE_UNKNOWN_USER = False' | tee -a $final_path/conf/seahub_settings.py
-    echo "REMOTE_USER_DOMAIN = ''" | tee -a $final_path/conf/seahub_settings.py
     echo "REMOTE_USER_PROTECTED_PATH = ['$path_url', '$path_url/accounts/login']" | tee -a $final_path/conf/seahub_settings.py
 
     # Clean connexion from the SSO. If we don't do this we could have some when the user was loged by the old SSO auth mecanisme
     ynh_mysql_execute_as_root --sql "DELETE FROM \`django_session\`" --database seahubdb
+    
+    ynh_print_warn --message "To be able to continue to use the SSO you probybly need to migrate your account. You can use the command 'yunohost app action run seafile migrate_user_email_to_mail_email' to migrate all of theses account. Note that after this migratation you need to reconfigure all your client with the official email of the user."
 ;&
 esac
 
