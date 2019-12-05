@@ -125,7 +125,7 @@ migrate_email_in_database() {
     mysql_relpace_db seahubdb base_userenabledmodule username
     mysql_relpace_db seahubdb base_userlastlogin username
     mysql_relpace_db seahubdb base_userstarredfiles email
-    mysql_relpace_db seahubdb django_cas_ng_proxygrantingticket user
+    mysql_relpace_db seahubdb django_cas_ng_proxygrantingticket user || true
     mysql_relpace_db seahubdb drafts_draft username
     mysql_relpace_db seahubdb group_groupmessage from_email
     mysql_relpace_db seahubdb group_messagereply from_email
