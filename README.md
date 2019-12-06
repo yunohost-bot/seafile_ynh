@@ -47,8 +47,12 @@ YunoHost specific features
 
 This app support LDAP and the SSO authentification.
 
-If you have Seafile installed before 7.x and you have more than one domain for users in Yunohost or Seafile app is installed on a different domain, you need to migrate accounts.
-You can use the provided action at https://domain.tld/yunohost/admin/#/apps/seafile/actions. See [issue#44](https://github.com/YunoHost-Apps/seafile_ynh/issues/44)
+If you have Seafile installed before 7.x and you have more than one domain for users in Yunohost or Seafile app is installed on a different domain, you need to migrate your accounts.
+You can use the provided action at https://domain.tld/yunohost/admin/#/apps/seafile/actions. You can also use this following command to migrate all of your accounts:
+```
+yunohost app action run seafile migrate_user_email_to_mail_email
+```
+See [issue#44](https://github.com/YunoHost-Apps/seafile_ynh/issues/44)
 for more information.
 
 ### Supported architectures
@@ -71,9 +75,9 @@ Additional informations
 
 ### Change URL
 
-Since now it's possible to change domain or the url of seafile but use it with precaution because it has not been tested enough for a big production installation.
+Since now it's possible to change domain or the url of seafile.
 
-To do this run : `yunohost app change-url seafile -d new_domain.tld -p PATH new_path
+To do this run : `yunohost app change-url seafile -d new_domain.tld -p PATH new_path`
 
 Links
 -----
