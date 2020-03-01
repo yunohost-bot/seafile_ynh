@@ -17,8 +17,8 @@
 		    setup_private=1
 		    setup_public=1
 		    upgrade=1
-            upgrade=1    from_commit=f9b9e934f6929bd564386f06c0352f0ef41b7619
-            upgrade=1    from_commit=874ff38bc4e011a5ba22f006745e86ef8e052346
+            upgrade=1    from_commit=333f32482b409de753b1fe2c010c25409da99fa7
+            upgrade=1    from_commit=2574d127bca88b4dac8325b93c429c8160123719
             upgrade=1    from_commit=f28bb98edd9bd018acc168a22186cc79737373a0
 		    backup_restore=1
 		    multi_instance=0
