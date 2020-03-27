@@ -67,6 +67,12 @@ ynh_app_setting_set --app $app --key installed_version --value $seafile_version
 # STANDARD MODIFICATIONS
 #=================================================
 
+ynh_script_progression --message="Creating base directory..."
+mkdir -p $final_path
+mkdir -p $final_path/installed
+mkdir -p $final_path/logs
+mkdir -p $final_path/seafile-data
+
 # Create User
 ynh_script_progression --message="Configuring system user..."
 ynh_system_user_create --username $seafile_user --home_dir $final_path
@@ -75,15 +81,9 @@ ynh_system_user_create --username $seafile_user --home_dir $final_path
 ynh_script_progression --message="Installing dependencies..." --weight=7
 install_dependance
 
-# Copy files to the right place
+# Clean data directory
 ynh_script_progression --message="Cleaning data directory..."
 test -e $seafile_data && ynh_secure_remove --file="$seafile_data"
-
-ynh_script_progression --message="Creating base directory..."
-mkdir -p $final_path
-mkdir -p $final_path/installed
-mkdir -p $final_path/logs
-mkdir -p $final_path/seafile-data
 
 # Download new version from sources
 ynh_script_progression --message="Installing sources files..." --weight=7
