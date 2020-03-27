@@ -71,6 +71,8 @@ if [ $final_path == "/var/www/$app" ]; then
     ynh_system_user_create --username $seafile_user --home_dir $final_path
     ynh_app_setting_set --app $app --key final_path --value $final_path
     test -e /var/log/seafile && rm /var/log/$app
+    echo '/home/yunohost.app/seafile-data' > /opt/yunohost/seafile/ccnet/seafile.ini
+    mv /opt/yunohost/$app/seafile-data/* /home/yunohost.app/seafile-data/
     ln -s $final_path/logs /var/log/seafile
     set_permission
 fi
