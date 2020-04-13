@@ -23,7 +23,6 @@ installed_version=$(ynh_app_setting_get --app $app --key installed_version)
 seahub_port=$(ynh_app_setting_get --app $app --key seahub_port)
 fileserver_port=$(ynh_app_setting_get --app $app --key fileserver_port)
 webdav_port=$(ynh_app_setting_get --app $app --key webdav_port)
-root_pwd=$(cat /etc/yunohost/mysql)
 final_path=$(ynh_app_setting_get --app $app --key final_path)
 seafile_user=$app
 
@@ -99,51 +98,51 @@ chmod +x $final_path/seafile-server-$seafile_version/upgrade/minor-upgrade.sh
 case $installed_version in
 "4.0."* )
 	# Update seafile by script
-	expect_scripts/upgrade_4.1.1.exp $final_path/seafile-server-$seafile_version $root_pwd
+	ynh_die "Upgrade form the version 4.0 was removed. Upgrade from this version won't be supported any more."
 ;&
 "4.1."* )
 	# Update seafile by script
-	expect_scripts/upgrade_4.2.1.exp $final_path/seafile-server-$seafile_version $root_pwd
+	expect_scripts/upgrade_4.2.1.exp $final_path/seafile-server-$seafile_version
 ;&
 "4.3."* )
 	# Update seafile by script
-	expect_scripts/upgrade_4.4.3.exp $final_path/seafile-server-$seafile_version $root_pwd
+	expect_scripts/upgrade_4.4.3.exp $final_path/seafile-server-$seafile_version
 ;&
 "4.4."* )
 	# Update seafile by script
-	expect_scripts/upgrade_5.0.3.exp $final_path/seafile-server-$seafile_version $root_pwd
+	expect_scripts/upgrade_5.0.3.exp $final_path/seafile-server-$seafile_version
 ;&
 "5.0."* )
 	# Update seafile by script
-	expect_scripts/upgrade_5.1.exp $final_path/seafile-server-$seafile_version $root_pwd
+	expect_scripts/upgrade_5.1.exp $final_path/seafile-server-$seafile_version
 ;&
 "5.1."* )
 	# Update seafile by script
-	expect_scripts/upgrade_6.0.exp $final_path/seafile-server-$seafile_version $root_pwd
+	expect_scripts/upgrade_6.0.exp $final_path/seafile-server-$seafile_version
 ;&
 "6.0."* )
 	python3 ../conf/update_sso_conf.py || true
 	
 	# Update seafile by script
-	expect_scripts/upgrade_6.1.exp $final_path/seafile-server-$seafile_version $root_pwd
+	expect_scripts/upgrade_6.1.exp $final_path/seafile-server-$seafile_version
 	
 	# Enable manually wiki
 	echo 'ENABLE_WIKI = True' | tee -a $final_path/conf/seahub_settings.py
 ;&
 "6.1."* )
 	# Update seafile by script
-	expect_scripts/upgrade_6.2.exp $final_path/seafile-server-$seafile_version $root_pwd
+	expect_scripts/upgrade_6.2.exp $final_path/seafile-server-$seafile_version
 ;&
 "6.2."* )
 	# Update seafile by script
-	expect_scripts/upgrade_6.3.exp $final_path/seafile-server-$seafile_version $root_pwd
+	expect_scripts/upgrade_6.3.exp $final_path/seafile-server-$seafile_version
 	
 	# Update logrotate to have the last version
 	ynh_use_logrotate --logfile $final_path/logs --nonappend
 ;&
 "6.3."* )
 	# Update seafile by script
-	expect_scripts/upgrade_7.0.exp $final_path/seafile-server-$seafile_version $root_pwd
+	expect_scripts/upgrade_7.0.exp $final_path/seafile-server-$seafile_version
 	# SSO authentication
     echo 'ENABLE_REMOTE_USER_AUTHENTICATION = True' | tee -a $final_path/conf/seahub_settings.py
     echo "REMOTE_USER_HEADER = 'HTTP_EMAIL'" | tee -a $final_path/conf/seahub_settings.py
@@ -157,7 +156,7 @@ case $installed_version in
 ;&
 esac
 
-expect_scripts/minor-upgrade.exp $final_path/seafile-server-$seafile_version $root_pwd
+expect_scripts/minor-upgrade.exp $final_path/seafile-server-$seafile_version
 
 ## Install webdav and logrotate if not installed
 if [[ $installed_version = "4.0."* ]] || [[ $installed_version = "4.1."* ]]

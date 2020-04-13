@@ -2,7 +2,6 @@
 set timeout 5
 
 set seafile_dir [lindex $argv 0]
-set mysql_password [lindex $argv 1]
 
 spawn $seafile_dir/upgrade/upgrade_6.2_6.3.sh
 
