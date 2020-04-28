@@ -58,8 +58,13 @@ install_source() {
 }
 
 install_dependance() {
-	ynh_install_app_dependencies python2.7 python-pip libpython2.7 python-setuptools python-ldap python-urllib3 python-simplejson python-imaging python-mysqldb python-flup expect python-requests python-dev ffmpeg python-memcache \
+    if [ "$(lsb_release --codename --short)" == "stretch" ]; then
+        ynh_install_app_dependencies python2.7 python-pip libpython2.7 python-setuptools python-ldap python-urllib3 python-simplejson python-imaging python-mysqldb python-flup expect python-requests python-dev ffmpeg python-memcache \
         libjpeg62-turbo-dev zlib1g-dev # For building pillow
+    else
+        ynh_install_app_dependencies python2.7 python-pip libpython2.7 python-setuptools python-ldap python-urllib3 python-simplejson python-pil python-mysqldb python-flup expect python-requests python-dev ffmpeg python-memcache \
+        libjpeg62-turbo-dev zlib1g-dev # For building pillow
+    fi
 	pip install --user --upgrade Pillow 'moviepy<1.0' 'imageio<2.8' certifi idna
 }
 
