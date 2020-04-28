@@ -20,18 +20,17 @@ install_source() {
 }
 
 install_dependance() {
-    if [ "$(lsb_release --codename --short)" == "stretch" ]; then
-        ynh_install_app_dependencies python2.7 python-pip libpython2.7 python-setuptools python-ldap python-urllib3 python-simplejson python-imaging python-mysqldb python-flup expect python-requests python-dev ffmpeg python-memcache \
-            libjpeg62-turbo-dev zlib1g-dev # For building pillow
-    else
-        ynh_install_app_dependencies python2.7 python-pip libpython2.7 python-setuptools python-ldap python-urllib3 python-simplejson python-pil python-mysqldb python-flup expect python-requests python-dev ffmpeg python-memcache \
-            libjpeg62-turbo-dev zlib1g-dev # For building pillow
-    fi
+    ynh_install_app_dependencies python3 python3-setuptools python3-pip python3-requests python3-dev \
+        expect ffmpeg \
+        memcached libmemcached-dev \
+        libjpeg62-turbo-dev zlib1g-dev # For building pillow
     ynh_add_swap 2000
     # We need to do that because we can have some issue about the permission access to the pip cache without this
     set_permission
     # Note that we install imageio to force the dependance, without this imageio 2.8 is installed and it need python3.5
-    sudo -u $seafile_user pip install --user --upgrade Pillow 'moviepy<1.0' 'imageio<2.8' certifi idna
+    sudo -u $seafile_user pip3 install --user --upgrade Pillow pylibmc captcha jinja2 sqlalchemy psd-tools \
+        django-pylibmc django-simple-captcha python3-ldap \
+        pylibmc django-pylibmc # Memcached support
     ynh_del_swap
 }
 

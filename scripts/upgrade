@@ -158,6 +158,31 @@ case $installed_version in
     
     ynh_print_warn --message "To be able to continue to use the SSO you probybly need to migrate your account. You can use the command 'yunohost app action run seafile migrate_user_email_to_mail_email' to migrate all of theses account. Note that after this migratation you need to reconfigure all your client with the official email of the user."
 ;&
+"7.0"* )
+	# Fix file comment
+	$final_path/seafile-server-$seafile_version/seahub.sh python-env seahub/manage.py migrate_file_comment
+
+	# TODO
+	# Check that last version >= 7.0. If not install and upgrade to 7.0 before !!
+
+    # Enable memcached
+    cat > $final_path/conf/seahub_settings.py <<EOF
+CACHES = {
+
+    'default': {
+
+        'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
+
+        'LOCATION': '127.0.0.1:11211',
+
+    },
+
+}
+EOF
+
+	# Update seafile by script
+	expect_scripts/upgrade_7.1.exp $final_path/seafile-server-$seafile_version
+;&
 esac
 
 expect_scripts/minor-upgrade.exp $final_path/seafile-server-$seafile_version
@@ -202,7 +227,7 @@ fi
 ynh_replace_string --match_string en_US.UTF-8 --replace_string ${LANG:-'en_US.UTF-8'} --target_file $final_path/seafile-server-$seafile_version/seahub.sh
 
 # Update gunicorn config
-sed --in-place -r "s@bind = \"0\.0\.0\.0:[[:digit:]]+\"@bind = \"0.0.0.0:$seahub_port\"@g" $final_path/conf/gunicorn.conf
+sed --in-place -r "s@bind = \"0\.0\.0\.0:[[:digit:]]+\"@bind = \"0.0.0.0:$seahub_port\"@g" $final_path/conf/gunicorn.conf.py
 
 # In the 3.x seafile version package the seahub_port and fileserver_port wasn't saved in the settings. If the settings is empty we try to get it and save in the settings
 
