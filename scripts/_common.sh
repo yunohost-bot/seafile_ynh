@@ -20,8 +20,13 @@ install_source() {
 }
 
 install_dependance() {
-	ynh_install_app_dependencies python2.7 python-pip libpython2.7 python-setuptools python-ldap python-urllib3 python-simplejson python-imaging python-mysqldb python-flup expect python-requests python-dev ffmpeg python-memcache \
-        libjpeg62-turbo-dev zlib1g-dev # For building pillow
+    if [ "$(lsb_release --codename --short)" == "stretch" ]; then
+        ynh_install_app_dependencies python2.7 python-pip libpython2.7 python-setuptools python-ldap python-urllib3 python-simplejson python-imaging python-mysqldb python-flup expect python-requests python-dev ffmpeg python-memcache \
+            libjpeg62-turbo-dev zlib1g-dev # For building pillow
+    else
+        ynh_install_app_dependencies python2.7 python-pip libpython2.7 python-setuptools python-ldap python-urllib3 python-simplejson python-pil python-mysqldb python-flup expect python-requests python-dev ffmpeg python-memcache \
+            libjpeg62-turbo-dev zlib1g-dev # For building pillow
+    fi
     ynh_add_swap 2000
     # We need to do that because we can have some issue about the permission access to the pip cache without this
     set_permission
