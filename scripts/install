@@ -41,7 +41,11 @@ admin_email=$(sudo yunohost user info $admin | grep mail: | sed "s/mail: //g")
 
 # Check dependencies
 sudo apt-get update
-sudo apt-get install -qq python2.7 python-setuptools python-simplejson python-imaging python-mysqldb python-flup expect
+if [ "$(lsb_release --codename --short)" == "stretch" ]; then
+    sudo apt-get install -qq python2.7 python-setuptools python-simplejson python-imaging python-mysqldb python-flup expect
+else
+    sudo apt-get install -qq python2.7 python-setuptools python-simplejson python-pil python-mysqldb python-flup expect
+fi
 
 # Copy files to the right place
 test -e $final_path && sudo rm -rf "$final_path"
