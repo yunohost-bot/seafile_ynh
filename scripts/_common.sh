@@ -19,6 +19,17 @@ install_source() {
     ynh_setup_source "$final_path/seafile-server-$seafile_version" "$architecture"
 }
 
+install_source_7_0() {
+    if ! [ -e $final_path/seafile-server-7.0.5 ]; then
+        mkdir "$final_path/seafile-server-7.0.5"
+        if [[ $architecture == "i386" ]]
+        then
+            ynh_die --message "Error : this architecture is no longer supported by the upstream. Please create en issue here : https://github.com/YunoHost-Apps/seafile_ynh/issues to ask to discuss about a support of this architecture"
+        fi
+        ynh_setup_source "$final_path/seafile-server-7.0.5" "$architecture"_7_0
+    fi
+}
+
 install_dependance() {
     ynh_install_app_dependencies python3 python3-setuptools python3-pip python3-requests python3-dev \
         expect ffmpeg \

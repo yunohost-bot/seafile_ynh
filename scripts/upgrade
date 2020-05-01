@@ -106,25 +106,31 @@ case $installed_version in
 ;&
 "4.1."* )
 	# Update seafile by script
+	install_source_7_0
 	expect_scripts/upgrade_4.2.1.exp $final_path/seafile-server-$seafile_version
 ;&
 "4.3."* )
 	# Update seafile by script
+	install_source_7_0
 	expect_scripts/upgrade_4.4.3.exp $final_path/seafile-server-$seafile_version
 ;&
 "4.4."* )
 	# Update seafile by script
+	install_source_7_0
 	expect_scripts/upgrade_5.0.3.exp $final_path/seafile-server-$seafile_version
 ;&
 "5.0."* )
 	# Update seafile by script
+	install_source_7_0
 	expect_scripts/upgrade_5.1.exp $final_path/seafile-server-$seafile_version
 ;&
 "5.1."* )
 	# Update seafile by script
+	install_source_7_0
 	expect_scripts/upgrade_6.0.exp $final_path/seafile-server-$seafile_version
 ;&
 "6.0."* )
+    install_source_7_0
 	python3 ../conf/update_sso_conf.py || true
 	
 	# Update seafile by script
@@ -135,10 +141,12 @@ case $installed_version in
 ;&
 "6.1."* )
 	# Update seafile by script
+	install_source_7_0
 	expect_scripts/upgrade_6.2.exp $final_path/seafile-server-$seafile_version
 ;&
 "6.2."* )
 	# Update seafile by script
+	install_source_7_0
 	expect_scripts/upgrade_6.3.exp $final_path/seafile-server-$seafile_version
 	
 	# Update logrotate to have the last version
@@ -146,6 +154,7 @@ case $installed_version in
 ;&
 "6.3."* )
 	# Update seafile by script
+	install_source_7_0
 	expect_scripts/upgrade_7.0.exp $final_path/seafile-server-$seafile_version
 	# SSO authentication
     echo 'ENABLE_REMOTE_USER_AUTHENTICATION = True' | tee -a $final_path/conf/seahub_settings.py
@@ -157,13 +166,11 @@ case $installed_version in
     ynh_mysql_execute_as_root --sql "DELETE FROM \`django_session\`" --database seahubdb
     
     ynh_print_warn --message "To be able to continue to use the SSO you probybly need to migrate your account. You can use the command 'yunohost app action run seafile migrate_user_email_to_mail_email' to migrate all of theses account. Note that after this migratation you need to reconfigure all your client with the official email of the user."
+    ynh_secure_remove --file="$final_path/seafile-server-7.0.5"
 ;&
 "7.0"* )
 	# Fix file comment
 	$final_path/seafile-server-$seafile_version/seahub.sh python-env seahub/manage.py migrate_file_comment
-
-	# TODO
-	# Check that last version >= 7.0. If not install and upgrade to 7.0 before !!
 
     # Enable memcached
     cat > $final_path/conf/seahub_settings.py <<EOF
