@@ -59,7 +59,7 @@ for more information.
 
 Since seafile 6.3 the i386 architecture is no more supported.
 
-Seafile no longer distribute binary for generic armhf architectures but rpi binary could work.
+Seafile don't distribute binary for generic armhf architectures but rpi binary generally work on all arm board.
 
 * x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/seafile%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/seafile/)
 * ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/seafile%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/seafile/)
