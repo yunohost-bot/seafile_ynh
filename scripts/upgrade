@@ -46,6 +46,9 @@ pkill -f seaf-server || true
 pkill -f ccnet-server || true
 pkill -f seahub || true
 
+if [  ]
+ynh_backup_before_upgrade
+
 #=================================================
 # MIGRATION FROM OLD VERSION
 #=================================================
