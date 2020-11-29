@@ -101,6 +101,30 @@ From command line:
 
 `sudo yunohost app upgrade seafile -u https://github.com/YunoHost-Apps/seafile_ynh`
 
+Backup
+------
+
+This app use now the core-only feature of the backup. To keep the integrity of the data and to have a better guarantee of the restoration is recommended to proceed like this:
+
+- Stop seafile service with theses following command:
+```
+systemctl stop seafile.service seahub.service
+```
+- Launch the backup of seafile with this following command:
+```
+yunohost backup create --app seafile
+```
+- Do a backup of your data with your specific strategy (could be with rsync, borg backup or just cp).
+- Restart the seafile service with theses command:
+```
+systemctl start seafile.service seahub.service
+```
+
+Remove
+------
+
+Due of the backup core only feature the data directory in `/home/yunohost.app/seafile-data` **is not removed**. It need to be removed manually to purge app user data.
+
 Developers infos
 ----------------
 
