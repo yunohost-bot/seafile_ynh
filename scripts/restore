@@ -73,8 +73,8 @@ set_permission
 # Enable service and start seafile
 ynh_script_progression --message="Reconfiguring application..."
 systemctl daemon-reload
-systemctl enable seafile
-systemctl enable seahub
+systemctl enable seafile --quiet
+systemctl enable seahub --quiet
 
 # Add Seafile to YunoHost's monitored services
 ynh_script_progression --message="Register seafile service..."

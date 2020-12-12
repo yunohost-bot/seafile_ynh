@@ -32,8 +32,8 @@ ynh_script_progression --message="Stoping services..."
 if [ -e /etc/init.d/seafile-server ]
 then
     # Old init script support
-    systemctl stop seafile-server
-    systemctl disable seafile-server
+    systemctl stop seafile-server --quiet
+    systemctl disable seafile-server --quiet
     ynh_secure_remove --file=/etc/init.d/seafile-server
     yunohost service remove seafile-server
 else
