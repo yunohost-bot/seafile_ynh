@@ -26,6 +26,8 @@ seafile_data=/home/yunohost.app/seafile-data
 final_path=/opt/yunohost/$app
 seafile_user=$app
 admin_password=$YNH_APP_ARG_ADMIN_PASSWORD
+# TODO User env variable in 4.1
+seafile_version=$(ynh_app_upstream_version)
 
 # Create special path with / at the end
 if [[ $path_url == '/' ]]

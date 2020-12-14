@@ -88,6 +88,14 @@ From command line:
 
 ### Upgrade
 
+By default a backup is made before the upgrade. To avoid this you have theses following possibilites:
+- Pass the `NO_BACKUP_UPGRADE` env variable with `1` at each upgrade. By example `NO_BACKUP_UPGRADE=1 yunohost app upgrade synapse`.
+- Set the settings `disable_backup_before_upgrade` to `1`. You can set this with this command:
+
+`yunohost app setting synapse disable_backup_before_upgrade -v 1`
+
+After this settings will be applied for **all** next upgrade.
+
 From command line:
 
 `yunohost app upgrade seafile`

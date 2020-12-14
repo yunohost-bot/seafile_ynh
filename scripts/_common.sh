@@ -3,8 +3,6 @@
 #=================================================
 
 app=$YNH_APP_INSTANCE_NAME
-[[ -e "../settings/manifest.json" ]] || [[ -e "../manifest.json" ]] && \
-    seafile_version=$(ynh_app_upstream_version)
 
 #=================================================
 # DEFINE ALL COMMON FONCTIONS

@@ -25,6 +25,8 @@ fileserver_port=$(ynh_app_setting_get --app $app --key fileserver_port)
 webdav_port=$(ynh_app_setting_get --app $app --key webdav_port)
 final_path=$(ynh_app_setting_get --app $app --key final_path)
 seafile_user=$app
+# TODO User env variable in 4.1
+seafile_version=$(ynh_app_upstream_version)
 
 ynh_script_progression --message="Stoping services..."
 
@@ -46,8 +48,16 @@ pkill -f seaf-server || true
 pkill -f ccnet-server || true
 pkill -f seahub || true
 
-if [  ]
-ynh_backup_before_upgrade
+# Backup the current version of the app
+if [ "0$(ynh_app_setting_get --app=$app --key=disable_backup_before_upgrade)" -ne 1 ]
+then
+    ynh_backup_before_upgrade
+    ynh_clean_setup () {
+        # Clean installation remainings that are not handled by the remove script.
+        ynh_clean_check_starting
+        ynh_restore_upgradebackup
+    }
+fi
 
 #=================================================
 # MIGRATION FROM OLD VERSION
@@ -176,17 +186,12 @@ case $installed_version in
 	$final_path/seafile-server-$seafile_version/seahub.sh python-env seahub/manage.py migrate_file_comment
 
     # Enable memcached
-    cat > $final_path/conf/seahub_settings.py <<EOF
+    cat >> $final_path/conf/seahub_settings.py <<EOF
 CACHES = {
-
     'default': {
-
         'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
-
         'LOCATION': '127.0.0.1:11211',
-
     },
-
 }
 EOF
 
