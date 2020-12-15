@@ -22,7 +22,7 @@ db_pwd=$(ynh_app_setting_get --app $app --key mysqlpwd)
 final_path=$(ynh_app_setting_get --app $app --key final_path)
 seafile_user=$app
 
-if [[ ! "$(systemctl status seafile)" =~ "Active: inactive (dead)" ]] || [[ ! "$(systemctl status seahub)" =~ "Active: inactive (dead)" ]]; then
+if [[ ! "$(systemctl status seafile)" =~ "Active: inactive (dead)" ]] || [[ ! "$(systemctl status seahub)" =~ "Active: failed (Result: signal)" ]]; then
     ynh_print_warn --message="It's hightly recommended to make your backup when the service is stopped. Please stop seafile service and seahub service with this command before to run the backup 'systemctl stop seafile.service seahub.service'"
 fi
 

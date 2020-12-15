@@ -79,7 +79,7 @@ mkdir -p $final_path
 mkdir -p $final_path/installed
 mkdir -p $final_path/logs
 mkdir -p $seafile_data
-ln -s $seafile_data $final_path/seafile_data
+ln -s $seafile_data $final_path/seafile-data
 
 # Create User
 ynh_script_progression --message="Configuring system user..."

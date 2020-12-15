@@ -25,6 +25,7 @@ fileserver_port=$(ynh_app_setting_get --app $app --key fileserver_port)
 webdav_port=$(ynh_app_setting_get --app $app --key webdav_port)
 final_path=$(ynh_app_setting_get --app $app --key final_path)
 seafile_user=$app
+seafile_data=/home/yunohost.app/seafile-data
 # TODO User env variable in 4.1
 seafile_version=$(ynh_app_upstream_version)
 
@@ -42,12 +43,13 @@ else
     ynh_systemd_action --service_name seafile --action stop
     ynh_systemd_action --service_name seahub --action stop
 fi
-sleep 2
+sleep 5
 pkill -f seafile-controller || true
 pkill -f seaf-server || true
 pkill -f ccnet-server || true
 pkill -f seahub || true
 
+ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=30
 # Backup the current version of the app
 if [ "0$(ynh_app_setting_get --app=$app --key=disable_backup_before_upgrade)" -ne 1 ]
 then
@@ -145,10 +147,10 @@ case $installed_version in
 "6.0."* )
     install_source_7_0
 	python3 ../conf/update_sso_conf.py || true
-	
+
 	# Update seafile by script
 	expect_scripts/upgrade_6.1.exp $final_path/seafile-server-$seafile_version
-	
+
 	# Enable manually wiki
 	echo 'ENABLE_WIKI = True' | tee -a $final_path/conf/seahub_settings.py
 ;&
@@ -161,7 +163,7 @@ case $installed_version in
 	# Update seafile by script
 	install_source_7_0
 	expect_scripts/upgrade_6.3.exp $final_path/seafile-server-$seafile_version
-	
+
 	# Update logrotate to have the last version
 	ynh_use_logrotate --logfile $final_path/logs --nonappend
 ;&
@@ -177,13 +179,13 @@ case $installed_version in
 
     # Clean connexion from the SSO. If we don't do this we could have some when the user was loged by the old SSO auth mecanisme
     ynh_mysql_execute_as_root --sql "DELETE FROM \`django_session\`" --database seahubdb
-    
+
     ynh_print_warn --message "To be able to continue to use the SSO you probybly need to migrate your account. You can use the command 'yunohost app action run seafile migrate_user_email_to_mail_email' to migrate all of theses account. Note that after this migratation you need to reconfigure all your client with the official email of the user."
     ynh_secure_remove --file="$final_path/seafile-server-7.0.5"
 ;&
 "7.0"* )
-	# Fix file comment
-	$final_path/seafile-server-$seafile_version/seahub.sh python-env seahub/manage.py migrate_file_comment
+    # Fix file comment
+    $final_path/seafile-server-$seafile_version/seahub.sh python-env seahub/manage.py migrate_file_comment
 
     # Enable memcached
     cat >> $final_path/conf/seahub_settings.py <<EOF
@@ -195,8 +197,15 @@ CACHES = {
 }
 EOF
 
-	# Update seafile by script
-	expect_scripts/upgrade_7.1.exp $final_path/seafile-server-$seafile_version
+    # Update seafile by script
+    expect_scripts/upgrade_7.1.exp $final_path/seafile-server-$seafile_version
+
+    # Fix seafile data link. Look like that the upgrade script of seafile don't always work correctly
+    if [ -e $final_path/seafile-data ]; then
+        old_data_dir_path="$final_path/seafile_data$(date '+%Y%m%d.%H%M%S')"
+        mv "$final_path/seafile-data" "$old_data_dir_path"
+    fi
+    ln -s $seafile_data $final_path/seafile-data
 ;&
 esac
 
