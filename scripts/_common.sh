@@ -8,11 +8,10 @@ i386sum="8a0b9e08d9c80790752b435c3e148328"
 armsum="15ca4b69585a990e00474e4cfc4be9eb"
 
 init_script() {
-    # Exit on command errors and treat unset variables as an error
-    set -eu
-
     # Source YunoHost helpers
     source /usr/share/yunohost/helpers
+    # Exit on command errors and treat unset variables as an error
+    ynh_abort_if_errors
 
     # Retrieve arguments
     app=$YNH_APP_INSTANCE_NAME
