@@ -19,15 +19,18 @@ ynh_script_progression --message="Loading installation settings..."
 # Retrieve arguments
 domain=$(ynh_app_setting_get --app $app --key domain)
 path_url=$(ynh_normalize_url_path --path_url $(ynh_app_setting_get --app $app --key path))
-installed_version=$(ynh_app_setting_get --app $app --key installed_version)
 seahub_port=$(ynh_app_setting_get --app $app --key seahub_port)
 fileserver_port=$(ynh_app_setting_get --app $app --key fileserver_port)
 webdav_port=$(ynh_app_setting_get --app $app --key webdav_port)
 final_path=$(ynh_app_setting_get --app $app --key final_path)
 seafile_user=$app
 seafile_data=/home/yunohost.app/seafile-data
-# TODO User env variable in 4.1
+installed_version=${YNH_APP_CURRENT_VERSION/*~ynh/}
 seafile_version=$(ynh_app_upstream_version)
+
+if [ "$YNH_APP_CURRENT_VERSION" == '-' ]; then
+    YNH_APP_CURRENT_VERSION="6.0.9~ynh0"
+fi
 
 ynh_script_progression --message="Stoping services..."
 
@@ -51,7 +54,8 @@ pkill -f seahub || true
 
 ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=30
 # Backup the current version of the app
-if [ "0$(ynh_app_setting_get --app=$app --key=disable_backup_before_upgrade)" -ne 1 ]
+if [ "0$(ynh_app_setting_get --app=$app --key=disable_backup_before_upgrade)" -ne 1 ] \
+    && (ynh_compare_current_package_version --comparison=ge --version='7.0.5~ynh1')
 then
     ynh_backup_before_upgrade
     ynh_clean_setup () {
@@ -314,8 +318,5 @@ while read f
 do
     ynh_secure_remove --file=$final_path/$f
 done
-
-# store new installed version
-ynh_app_setting_set --app $app --key installed_version --value $seafile_version
 
 ynh_script_progression --message="Upgrade of $app completed" --last
