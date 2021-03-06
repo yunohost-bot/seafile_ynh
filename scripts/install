@@ -27,6 +27,7 @@ final_path=/opt/yunohost/$app
 seafile_user=$app
 admin_password=$YNH_APP_ARG_ADMIN_PASSWORD
 seafile_version=$(ynh_app_upstream_version)
+architecture=$(ynh_detect_arch)
 
 # Create special path with / at the end
 if [[ $path_url == '/' ]]

@@ -23,6 +23,7 @@ seafile_data=/home/yunohost.app/seafile-data
 db_pwd=$(ynh_app_setting_get --app $app --key mysqlpwd)
 final_path=$(ynh_app_setting_get --app $app --key final_path)
 seafile_user=$app
+architecture=$(ynh_detect_arch)
 
 # Check domain/path availability
 ynh_webpath_available --domain $domain --path_url $path_url || ynh_die --message "$domain/$path_url is not available, please use an other domain or path."
