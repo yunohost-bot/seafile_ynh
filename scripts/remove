@@ -7,9 +7,6 @@
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
-# Stop script if errors
-set -u
-
 # Import common cmd
 source ./experimental_helper.sh
 source ./_common.sh
