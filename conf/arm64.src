@@ -1,5 +1,5 @@
-SOURCE_URL=https://github.com/haiwen/seafile-rpi/releases/download/v7.1.5/seafile-server-7.1.5-buster-armv7.tar.gz
-SOURCE_SUM=4baec21c1acaec6f50c7a1b229a728417d8fbf87fe3be98f128bc9d2ad399681
+SOURCE_URL=https://github.com/haiwen/seafile-rpi/releases/download/v8.0.3/seafile-server-8.0.3-buster-arm64v8.tar.gz
+SOURCE_SUM=0af0c4653fbff99dc77cf72bc8938ca85424e54d4ed0ec553ebd7d6a9ee13d4c
 # (Optional) Program to check the integrity (sha256sum, md5sum...)
 # default: sha256
 SOURCE_SUM_PRG=sha256sum

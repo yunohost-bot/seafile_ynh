@@ -201,21 +201,19 @@ ynh_debug_exec ls /opt/yunohost/seafile/ccnet
 ynh_script_progression --message="Protecting directory..."
 set_permission
 
-# Add sso config to unprotect domain.tld/seafhttp + domain.tld/seafdav do in /etc/ssowat/conf.json.persistent
+# Add sso config to unprotect domain.tld/seafhttp + domain.tld/seafdav
 ynh_script_progression --message="Configuring permissions..."
-ynh_permission_create --permission=file_server --url=/seafhttp --auth_header=false \
+ynh_permission_create --permission=file_server --url=$domain/seafhttp --auth_header=false \
                       --label="File server" --protected=true --allowed=visitors
-ynh_permission_create --permission=webdav --url=/seafdav --auth_header=true \
+ynh_permission_create --permission=webdav --url=$domain/seafdav --auth_header=true \
                       --label="Webdav" --protected=true --allowed=visitors
-
 # unprotect media
-ynh_app_setting_set --app $app --key unprotected_uris --value "/media"
+ynh_permission_create --permission=media --url=/media --auth_header=true \
+                      --label="Media" --protected=true --allowed=visitors
 
-if [ "$is_public" = "0" ]
+if [ "$is_public" == '1' ];
 then
-	ynh_app_setting_delete --app seafile --key unprotected_uris
-else
-	ynh_app_setting_set --app $app --key unprotected_uris --value "/"
+    ynh_permission_update --permission "main" --add "visitors"
 fi
 
 # Add logrotate
@@ -232,6 +230,7 @@ ynh_script_progression --message="Stoping services..." --weight=3
 # Start service
 ynh_script_progression --message="Starting seafile services..." --weight=3
 ynh_systemd_action --service_name seafile -l "spawned seaf-server, pid " -p /var/log/seafile/controller.log
+sleep 2
 ynh_systemd_action --service_name seahub -l "Started Seafile hub." -p "systemd"
 sleep 2
 
