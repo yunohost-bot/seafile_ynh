@@ -1,4 +1,4 @@
-Seafile For yunohost
+Seafile for YunoHost
 =================
 
 [![Integration level](https://dash.yunohost.org/integration/seafile.svg)](https://dash.yunohost.org/appci/app/seafile) ![](https://ci-apps.yunohost.org/ci/badges/seafile.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/seafile.maintain.svg)  
