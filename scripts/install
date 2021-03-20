@@ -141,6 +141,7 @@ echo '[LDAP]' | tee -a $final_path/conf/ccnet.conf
 echo 'HOST = ldap://localhost:389' | tee -a $final_path/conf/ccnet.conf
 echo 'BASE = ou=users,dc=yunohost,dc=org' | tee -a $final_path/conf/ccnet.conf
 echo 'LOGIN_ATTR = mail' | tee -a $final_path/conf/ccnet.conf
+echo "FILTER = permission=cn=$app.main,ou=permission,dc=yunohost,dc=org" | tee -a $final_path/conf/ccnet.conf
 
 # Enable manually wiki
 echo 'ENABLE_WIKI = True' | tee -a $final_path/conf/seahub_settings.py
