@@ -128,33 +128,33 @@ case $installed_version in
 "4.1."* )
 	# Update seafile by script
 	install_source_7_0
-	expect_scripts/upgrade_4.2.1.exp $final_path/seafile-server-$seafile_version
+	expect_scripts/upgrade_4.2.1.exp $final_path/seafile-server-7.0.5
 ;&
 "4.3."* )
 	# Update seafile by script
 	install_source_7_0
-	expect_scripts/upgrade_4.4.3.exp $final_path/seafile-server-$seafile_version
+	expect_scripts/upgrade_4.4.3.exp $final_path/seafile-server-7.0.5
 ;&
 "4.4."* )
 	# Update seafile by script
 	install_source_7_0
-	expect_scripts/upgrade_5.0.3.exp $final_path/seafile-server-$seafile_version
+	expect_scripts/upgrade_5.0.3.exp $final_path/seafile-server-7.0.5
 ;&
 "5.0."* )
 	# Update seafile by script
 	install_source_7_0
-	expect_scripts/upgrade_5.1.exp $final_path/seafile-server-$seafile_version
+	expect_scripts/upgrade_5.1.exp $final_path/seafile-server-7.0.5
 ;&
 "5.1."* )
 	# Update seafile by script
 	install_source_7_0
-	expect_scripts/upgrade_6.0.exp $final_path/seafile-server-$seafile_version
+	expect_scripts/upgrade_6.0.exp $final_path/seafile-server-7.0.5
 ;&
 "6.0."* )
     install_source_7_0
 
 	# Update seafile by script
-	expect_scripts/upgrade_6.1.exp $final_path/seafile-server-$seafile_version
+	expect_scripts/upgrade_6.1.exp $final_path/seafile-server-7.0.5
 
 	# Enable manually wiki
 	echo 'ENABLE_WIKI = True' | tee -a $final_path/conf/seahub_settings.py
@@ -162,12 +162,12 @@ case $installed_version in
 "6.1."* )
 	# Update seafile by script
 	install_source_7_0
-	expect_scripts/upgrade_6.2.exp $final_path/seafile-server-$seafile_version
+	expect_scripts/upgrade_6.2.exp $final_path/seafile-server-7.0.5
 ;&
 "6.2."* )
 	# Update seafile by script
 	install_source_7_0
-	expect_scripts/upgrade_6.3.exp $final_path/seafile-server-$seafile_version
+	expect_scripts/upgrade_6.3.exp $final_path/seafile-server-7.0.5
 
 	# Update logrotate to have the last version
 	ynh_use_logrotate --logfile $final_path/logs --nonappend
@@ -175,7 +175,7 @@ case $installed_version in
 "6.3."* )
 	# Update seafile by script
 	install_source_7_0
-	expect_scripts/upgrade_7.0.exp $final_path/seafile-server-$seafile_version
+	expect_scripts/upgrade_7.0.exp $final_path/seafile-server-7.0.5
 	# SSO authentication
     echo 'ENABLE_REMOTE_USER_AUTHENTICATION = True' | tee -a $final_path/conf/seahub_settings.py
     echo "REMOTE_USER_HEADER = 'HTTP_EMAIL'" | tee -a $final_path/conf/seahub_settings.py
@@ -203,7 +203,7 @@ CACHES = {
 EOF
 
     # Update seafile by script
-    expect_scripts/upgrade_7.1.exp $final_path/seafile-server-$seafile_version
+    sudo -u $seafile_user expect_scripts/upgrade_7.1.exp $final_path/seafile-server-$seafile_version
 
     # Fix seafile data link. Look like that the upgrade script of seafile don't always work correctly
     if [ -e $final_path/seafile-data ]; then
@@ -213,11 +213,12 @@ EOF
     ln -s $seafile_data $final_path/seafile-data
 ;&
 "7.1."* )
-	expect_scripts/upgrade_8.0.exp $final_path/seafile-server-$seafile_version
+	sudo -u $seafile_user expect_scripts/upgrade_8.0.exp $final_path/seafile-server-$seafile_version
+	echo "FILTER = permission=cn=$app.main,ou=permission,dc=yunohost,dc=org" | tee -a $final_path/conf/ccnet.conf
 ;&
 esac
 
-expect_scripts/minor-upgrade.exp $final_path/seafile-server-$seafile_version
+sudo -u $seafile_user expect_scripts/minor-upgrade.exp $final_path/seafile-server-$seafile_version
 
 ## Install webdav and logrotate if not installed
 if [[ $installed_version = "4.0."* ]] || [[ $installed_version = "4.1."* ]]
