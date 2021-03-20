@@ -32,10 +32,12 @@ install_dependance() {
     ynh_install_app_dependencies python3 python3-setuptools python3-pip python3-requests python3-dev libmariadb-dev-compat libmariadb-dev \
         expect ffmpeg \
         memcached libmemcached-dev \
+        python3-scipy python3-matplotlib \
         libjpeg62-turbo-dev zlib1g-dev  # For building pillow
     ynh_add_swap 2000
     # We need to do that because we can have some issue about the permission access to the pip cache without this
     set_permission
+
     # Note that we install imageio to force the dependance, without this imageio 2.8 is installed and it need python3.5
     sudo -u $seafile_user pip3 install --user --upgrade django==2.2.* future mysqlclient pymysql Pillow pylibmc captcha jinja2 sqlalchemy psd-tools django-pylibmc django-simple-captcha
     ynh_del_swap
