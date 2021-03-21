@@ -212,10 +212,10 @@ EOF
     fi
     ln -s $seafile_data $final_path/seafile-data
 ;&
-"7.1."* )
-	sudo -u $seafile_user expect_scripts/upgrade_8.0.exp $final_path/seafile-server-$seafile_version
-	echo "FILTER = permission=cn=$app.main,ou=permission,dc=yunohost,dc=org" | tee -a $final_path/conf/ccnet.conf
-;&
+# "7.1."* )
+# 	sudo -u $seafile_user expect_scripts/upgrade_8.0.exp $final_path/seafile-server-$seafile_version
+# 	echo "FILTER = permission=cn=$app.main,ou=permission,dc=yunohost,dc=org" | tee -a $final_path/conf/ccnet.conf
+# ;&
 esac
 
 sudo -u $seafile_user expect_scripts/minor-upgrade.exp $final_path/seafile-server-$seafile_version
