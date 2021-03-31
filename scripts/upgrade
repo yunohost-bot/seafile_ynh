@@ -118,6 +118,10 @@ chmod +x expect_scripts/upgrade_*.exp
 chmod +x expect_scripts/minor-upgrade.exp
 chmod +x $final_path/seafile-server-$seafile_version/upgrade/upgrade_*.sh
 chmod +x $final_path/seafile-server-$seafile_version/upgrade/minor-upgrade.sh
+chown $seafile_user expect_scripts/upgrade_*.exp
+chown $seafile_user expect_scripts/minor-upgrade.exp
+chown $seafile_user $final_path/seafile-server-$seafile_version/upgrade/upgrade_*.sh
+chown $seafile_user $final_path/seafile-server-$seafile_version/upgrade/minor-upgrade.sh
 
 # do the upgrade    ( the ";&" syntax mean when it go in the first case which is true it do all the next case)
 case $installed_version in
