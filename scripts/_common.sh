@@ -43,13 +43,22 @@ install_dependance() {
     ynh_del_swap
 }
 
+mv_expect_scripts() {
+    expect_scripts_dir=$(mktemp -d)
+    cp expect_scripts/* $expect_scripts_dir
+    chmod u=rwX,o= -R $expect_scripts_dir
+    chown $seafile_user -R $expect_scripts_dir
+}
+
 set_permission() {
     chown -R $seafile_user:$seafile_user $final_path
+    chmod -R o= $final_path
     # check that this directory exist because in some really old install the data could still be in the main seafile directory
     # We also check at the install time when data directory is not already initialised 
-    test -e /home/yunohost.app/seafile-data && chown -R $seafile_user:$seafile_user /home/yunohost.app/seafile-data
-    # Well need to put this here because if test return false, set_permission also return false and the install fail
-    true
+    if [ -e /home/yunohost.app/seafile-data ]; then
+        chown -R $seafile_user:$seafile_user /home/yunohost.app/seafile-data
+        chmod -R o= /home/yunohost.app/seafile-data
+    fi
 }
 
 ynh_clean_setup () {

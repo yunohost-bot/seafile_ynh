@@ -102,9 +102,9 @@ ynh_mysql_setup_db --db_user $db_user --db_name seahubdb --db_pwd "$db_pwd"
 ynh_script_progression --message="Configuring application..." --weight=3
 
 # Run install script
-chmod +x expect_scripts/install.exp
+mv_expect_scripts
 chmod +x $final_path/seafile-server-$seafile_version/setup-seafile-mysql.sh
-expect_scripts/install.exp "$final_path/seafile-server-$seafile_version" "$server_name" "$domain" "$seafile_data" "$fileserver_port" "$db_pwd"
+$expect_scripts_dir/install.exp "$final_path/seafile-server-$seafile_version" "$server_name" "$domain" "$seafile_data" "$fileserver_port" "$db_pwd"
 
 sleep 3
 
@@ -181,18 +181,6 @@ ynh_add_systemd_config --service seahub --template seahub.service
 # Config nginx
 ynh_script_progression --message="Configuring nginx..." --weight=1
 ynh_add_nginx_config 'seahub_port fileserver_port webdav_port'
-
-# Copy first launch script
-cp expect_scripts/first_launch.exp $final_path
-chmod +x $final_path/first_launch.exp
-
-# Set permissions to seafile directory
-set_permission
-
-# Sometime we have a current effect. We try to lunch seafile when not all permissions are already set.
-# So wait untils all permissions are cleanly set
-sleep 5
-ynh_debug_exec ls /opt/yunohost/seafile/ccnet
 
 #=================================================
 # GENERIC FINALIZATION

@@ -114,14 +114,10 @@ install_dependance
 ynh_script_progression --message="Configuring application..."
 
 # permission to execute update script and expect helper
-chmod +x expect_scripts/upgrade_*.exp
-chmod +x expect_scripts/minor-upgrade.exp
-chmod +x $final_path/seafile-server-$seafile_version/upgrade/upgrade_*.sh
-chmod +x $final_path/seafile-server-$seafile_version/upgrade/minor-upgrade.sh
-chown $seafile_user expect_scripts/upgrade_*.exp
-chown $seafile_user expect_scripts/minor-upgrade.exp
-chown $seafile_user $final_path/seafile-server-$seafile_version/upgrade/upgrade_*.sh
-chown $seafile_user $final_path/seafile-server-$seafile_version/upgrade/minor-upgrade.sh
+mv_expect_scripts
+set_permission
+chmod u+x,o= $final_path/seafile-server-$seafile_version/upgrade/upgrade_*.sh
+chmod u+x,o= $final_path/seafile-server-$seafile_version/upgrade/minor-upgrade.sh
 
 # do the upgrade    ( the ";&" syntax mean when it go in the first case which is true it do all the next case)
 case $installed_version in
@@ -132,33 +128,33 @@ case $installed_version in
 "4.1."* )
 	# Update seafile by script
 	install_source_7_0
-	expect_scripts/upgrade_4.2.1.exp $final_path/seafile-server-7.0.5
+	$expect_scripts_dir/upgrade_4.2.1.exp $final_path/seafile-server-7.0.5
 ;&
 "4.3."* )
 	# Update seafile by script
 	install_source_7_0
-	expect_scripts/upgrade_4.4.3.exp $final_path/seafile-server-7.0.5
+	$expect_scripts_dir/upgrade_4.4.3.exp $final_path/seafile-server-7.0.5
 ;&
 "4.4."* )
 	# Update seafile by script
 	install_source_7_0
-	expect_scripts/upgrade_5.0.3.exp $final_path/seafile-server-7.0.5
+	$expect_scripts_dir/upgrade_5.0.3.exp $final_path/seafile-server-7.0.5
 ;&
 "5.0."* )
 	# Update seafile by script
 	install_source_7_0
-	expect_scripts/upgrade_5.1.exp $final_path/seafile-server-7.0.5
+	$expect_scripts_dir/upgrade_5.1.exp $final_path/seafile-server-7.0.5
 ;&
 "5.1."* )
 	# Update seafile by script
 	install_source_7_0
-	expect_scripts/upgrade_6.0.exp $final_path/seafile-server-7.0.5
+	$expect_scripts_dir/upgrade_6.0.exp $final_path/seafile-server-7.0.5
 ;&
 "6.0."* )
     install_source_7_0
 
 	# Update seafile by script
-	expect_scripts/upgrade_6.1.exp $final_path/seafile-server-7.0.5
+	$expect_scripts_dir/upgrade_6.1.exp $final_path/seafile-server-7.0.5
 
 	# Enable manually wiki
 	echo 'ENABLE_WIKI = True' | tee -a $final_path/conf/seahub_settings.py
@@ -166,12 +162,12 @@ case $installed_version in
 "6.1."* )
 	# Update seafile by script
 	install_source_7_0
-	expect_scripts/upgrade_6.2.exp $final_path/seafile-server-7.0.5
+	$expect_scripts_dir/upgrade_6.2.exp $final_path/seafile-server-7.0.5
 ;&
 "6.2."* )
 	# Update seafile by script
 	install_source_7_0
-	expect_scripts/upgrade_6.3.exp $final_path/seafile-server-7.0.5
+	$expect_scripts_dir/upgrade_6.3.exp $final_path/seafile-server-7.0.5
 
 	# Update logrotate to have the last version
 	ynh_use_logrotate --logfile $final_path/logs --nonappend
@@ -179,7 +175,7 @@ case $installed_version in
 "6.3."* )
 	# Update seafile by script
 	install_source_7_0
-	expect_scripts/upgrade_7.0.exp $final_path/seafile-server-7.0.5
+	$expect_scripts_dir/upgrade_7.0.exp $final_path/seafile-server-7.0.5
 	# SSO authentication
     echo 'ENABLE_REMOTE_USER_AUTHENTICATION = True' | tee -a $final_path/conf/seahub_settings.py
     echo "REMOTE_USER_HEADER = 'HTTP_EMAIL'" | tee -a $final_path/conf/seahub_settings.py
@@ -190,11 +186,17 @@ case $installed_version in
     ynh_mysql_execute_as_root --sql "DELETE FROM \`django_session\`" --database seahubdb
 
     ynh_print_warn --message "To be able to continue to use the SSO you probybly need to migrate your account. You can use the command 'yunohost app action run seafile migrate_user_email_to_mail_email' to migrate all of theses account. Note that after this migratation you need to reconfigure all your client with the official email of the user."
-    ynh_secure_remove --file="$final_path/seafile-server-7.0.5"
 ;&
 "7.0"* )
     # Fix file comment
-    $final_path/seafile-server-$seafile_version/seahub.sh python-env seahub/manage.py migrate_file_comment
+    pushd $final_path/seafile-server-$seafile_version
+    sudo -u $seafile_user $final_path/seafile-server-$seafile_version/seahub.sh python-env seahub/manage.py migrate_file_comment
+    popd
+
+    # Update seafile by script
+    sudo -u $seafile_user $expect_scripts_dir/upgrade_7.1.exp $final_path/seafile-server-$seafile_version
+
+    ynh_secure_remove --file="$final_path/seafile-server-7.0.5"
 
     # Enable memcached
     cat >> $final_path/conf/seahub_settings.py <<EOF
@@ -205,10 +207,6 @@ CACHES = {
     },
 }
 EOF
-
-    # Update seafile by script
-    sudo -u $seafile_user expect_scripts/upgrade_7.1.exp $final_path/seafile-server-$seafile_version
-
     # Fix seafile data link. Look like that the upgrade script of seafile don't always work correctly
     if [ -e $final_path/seafile-data ]; then
         old_data_dir_path="$final_path/seafile_data$(date '+%Y%m%d.%H%M%S')"
@@ -217,12 +215,12 @@ EOF
     ln -s $seafile_data $final_path/seafile-data
 ;&
 # "7.1."* )
-# 	sudo -u $seafile_user expect_scripts/upgrade_8.0.exp $final_path/seafile-server-$seafile_version
+# 	sudo -u $seafile_user $expect_scripts_dir/upgrade_8.0.exp $final_path/seafile-server-$seafile_version
 # 	echo "FILTER = permission=cn=$app.main,ou=permission,dc=yunohost,dc=org" | tee -a $final_path/conf/ccnet.conf
 # ;&
 esac
 
-sudo -u $seafile_user expect_scripts/minor-upgrade.exp $final_path/seafile-server-$seafile_version
+sudo -u $seafile_user $expect_scripts_dir/minor-upgrade.exp $final_path/seafile-server-$seafile_version
 
 ## Install webdav and logrotate if not installed
 if [[ $installed_version = "4.0."* ]] || [[ $installed_version = "4.1."* ]]
