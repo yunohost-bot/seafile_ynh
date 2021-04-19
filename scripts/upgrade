@@ -190,7 +190,7 @@ case $installed_version in
 "7.0"* )
     # Fix file comment
     pushd $final_path/seafile-server-$seafile_version
-    sudo -u $seafile_user $final_path/seafile-server-$seafile_version/seahub.sh python-env seahub/manage.py migrate_file_comment
+    sudo -u $seafile_user $final_path/seafile-server-$seafile_version/seahub.sh python-env python3 seahub/manage.py migrate_file_comment
     popd
 
     # Update seafile by script

@@ -8,4 +8,12 @@ spawn $seafile_dir/upgrade/upgrade_7.0_7.1.sh
 expect "to contiune"
 send "\r";
 
+sleep 10;
+
+send "\r";
+
+sleep 1;
+
+send "\r";
+
 interact
