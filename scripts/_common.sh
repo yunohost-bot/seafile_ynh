@@ -47,7 +47,7 @@ install_dependance() {
 mv_expect_scripts() {
     expect_scripts_dir=$(mktemp -d)
     cp expect_scripts/* $expect_scripts_dir
-    chmod u=rwX,o= -R $expect_scripts_dir
+    chmod u=rwx,o= -R $expect_scripts_dir
     chown $seafile_user -R $expect_scripts_dir
 }
 
