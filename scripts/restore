@@ -22,6 +22,7 @@ path_url=$(ynh_normalize_url_path --path_url $(ynh_app_setting_get --app $app --
 seafile_data=/home/yunohost.app/seafile-data
 db_pwd=$(ynh_app_setting_get --app $app --key mysqlpwd)
 final_path=$(ynh_app_setting_get --app $app --key final_path)
+seafile_version=$(ynh_app_upstream_version)
 seafile_user=$app
 architecture=$(ynh_detect_arch)
 

@@ -36,7 +36,7 @@ install_dependance() {
         libjpeg62-turbo-dev zlib1g-dev  # For building pillow
     ynh_add_swap 2000
     # We need to do that because we can have some issue about the permission access to the pip cache without this
-    set_permission
+    chown -R $seafile_user:$seafile_user $final_path
 
     # Note that we install imageio to force the dependance, without this imageio 2.8 is installed and it need python3.5
     sudo -u $seafile_user pip3 install --user --no-warn-script-location --upgrade future mysqlclient pymysql Pillow pylibmc captcha jinja2 sqlalchemy psd-tools django-pylibmc django-simple-captcha python3-ldap
@@ -53,7 +53,12 @@ mv_expect_scripts() {
 
 set_permission() {
     chown -R $seafile_user:$seafile_user $final_path
-    chmod -R o= $final_path
+    chmod -R g-wx,o= $final_path
+    setfacl -m user:www-data:rX $final_path
+    setfacl -m user:www-data:rX $final_path/seafile-server-$seafile_version
+    setfacl -m user:www-data:rX $final_path/seafile-server-latest/seahub
+    setfacl -R -m user:www-data:rX $final_path/seafile-server-latest/seahub/media
+
     # check that this directory exist because in some really old install the data could still be in the main seafile directory
     # We also check at the install time when data directory is not already initialised 
     if [ -e /home/yunohost.app/seafile-data ]; then
