@@ -214,10 +214,10 @@ EOF
     fi
     ln -s $seafile_data $final_path/seafile-data
 ;&
-# "7.1."* )
-# 	sudo -u $seafile_user $expect_scripts_dir/upgrade_8.0.exp $final_path/seafile-server-$seafile_version
-# 	echo "FILTER = permission=cn=$app.main,ou=permission,dc=yunohost,dc=org" | tee -a $final_path/conf/ccnet.conf
-# ;&
+"7.1."* )
+	sudo -u $seafile_user $expect_scripts_dir/upgrade_8.0.exp $final_path/seafile-server-$seafile_version
+	echo "FILTER = permission=cn=$app.main,ou=permission,dc=yunohost,dc=org" | tee -a $final_path/conf/ccnet.conf
+;&
 esac
 
 sudo -u $seafile_user $expect_scripts_dir/minor-upgrade.exp $final_path/seafile-server-$seafile_version
@@ -314,7 +314,7 @@ if ! ynh_permission_exists --permission=file_server; then
 else
     ynh_permission_url --permission=file_server --url=$domain/seafhttp --auth_header=false
     ynh_permission_update --permission=file_server --label="File server" --show_tile=false --protected=true
-    ynh_permission_url --permission=webdav --url=$domain/seafhttp --auth_header=false
+    ynh_permission_url --permission=webdav --url=$domain/seafdav --auth_header=false
     ynh_permission_update --permission=webdav --label="Webdav" --show_tile=false --protected=true
     ynh_permission_url --permission=media --url=/media --auth_header=true
     ynh_permission_update --permission=media --label="Media" --show_tile=false --protected=true

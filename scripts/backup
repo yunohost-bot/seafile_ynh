@@ -20,6 +20,7 @@ ynh_print_info --message="Loading installation settings..."
 domain=$(ynh_app_setting_get --app $app --key domain)
 db_pwd=$(ynh_app_setting_get --app $app --key mysqlpwd)
 final_path=$(ynh_app_setting_get --app $app --key final_path)
+seafile_version=$(ynh_app_upstream_version)
 seafile_user=$app
 
 if [[ ! "$(systemctl status seafile)" =~ "Active: inactive (dead)" ]] || [[ ! "$(systemctl status seahub)" =~ "Active: failed (Result: signal)" ]]; then
