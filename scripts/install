@@ -225,6 +225,6 @@ sleep 2
 
 # Add fail2ban
 ynh_script_progression --message="Configuring fail2ban..." --weight=10
-ynh_add_fail2ban_config --use_template --others_var 'final_path'
+ynh_add_fail2ban_config --use_template
 
 ynh_script_progression --message="Installation of $app completed" --last
