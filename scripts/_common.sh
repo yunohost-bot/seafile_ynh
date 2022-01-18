@@ -32,7 +32,6 @@ install_dependance() {
     ynh_install_app_dependencies python3 python3-setuptools python3-pip python3-requests python3-dev libmariadb-dev-compat libmariadb-dev \
         expect ffmpeg \
         memcached libmemcached-dev \
-        pycryptodome==3.12.0 cffi==1.14.0 \
         python3-scipy python3-matplotlib \
         libjpeg62-turbo-dev zlib1g-dev  # For building pillow
     ynh_add_swap 2000
@@ -40,7 +39,7 @@ install_dependance() {
     chown -R $seafile_user:$seafile_user $final_path
 
     # Note that we install imageio to force the dependance, without this imageio 2.8 is installed and it need python3.5
-    sudo -u $seafile_user pip3 install --user --no-warn-script-location --upgrade future mysqlclient pymysql Pillow pylibmc captcha jinja2 sqlalchemy psd-tools django-pylibmc django-simple-captcha python3-ldap
+    sudo -u $seafile_user pip3 install --user --no-warn-script-location --upgrade future mysqlclient pymysql Pillow pylibmc captcha jinja2 sqlalchemy psd-tools django-pylibmc django-simple-captcha python3-ldap pycryptodome==3.12.0 cffi==1.14.0
     # TODO add dependance when upgrade to seafile 8: django==2.2.*
     ynh_del_swap
 }
