@@ -67,7 +67,6 @@ ynh_app_setting_set --app $app --key admin --value $admin
 ynh_app_setting_set --app $app --key seahub_port --value $seahub_port
 ynh_app_setting_set --app $app --key fileserver_port --value $fileserver_port
 ynh_app_setting_set --app $app --key webdav_port --value $webdav_port
-ynh_app_setting_set --app $app --key is_public --value $is_public
 
 #=================================================
 # STANDARD MODIFICATIONS
