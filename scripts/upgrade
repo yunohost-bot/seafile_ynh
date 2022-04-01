@@ -27,7 +27,6 @@ seafile_user=$app
 seafile_data=/home/yunohost.app/seafile-data
 installed_version=${YNH_APP_CURRENT_VERSION/~ynh*/}
 seafile_version=$(ynh_app_upstream_version)
-architecture=$(ynh_detect_arch)
 
 if [ "$YNH_APP_CURRENT_VERSION" == '-' ]; then
     YNH_APP_CURRENT_VERSION="6.0.9~ynh0"
