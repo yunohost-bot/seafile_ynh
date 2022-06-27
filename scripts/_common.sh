@@ -10,21 +10,21 @@ app=$YNH_APP_INSTANCE_NAME
 
 install_source() {
     mkdir "$final_path/seafile-server-$seafile_version"
-    if [[ $architecture == "i386" ]]
+    if [ $YNH_ARCH == "i386" ] || [ $YNH_ARCH == "armel" ]
     then
         ynh_die --message "Error : this architecture is no longer supported by the upstream. Please create en issue here : https://github.com/YunoHost-Apps/seafile_ynh/issues to ask to discuss about a support of this architecture"
     fi
-    ynh_setup_source "$final_path/seafile-server-$seafile_version" "$architecture"
+    ynh_setup_source "$final_path/seafile-server-$seafile_version" "$YNH_ARCH"
 }
 
 install_source_7_0() {
     if ! [ -e $final_path/seafile-server-7.0.5 ]; then
         mkdir "$final_path/seafile-server-7.0.5"
-        if [[ $architecture == "i386" ]]
+        if [ $YNH_ARCH == "i386" ] || [ $YNH_ARCH == "armel" ]
         then
             ynh_die --message "Error : this architecture is no longer supported by the upstream. Please create en issue here : https://github.com/YunoHost-Apps/seafile_ynh/issues to ask to discuss about a support of this architecture"
         fi
-        ynh_setup_source "$final_path/seafile-server-7.0.5" "$architecture"_7_0
+        ynh_setup_source "$final_path/seafile-server-7.0.5" "$YNH_ARCH"_7_0
     fi
 }
 
@@ -39,7 +39,7 @@ install_dependance() {
     chown -R $seafile_user:$seafile_user $final_path
 
     # Note that we install imageio to force the dependance, without this imageio 2.8 is installed and it need python3.5
-    sudo -u $seafile_user pip3 install --user --no-warn-script-location --upgrade future mysqlclient pymysql Pillow pylibmc captcha jinja2 sqlalchemy psd-tools django-pylibmc django-simple-captcha python3-ldap
+    sudo -u $seafile_user pip3 install --user --no-warn-script-location --upgrade future mysqlclient pymysql Pillow pylibmc captcha jinja2 sqlalchemy psd-tools django-pylibmc django-simple-captcha python3-ldap pycryptodome==3.12.0 cffi==1.14.0
     # TODO add dependance when upgrade to seafile 8: django==2.2.*
     ynh_del_swap
 }

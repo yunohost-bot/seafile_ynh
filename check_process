@@ -20,6 +20,7 @@
             upgrade=1    from_commit=db11d890922564dfdcb7937a3a682957082fbb31
             upgrade=1    from_commit=67e0869de25f4f58710c3d30d5533356745ea676
             upgrade=1    from_commit=6786d9f65e60b2d2a96b9ea4c43897dde3a66199
+            upgrade=1    from_commit=e0dd33676b2ad3b0d730c082a5149a5fde1e67e4
 		    backup_restore=1
 		    multi_instance=0
 		    wrong_user=1
@@ -38,3 +39,5 @@
 		name=Before move main dir to opt - branch Old_version_for_CI_2
 	; commit=6786d9f65e60b2d2a96b9ea4c43897dde3a66199
 		name=The oldest installable version - branch Old_version_for_CI
+    ; commit=e0dd33676b2ad3b0d730c082a5149a5fde1e67e4
+        name=Version 8.x

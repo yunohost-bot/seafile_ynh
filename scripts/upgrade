@@ -27,7 +27,6 @@ seafile_user=$app
 seafile_data=/home/yunohost.app/seafile-data
 installed_version=${YNH_APP_CURRENT_VERSION/~ynh*/}
 seafile_version=$(ynh_app_upstream_version)
-architecture=$(ynh_detect_arch)
 
 if [ "$YNH_APP_CURRENT_VERSION" == '-' ]; then
     YNH_APP_CURRENT_VERSION="6.0.9~ynh0"
@@ -98,7 +97,6 @@ if [ $final_path == "/var/www/$app" ]; then
         ln -s /home/yunohost.app/seafile-data $final_path/
     fi
     ln -s $final_path/logs /var/log/seafile
-    set_permission
 fi
 
 ynh_script_progression --message="Upgrading source files..." --weight=6
@@ -217,6 +215,9 @@ EOF
 "7.1."* )
 	sudo -u $seafile_user $expect_scripts_dir/upgrade_8.0.exp $final_path/seafile-server-$seafile_version
 	echo "FILTER = permission=cn=$app.main,ou=permission,dc=yunohost,dc=org" | tee -a $final_path/conf/ccnet.conf
+;&
+"8.0."* )
+	sudo -u $seafile_user $expect_scripts_dir/upgrade_9.0.exp $final_path/seafile-server-$seafile_version
 ;&
 esac
 
