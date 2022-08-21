@@ -5,7 +5,7 @@
     "license": "AGPL-3.0,Apache-2.0,MIT,GPL-2.0",
     "url": "https://www.seafile.com",
     "upstream": {
-        "license": "free",
+        "license": "AGPL-3.0,Apache-2.0,MIT,GPL-2.0",
         "website": "https://www.seafile.com",
         "demo": "https://demo.seafile.com",
         "admindoc": "https://manual.seafile.com",
@@ -68,7 +68,7 @@
             {
                 "name": "is_public",
                 "type": "boolean",
-                "help": { 
+                "help": {
                     "en": "If it's not public, everybody which want to access to any page of seafile need to be authenticated on the SSO. On the public mode anybody can access to the authentication page. The shared link will be olso accessible by anybody who has this link.",
                     "fr": "Si n'est pas publique, n'importe qui veux accéder à n'importe quelle page de seafile doit être authentifié dans le SSO. Dans le mode publique n'importe qui peut accéder à la page d'authentification de seafile. Les liens partagé seront aussi accessible par n'import qui qui à ce liens."
                 },
