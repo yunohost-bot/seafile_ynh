@@ -34,7 +34,7 @@ install_dependance() {
         memcached libmemcached-dev \
         python3-scipy python3-matplotlib \
         libjpeg62-turbo-dev zlib1g-dev  # For building pillow
-    ynh_add_swap 2000
+    ynh_add_swap --size=2000
     # We need to do that because we can have some issue about the permission access to the pip cache without this
     chown -R $seafile_user:$seafile_user $final_path
 

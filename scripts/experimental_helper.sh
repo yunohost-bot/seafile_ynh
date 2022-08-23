@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Add swap
 #
 # usage: ynh_add_swap --size=SWAP in Mb
@@ -46,6 +48,12 @@ ynh_add_swap () {
 	# If there's enough space for a swap, and no existing swap here
 	if [ $swap_size -ne 0 ] && [ ! -e /swap_$app ]
 	then
+		# Create file
+		truncate -s 0 /swap_$app
+
+		# set the No_COW attribute on the swapfile with chattr
+		chattr +C /swap_$app
+
 		# Preallocate space for the swap file, fallocate may sometime not be used, use dd instead in this case
 		if ! fallocate -l ${swap_size}K /swap_$app
 		then
@@ -68,7 +76,7 @@ ynh_del_swap () {
 		# Clean the fstab
 		sed -i "/#Swap added by $app/d" /etc/fstab
 		# Desactive the swap file
-		swapoff /swap_$app || true
+		swapoff /swap_$app
 		# And remove it
 		rm /swap_$app
 	fi
@@ -89,4 +97,3 @@ ynh_is_main_device_a_sd_card () {
 		return 1
 	fi
 }
-
