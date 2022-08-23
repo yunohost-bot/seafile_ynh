@@ -52,7 +52,7 @@ ynh_add_swap () {
 		truncate -s 0 /swap_$app
 
 		# set the No_COW attribute on the swapfile with chattr
-		chattr +C /swap_$app
+		chattr +C /swap_$app || true
 
 		# Preallocate space for the swap file, fallocate may sometime not be used, use dd instead in this case
 		if ! fallocate -l ${swap_size}K /swap_$app
@@ -76,7 +76,7 @@ ynh_del_swap () {
 		# Clean the fstab
 		sed -i "/#Swap added by $app/d" /etc/fstab
 		# Desactive the swap file
-		swapoff /swap_$app
+		swapoff /swap_$app || true
 		# And remove it
 		rm /swap_$app
 	fi
