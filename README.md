@@ -22,6 +22,7 @@ It's a Enterprise file sync and share platform with high reliability and perform
 
 **Shipped version:** 9.0.2~ynh1
 
+
 **Demo:** https://demo.seafile.com
 
 ## Screenshots
