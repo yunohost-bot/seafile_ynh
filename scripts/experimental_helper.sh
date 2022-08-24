@@ -63,7 +63,7 @@ ynh_add_swap () {
 		# Create the swap
 		mkswap /swap_$app
 		# And activate it
-		swapon /swap_$app
+		swapon /swap_$app || true
 		# Then add an entry in fstab to load this swap at each boot.
 		echo -e "/swap_$app swap swap defaults 0 0 #Swap added by $app" >> /etc/fstab
 	fi
