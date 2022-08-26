@@ -18,7 +18,7 @@
 		    setup_public=1
 		    upgrade=1
             upgrade=1    from_commit=0bfb04d996bf1973a3ab2b415bfaeed86cebdb06
-            upgrade=1    from_commit=e0dd33676b2ad3b0d730c082a5149a5fde1e67e4
+            upgrade=1    from_commit=cb4a6e0d02782c75cf270276667ea2f062afd051
 		    backup_restore=1
 		    multi_instance=0
 		    wrong_user=1
@@ -33,5 +33,5 @@
 ;;; Upgrade options
 	; commit=0bfb04d996bf1973a3ab2b415bfaeed86cebdb06
 		name=Version 7.1 Old version for CI 4 branch
-    ; commit=e0dd33676b2ad3b0d730c082a5149a5fde1e67e4
-        name=Version 8.x
+    ; commit=cb4a6e0d02782c75cf270276667ea2f062afd051
+        name=Version 8.x Old version for CI 5 branch
