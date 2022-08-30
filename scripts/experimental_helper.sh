@@ -1,28 +1,4 @@
-
-# Check the architecture
-#
-# example: architecture=$(ynh_detect_arch)
-#
-# usage: ynh_detect_arch
-#
-# Requires YunoHost version 2.2.4 or higher.
-
-ynh_detect_arch(){
-	local architecture
-	if [ -n "$(uname -m | grep arm64)" ] || [ -n "$(uname -m | grep aarch64)" ]; then
-		architecture="arm64"
-	elif [ -n "$(uname -m | grep 64)" ]; then
-		architecture="x86-64"
-	elif [ -n "$(uname -m | grep 86)" ]; then
-		architecture="i386"
-	elif [ -n "$(uname -m | grep arm)" ]; then
-		architecture="arm"
-	else
-		architecture="unknown"
-	fi
-	echo $architecture
-}
-
+#!/bin/bash
 
 # Add swap
 #
@@ -72,6 +48,12 @@ ynh_add_swap () {
 	# If there's enough space for a swap, and no existing swap here
 	if [ $swap_size -ne 0 ] && [ ! -e /swap_$app ]
 	then
+		# Create file
+		truncate -s 0 /swap_$app
+
+		# set the No_COW attribute on the swapfile with chattr
+		chattr +C /swap_$app || true
+
 		# Preallocate space for the swap file, fallocate may sometime not be used, use dd instead in this case
 		if ! fallocate -l ${swap_size}K /swap_$app
 		then
@@ -81,7 +63,7 @@ ynh_add_swap () {
 		# Create the swap
 		mkswap /swap_$app
 		# And activate it
-		swapon /swap_$app
+		swapon /swap_$app || true
 		# Then add an entry in fstab to load this swap at each boot.
 		echo -e "/swap_$app swap swap defaults 0 0 #Swap added by $app" >> /etc/fstab
 	fi
@@ -115,4 +97,3 @@ ynh_is_main_device_a_sd_card () {
 		return 1
 	fi
 }
-
