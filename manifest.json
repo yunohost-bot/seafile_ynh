@@ -11,7 +11,7 @@
         "admindoc": "https://manual.seafile.com",
         "code": "https://github.com/haiwen/seafile-server"
     },
-    "version": "9.0.2~ynh1",
+    "version": "9.0.2~ynh2",
     "description": {
         "en": "Open Source Cloud Storage",
         "fr": "Stockage Cloud Open Source"
