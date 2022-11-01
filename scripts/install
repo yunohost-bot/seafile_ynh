@@ -102,7 +102,7 @@ ynh_script_progression --message="Configuring application..." --weight=3
 # Run install script
 mv_expect_scripts
 chmod +x $final_path/seafile-server-$seafile_version/setup-seafile-mysql.sh
-$expect_scripts_dir/install.exp "$final_path/seafile-server-$seafile_version" "$server_name" "$domain" "$fileserver_port" "$db_pwd"
+sudo -u $seafile_user $expect_scripts_dir/install.exp "$final_path/seafile-server-$seafile_version" "$server_name" "$domain" "$fileserver_port" "$db_pwd"
 
 sleep 3
 
