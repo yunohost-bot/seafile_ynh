@@ -56,9 +56,10 @@ set_permission() {
     chmod -R g-wx,o= $final_path
     setfacl -m user:www-data:rX $final_path
     setfacl -m user:www-data:rX $final_path/seafile-server-$seafile_version
-    setfacl -m user:www-data:rX $final_path/seafile-server-latest/seahub
-    setfacl -R -m user:www-data:rX $final_path/seafile-server-latest/seahub/media
-    setfacl -R -m user:www-data:rX $final_path/seahub-data
+    # At install time theses directory are not available
+    test -e $final_path/seafile-server-latest/seahub && setfacl -m user:www-data:rX $final_path/seafile-server-latest/seahub
+    test -e $final_path/seafile-server-latest/seahub/media && setfacl -R -m user:www-data:rX $final_path/seafile-server-latest/seahub/media
+    test -e $final_path/seahub-data && setfacl -R -m user:www-data:rX $final_path/seahub-data
 
     # check that this directory exist because in some really old install the data could still be in the main seafile directory
     # We also check at the install time when data directory is not already initialised
