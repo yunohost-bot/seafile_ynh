@@ -15,6 +15,11 @@ install_source() {
         ynh_die --message "Error : this architecture is no longer supported by the upstream. Please create en issue here : https://github.com/YunoHost-Apps/seafile_ynh/issues to ask to discuss about a support of this architecture"
     fi
     ynh_setup_source "$final_path/seafile-server-$seafile_version" "$YNH_ARCH"
+
+    # Drop some conflicting package cf: https://forum.seafile.com/t/seahub-fails-to-start-nameerror-name-mysql-is-not-defined/14566/3
+    ynh_secure_remove --file=$final_path/seafile-server-$seafile_version/seahub/thirdpart/MySQLdb
+    ynh_secure_remove --file=$final_path/seafile-server-$seafile_version/seahub/thirdpart/cffi
+    ynh_secure_remove --file=$final_path/seafile-server-$seafile_version/seahub/thirdpart/PIL
 }
 
 install_source_7_0() {
