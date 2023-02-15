@@ -15,6 +15,11 @@ install_source() {
         ynh_die --message "Error : this architecture is no longer supported by the upstream. Please create en issue here : https://github.com/YunoHost-Apps/seafile_ynh/issues to ask to discuss about a support of this architecture"
     fi
     ynh_setup_source "$final_path/seafile-server-$seafile_version" "$YNH_ARCH"
+
+    # Drop some conflicting package cf: https://forum.seafile.com/t/seahub-fails-to-start-nameerror-name-mysql-is-not-defined/14566/3
+    ynh_secure_remove --file=$final_path/seafile-server-$seafile_version/seahub/thirdpart/MySQLdb
+    ynh_secure_remove --file=$final_path/seafile-server-$seafile_version/seahub/thirdpart/cffi
+    ynh_secure_remove --file=$final_path/seafile-server-$seafile_version/seahub/thirdpart/PIL
 }
 
 install_source_7_0() {
@@ -56,9 +61,10 @@ set_permission() {
     chmod -R g-wx,o= $final_path
     setfacl -m user:www-data:rX $final_path
     setfacl -m user:www-data:rX $final_path/seafile-server-$seafile_version
-    setfacl -m user:www-data:rX $final_path/seafile-server-latest/seahub
-    setfacl -R -m user:www-data:rX $final_path/seafile-server-latest/seahub/media
-    setfacl -R -m user:www-data:rX $final_path/seahub-data
+    # At install time theses directory are not available
+    test -e $final_path/seafile-server-latest/seahub && setfacl -m user:www-data:rX $final_path/seafile-server-latest/seahub
+    test -e $final_path/seafile-server-latest/seahub/media && setfacl -R -m user:www-data:rX $final_path/seafile-server-latest/seahub/media
+    test -e $final_path/seahub-data && setfacl -R -m user:www-data:rX $final_path/seahub-data
 
     # check that this directory exist because in some really old install the data could still be in the main seafile directory
     # We also check at the install time when data directory is not already initialised
