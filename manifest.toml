@@ -1,0 +1,114 @@
+packaging_format = 2
+
+id = "seafile"
+name = "Seafile"
+description.en = "Open Source Cloud Storage"
+description.fr = "Stockage Cloud Open Source"
+
+version = "9.0.2~ynh2"
+
+maintainers = ["Josué Tille"]
+
+[upstream]
+license = "AGPL-3.0,Apache-2.0,MIT,GPL-2.0"
+website = "https://www.seafile.com"
+demo = "https://demo.seafile.com"
+admindoc = "https://manual.seafile.com"
+code = "https://github.com/haiwen/seafile-server"
+cpe = "cpe:2.3:a:seafile:seafile"
+
+[integration]
+yunohost = ">= 11.2.3"
+architectures = ["amd64", "arm64", "armhf"]
+multi_instance = false
+ldap = true
+sso = true
+disk = "1G"
+ram.build = "1G"
+ram.runtime = "500M"
+
+[install]
+    [install.domain]
+    # this is a generic question - ask strings are automatically handled by Yunohost's core
+    type = "domain"
+
+    [install.path]
+    # this is a generic question - ask strings are automatically handled by Yunohost's core
+    type = "path"
+    default = "/seafile"
+
+    [install.server_name]
+    ask.en = "Choose a name (3 - 15 letters or digits)"
+    ask.fr = "Choisissez un nom (3 - 15 letters or digits)"
+    type = "string"
+    example = "Seafile"
+    default = "Seafile"
+
+    [install.admin]
+    # this is a generic question - ask strings are automatically handled by Yunohost's core
+    type = "user"
+
+    [install.admin_password]
+    ask.en = "Enter a password for the administrator"
+    ask.fr = "Entrez un mot de passe pour l'administrateur"
+    type = "password"
+
+    [install.init_main_permission]
+    help.en = "If it's not public, everybody which want to access to any page of seafile need to be authenticated on the SSO. On the public mode anybody can access to the authentication page. The shared link will be olso accessible by anybody who has this link."
+    help.fr = "Si n'est pas publique, n'importe qui veux accéder à n'importe quelle page de seafile doit être authentifié dans le SSO. Dans le mode publique n'importe qui peut accéder à la page d'authentification de seafile. Les liens partagé seront aussi accessible par n'import qui qui à ce liens."
+    type = "group"
+    default = "visitors"
+
+[resources]
+    [resources.system_user]
+
+    [resources.install_dir]
+    dir = "/opt/yunohost/$app"
+    owner = "__APP__:rwX"
+    group = "__APP__:rX"
+    subdirs = ["installed", "logs"]
+
+    [resources.data_dir]
+    dir = "/home/yunohost.app/seafile-data"
+
+    [resources.permissions]
+    main.url = "/"
+
+    file_server.url = "__DOMAIN__/seafhttp"
+    file_server.label = "File server"
+    file_server.allowed = "visitors"
+    file_server.auth_header = false
+    file_server.protected = true
+
+    webdav.url = "__DOMAIN__/seafdav"
+    webdav.label = "Webdav"
+    webdav.allowed = "visitors"
+    webdav.auth_header = true
+    webdav.protected = true
+
+    media.url = "/media"
+    media.label = "Media"
+    media.allowed = "visitors"
+    media.auth_header = true
+    media.protected = true
+
+    [resources.ports]
+    seahub.default = 8000
+    fileserver.default = 8082
+    webdav.default = 8080
+
+    [resources.sources.main]
+    amd64.url = "https://s3.eu-central-1.amazonaws.com/download.seadrive.org/seafile-server_9.0.2_x86-64.tar.gz"
+    amd64.sha256 = "5adb3c800cd48de38b6e5d9b073e03ff375cfa30208a7291c481cdf1e1cf167b"
+    arm64.url = "https://github.com/haiwen/seafile-rpi/releases/download/v9.0.2/seafile-server-9.0.2-buster-arm64v8l.tar.gz"
+    arm64.sha256 = "0332a57364f92eaefe0109e5a65f8e3a3b909c3805b9113431d4bde2a962d78c"
+    armhf.url = "https://github.com/haiwen/seafile-rpi/releases/download/v9.0.2/seafile-server-9.0.2-buster-arm32v7l.tar.gz"
+    armhf.sha256 = "2aa42caa1420842435ee8a386fb9f3244a0d286a4c1f829a97cba49b41b274df"
+
+    [resources.apt]
+    packages = """
+        python3 python3-setuptools python3-pip python3-requests python3-dev libmariadb-dev-compat libmariadb-dev \
+        expect ffmpeg \
+        memcached libmemcached-dev \
+        python3-scipy python3-matplotlib \
+        libjpeg62-turbo-dev zlib1g-dev libffi-dev"""
