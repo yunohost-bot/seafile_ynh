@@ -39,7 +39,7 @@ install_dependance() {
     chown -R $seafile_user:$seafile_user $final_path
 
     # Note that we install imageio to force the dependance, without this imageio 2.8 is installed and it need python3.5
-    sudo -u $seafile_user pip3 install --user --no-warn-script-location --upgrade future mysqlclient pymysql Pillow pylibmc captcha jinja2 sqlalchemy psd-tools django-pylibmc django-simple-captcha python3-ldap
+    sudo -u $seafile_user pip3 install --user --no-warn-script-location --upgrade future mysqlclient pymysql 'Pillow<10.0.0' pylibmc captcha jinja2 sqlalchemy psd-tools django-pylibmc django-simple-captcha python3-ldap
     # TODO add dependance when upgrade to seafile 8: django==2.2.*
     ynh_del_swap
 }
@@ -60,7 +60,7 @@ set_permission() {
     setfacl -R -m user:www-data:rX $final_path/seafile-server-latest/seahub/media
 
     # check that this directory exist because in some really old install the data could still be in the main seafile directory
-    # We also check at the install time when data directory is not already initialised 
+    # We also check at the install time when data directory is not already initialised
     if [ -e /home/yunohost.app/seafile-data ]; then
         chown -R $seafile_user:$seafile_user /home/yunohost.app/seafile-data
         chmod -R o= /home/yunohost.app/seafile-data
