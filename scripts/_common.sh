@@ -39,7 +39,7 @@ install_dependance() {
     # We need to do that because we can have some issue about the permission access to the pip cache without this
     set_permission
     # Note that we install imageio to force the dependance, without this imageio 2.8 is installed and it need python3.5
-    sudo -u $seafile_user pip3 install --user --upgrade Pillow pylibmc captcha jinja2 sqlalchemy psd-tools \
+    sudo -u $seafile_user pip3 install --user --upgrade 'Pillow<10.0.0' pylibmc captcha jinja2 sqlalchemy psd-tools \
         django-pylibmc django-simple-captcha python3-ldap \
         pylibmc django-pylibmc # Memcached support
     ynh_del_swap
@@ -48,7 +48,7 @@ install_dependance() {
 set_permission() {
     chown -R $seafile_user:$seafile_user $final_path
     # check that this directory exist because in some really old install the data could still be in the main seafile directory
-    # We also check at the install time when data directory is not already initialised 
+    # We also check at the install time when data directory is not already initialised
     test -e /home/yunohost.app/seafile-data && chown -R $seafile_user:$seafile_user /home/yunohost.app/seafile-data
     # Well need to put this here because if test return false, set_permission also return false and the install fail
     true
