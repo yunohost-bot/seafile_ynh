@@ -5,7 +5,7 @@ name = "Seafile"
 description.en = "Open Source Cloud Storage"
 description.fr = "Stockage Cloud Open Source"
 
-version = "9.0.2~ynh2"
+version = "9.0.9~ynh1"
 
 maintainers = ["Josué Tille"]
 
@@ -61,9 +61,11 @@ ram.runtime = "500M"
 
 [resources]
     [resources.system_user]
+    allow_email = true
+    home = "/opt/yunohost/__APP__"
 
     [resources.install_dir]
-    dir = "/opt/yunohost/$app"
+    dir = "/opt/yunohost/__APP__"
     owner = "__APP__:rwX"
     group = "__APP__:rX"
     subdirs = ["installed", "logs"]
@@ -78,6 +80,7 @@ ram.runtime = "500M"
     file_server.label = "File server"
     file_server.allowed = "visitors"
     file_server.auth_header = false
+    file_server.show_tile = false
     file_server.protected = true
 
     webdav.url = "__DOMAIN__/seafdav"
@@ -85,12 +88,14 @@ ram.runtime = "500M"
     webdav.allowed = "visitors"
     webdav.auth_header = true
     webdav.protected = true
+    webdav.show_tile = false
 
     media.url = "/media"
     media.label = "Media"
     media.allowed = "visitors"
     media.auth_header = true
     media.protected = true
+    media.show_tile = false
 
     [resources.ports]
     seahub.default = 8000
@@ -98,17 +103,16 @@ ram.runtime = "500M"
     webdav.default = 8080
 
     [resources.sources.main]
-    amd64.url = "https://s3.eu-central-1.amazonaws.com/download.seadrive.org/seafile-server_9.0.2_x86-64.tar.gz"
-    amd64.sha256 = "5adb3c800cd48de38b6e5d9b073e03ff375cfa30208a7291c481cdf1e1cf167b"
-    arm64.url = "https://github.com/haiwen/seafile-rpi/releases/download/v9.0.2/seafile-server-9.0.2-buster-arm64v8l.tar.gz"
-    arm64.sha256 = "0332a57364f92eaefe0109e5a65f8e3a3b909c3805b9113431d4bde2a962d78c"
-    armhf.url = "https://github.com/haiwen/seafile-rpi/releases/download/v9.0.2/seafile-server-9.0.2-buster-arm32v7l.tar.gz"
-    armhf.sha256 = "2aa42caa1420842435ee8a386fb9f3244a0d286a4c1f829a97cba49b41b274df"
+    amd64.url = "https://s3.eu-central-1.amazonaws.com/download.seadrive.org/seafile-server_9.0.9_x86-64.tar.gz"
+    amd64.sha256 = "db76bb33572ad0a6860470e907bed4ed780aa17d9e022226d99448a7f9e4ba74"
+    arm64.url = "https://github.com/haiwen/seafile-rpi/releases/download/v9.0.9/seafile-server-9.0.9-bullseye-arm64v8l.tar.gz"
+    arm64.sha256 = "c58f5d6b741dec240be9d75d6e617102b7adbfeba98cbd866732822bf9ca10b7"
+    armhf.url = "https://github.com/haiwen/seafile-rpi/releases/download/v9.0.9/seafile-server-9.0.9-bullseye-arm32v7l.tar.gz"
+    armhf.sha256 = "171fcf08b726d452e1c4cd22dadb9f8f5cf6848424ebc1e04cde5be34ef3d7f6"
 
     [resources.apt]
-    packages = """
-        python3 python3-setuptools python3-pip python3-requests python3-dev libmariadb-dev-compat libmariadb-dev \
-        expect ffmpeg \
-        memcached libmemcached-dev \
-        python3-scipy python3-matplotlib \
-        libjpeg62-turbo-dev zlib1g-dev libffi-dev"""
+    packages = ["expect", "ffmpeg", "pkgconf",
+                "python3", "python3-setuptools", "python3-pip", "python3-requests", "python3-dev", "libmariadb-dev-compat", "libmariadb-dev",
+                "memcached", "libmemcached-dev",
+                "python3-scipy", "python3-matplotlib",
+                "libjpeg62-turbo-dev", "zlib1g-dev", "libffi-dev"]

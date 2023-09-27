@@ -11,55 +11,16 @@ source ./_common.sh
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
-# Stop script if errors
-#REMOVEME? ynh_abort_if_errors
-
-#REMOVEME? ynh_script_progression --message="Loading installation settings..."
-
-# Retrive arguments
-#REMOVEME? old_domain=$YNH_APP_OLD_DOMAIN
-domain=$YNH_APP_NEW_DOMAIN
-#REMOVEME? old_path=$(ynh_normalize_url_path --path $YNH_APP_OLD_PATH)
-path=$(ynh_normalize_url_path --path $YNH_APP_NEW_PATH)
-#REMOVEME? seahub_port=$(ynh_app_setting_get --app $app --key seahub_port)
-#REMOVEME? fileserver_port=$(ynh_app_setting_get --app $app --key fileserver_port)
-#REMOVEME? webdav_port=$(ynh_app_setting_get --app $app --key webdav_port)
-#REMOVEME? #REMOVEME? install_dir=$(ynh_app_setting_get --app $app --key install_dir)
-seafile_user=$app
-
-# Create special path with / at the end
-if [[ $old_path == '/' ]]
-then
-    old_path2=$old_path
-else
-    old_path2=$old_path'/'
-fi
-
-if [[ $path == '/' ]]
-then
-    path2=$path
-else
-    path2=$path'/'
-fi
-
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================
 
-#REMOVEME? ynh_script_progression --message="Updating nginx configuration..."
+ynh_script_progression --message="Updating NGINX web server configuration..." --weight=1
+ynh_change_url_nginx_config
 
-#REMOVEME? # Update nginx config
-if [ "$old_domain" != "$domain" ]
-then
-    # Delete file checksum for the old conf file location
-#REMOVEME?     ynh_delete_file_checksum --file "/etc/nginx/conf.d/$old_domain.d/$app.conf"
-
-#REMOVEME?     mv "/etc/nginx/conf.d/$old_domain.d/$app.conf" "/etc/nginx/conf.d/$domain.d/$app.conf"
-
-    # Store file checksum for the new config file location
-#REMOVEME?     ynh_store_file_checksum --file "/etc/nginx/conf.d/$domain.d/$app.conf"
-fi
-#REMOVEME? ynh_add_nginx_config 'seahub_port fileserver_port webdav_port'
+#=================================================
+# SPECIFIC MODIFICATIONS
+#=================================================
 
 ynh_script_progression --message="Stoping services..."
 
@@ -75,16 +36,13 @@ pkill -f seahub || true
 ynh_script_progression --message="Updating seafile configuration..."
 
 # Update Seafile Config
-ynh_replace_string --match_string "SERVICE_URL = https://$old_domain$old_path" --replace_string "SERVICE_URL = https://$domain$path" --target_file $install_dir/conf/ccnet.conf
+ynh_add_config --template=seahub_settings.py --destination=$install_dir/conf/seahub_settings.py
+ynh_add_config --template=ccnet.conf --destination=$install_dir/conf/ccnet.conf
+ynh_add_config --template=gunicorn.conf.py --destination=$install_dir/conf/gunicorn.conf.py
+ynh_add_config --template=seafdav.conf --destination=$install_dir/conf/seafdav.conf
 
-ynh_replace_string --match_string 'FILE_SERVER_ROOT = "https://'"$old_domain"'/seafhttp"' --replace_string 'FILE_SERVER_ROOT = "https://'"$domain"'/seafhttp"' --target_file $install_dir/conf/seahub_settings.py
-ynh_replace_string --match_string 'SITE_ROOT = "'"$old_path2"'"' --replace_string 'SITE_ROOT = "'"$path2"'"' --target_file $install_dir/conf/seahub_settings.py
-ynh_replace_string --match_string 'MEDIA_URL = "'"$old_path2"'media/"' --replace_string 'MEDIA_URL = "'"$path2"'media/"' --target_file $install_dir/conf/seahub_settings.py
-ynh_replace_string --match_string "LOGIN_URL = '${old_path2}accounts/login/'" --replace_string "LOGIN_URL = '${path2}accounts/login/'" --target_file $install_dir/conf/seahub_settings.py
-ynh_replace_string --match_string ' = "seafile@'"$old_domain"'"' --replace_string ' = "seafile@'"$domain"'"' --target_file $install_dir/conf/seahub_settings.py
-sed --in-place "s@ALLOWED_HOSTS = \['${old_domain}'\]@ALLOWED_HOSTS = \['${domain}'\]@g" $install_dir/conf/seahub_settings.py
-ynh_replace_string --match_string "REMOTE_USER_DOMAIN = '$old_domain'" --replace_string "REMOTE_USER_DOMAIN = '$domain'" --target_file $install_dir/conf/seahub_settings.py
-sed --in-place "s@REMOTE_USER_PROTECTED_PATH = \['$old_path', '$old_path/accounts/login'\]@REMOTE_USER_PROTECTED_PATH = \['$path', '$path/accounts/login'\]@g"  $install_dir/conf/seahub_settings.py
+# Clean url in config in DB
+clean_url_in_db_config
 
 # Avoid the current effect
 sleep 2

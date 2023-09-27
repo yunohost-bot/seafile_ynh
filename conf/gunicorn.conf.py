@@ -4,7 +4,7 @@ daemon = True
 workers = 5
 
 # default localhost:8000
-bind = "127.0.0.1:__SEAHUB_PORT__"
+bind = "127.0.0.1:__PORT_SEAHUB__"
 
 # Pid
 pids_dir = '__INSTALL_DIR__/pids'

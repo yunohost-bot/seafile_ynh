@@ -55,8 +55,6 @@ set_permission
 chmod u+x,o= $install_dir/seafile-server-$seafile_version/upgrade/upgrade_*.sh
 chmod u+x,o= $install_dir/seafile-server-$seafile_version/upgrade/minor-upgrade.sh
 
-# TODO !! retrive config from config file if not already set
-
 # do the upgrade    ( the ";&" syntax mean when it go in the first case which is true it do all the next case)
 case $installed_version in
 "4."* )
@@ -88,7 +86,6 @@ case $installed_version in
 ;&
 "7.1."* )
 	sudo -u $seafile_user $expect_scripts_dir/upgrade_8.0.exp $install_dir/seafile-server-$seafile_version
-	echo "FILTER = permission=cn=$app.main,ou=permission,dc=yunohost,dc=org" | tee -a $install_dir/conf/ccnet.conf
 ;&
 "8.0."* )
 	sudo -u $seafile_user $expect_scripts_dir/upgrade_9.0.exp $install_dir/seafile-server-$seafile_version
@@ -97,17 +94,18 @@ esac
 
 sudo -u $seafile_user $expect_scripts_dir/minor-upgrade.exp $install_dir/seafile-server-$seafile_version
 
+# Clean url in config in DB
+clean_url_in_db_config
+
 # Update seafile config files
 ynh_add_config --template=seahub_settings.py --destination=$install_dir/conf/seahub_settings.py
+ynh_add_config --template=seafile.conf --destination=$install_dir/conf/seafile.conf
 ynh_add_config --template=ccnet.conf --destination=$install_dir/conf/ccnet.conf
 ynh_add_config --template=gunicorn.conf.py --destination=$install_dir/conf/gunicorn.conf.py
 ynh_add_config --template=seafdav.conf --destination=$install_dir/conf/seafdav.conf
 
 # Fix local warning
 ynh_replace_string --match_string en_US.UTF-8 --replace_string ${LANG:-'en_US.UTF-8'} --target_file $install_dir/seafile-server-$seafile_version/seahub.sh
-
-# Update gunicorn config
-sed --in-place -r "s@bind = \"0\.0\.0\.0:[[:digit:]]+\"@bind = \"0.0.0.0:$seahub_port\"@g" $install_dir/conf/gunicorn.conf.py
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -143,11 +141,11 @@ yunohost service add seafile
 yunohost service add seahub
 
 # delete seafile cache
-ynh_secure_remove --file=/tmp/seahub_cache
 
 # restart seafile server
 ynh_script_progression --message="Starting seafile services..." --weight=3
 sleep 5
+ynh_systemd_action --service_name memcached.service -p "systemd"
 ynh_systemd_action --service_name seafile -l "spawned seaf-server, pid " -p /var/log/seafile/controller.log
 ynh_systemd_action --service_name seahub -l "Started Seafile hub." -p "systemd"
 sleep 2

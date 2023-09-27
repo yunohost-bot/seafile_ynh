@@ -48,18 +48,17 @@ ynh_script_progression --message="Configuring application..." --weight=3
 mv_expect_scripts
 chmod +x $install_dir/seafile-server-$seafile_version/setup-seafile-mysql.sh
 set_permission
-sudo -u $seafile_user $expect_scripts_dir/install.exp "$install_dir/seafile-server-$seafile_version" "$server_name" "$domain" "$fileserver_port" "$db_pwd"
+sudo -u $YNH_APP_ID $expect_scripts_dir/install.exp "$install_dir/seafile-server-$seafile_version" "$server_name" "$domain" "$port_fileserver" "$db_pwd"
 
 sleep 3
 
 # Retrive values from auto generated config file
-seahub_secret_key=$(grep -P 'SECRET_KEY\s*=\s*"[\w-]+"' $install_dir/conf/seahub_settings.py | cut -d'"' -f2)
-ccnet_id=$(grep -P 'ID\s*=\s*\w+$' $install_dir/conf/ccnet.conf | cut -d= -f2 | grep -o -P '\w+')
+seahub_secret_key=$(grep -P 'SECRET_KEY\s*=\s*".+"' $install_dir/conf/seahub_settings.py | cut -d'"' -f2)
 ynh_app_setting_set --app $app --key seahub_secret_key --value $seahub_secret_key
-ynh_app_setting_set --app $app --key ccnet_id --value $ccnet_id
 
 # Update seafile config files
 ynh_add_config --template=seahub_settings.py --destination=$install_dir/conf/seahub_settings.py
+ynh_add_config --template=seafile.conf --destination=$install_dir/conf/seafile.conf
 ynh_add_config --template=ccnet.conf --destination=$install_dir/conf/ccnet.conf
 ynh_add_config --template=gunicorn.conf.py --destination=$install_dir/conf/gunicorn.conf.py
 ynh_add_config --template=seafdav.conf --destination=$install_dir/conf/seafdav.conf
@@ -75,13 +74,27 @@ ynh_replace_special_string --match_string __PASSWORD__ --replace_string $admin_p
 ynh_replace_string --match_string en_US.UTF-8 --replace_string ${LANG:-'en_US.UTF-8'} --target_file $install_dir/seafile-server-$seafile_version/seahub.sh
 
 # Add Seafile Server to startup
-ynh_script_progression --message="Configuring a systemd service..." --weight=2
+ynh_script_progression --message="Configuring a systemd service..."
 ynh_add_systemd_config --service seafile --template seafile.service
 ynh_add_systemd_config --service seahub --template seahub.service
 
+# register yunohost service
+yunohost service add seafile
+yunohost service add seahub
+
 # Config nginx
-ynh_script_progression --message="Configuring nginx..." --weight=1
-ynh_add_nginx_config 'seahub_port fileserver_port webdav_port'
+ynh_script_progression --message="Configuring nginx..."
+ynh_add_nginx_config
+
+# Add logrotate
+ynh_script_progression --message="Configuring log rotation..."
+ynh_use_logrotate --logfile $install_dir/logs
+ln -s $install_dir/logs /var/log/seafile
+
+# Add fail2ban
+ynh_script_progression --message="Configuring fail2ban..."
+touch $install_dir/logs/seahub.log
+ynh_add_fail2ban_config --use_template
 
 #=================================================
 # GENERIC FINALIZATION
@@ -91,26 +104,13 @@ ynh_add_nginx_config 'seahub_port fileserver_port webdav_port'
 ynh_script_progression --message="Protecting directory..."
 set_permission
 
-# Add logrotate
-ynh_script_progression --message="Configuring log rotation..."
-ynh_use_logrotate --logfile $install_dir/logs
-ln -s $install_dir/logs /var/log/seafile
-
-# register yunohost service
-yunohost service add seafile
-yunohost service add seahub
-
-ynh_script_progression --message="Stoping services..." --weight=3
-
 # Start service
-ynh_script_progression --message="Starting seafile services..." --weight=3
+sleep 3
+
+ynh_script_progression --message="Starting seafile services..."
 ynh_systemd_action --service_name seafile -l "spawned seaf-server, pid " -p /var/log/seafile/controller.log
 sleep 2
 ynh_systemd_action --service_name seahub -l "Started Seafile hub." -p "systemd"
 sleep 2
-
-# Add fail2ban
-ynh_script_progression --message="Configuring fail2ban..." --weight=10
-ynh_add_fail2ban_config --use_template
 
 ynh_script_progression --message="Installation of $app completed" --last

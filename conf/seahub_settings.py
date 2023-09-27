@@ -14,6 +14,7 @@ DATABASES = {
     }
 }
 
+SERVICE_URL =  "https://__DOMAIN____PATH__"
 FILE_SERVER_ROOT = "https://__DOMAIN__/seafhttp"
 SITE_ROOT = "__PATH2__"
 SERVE_STATIC = False
@@ -22,11 +23,11 @@ COMPRESS_URL = MEDIA_URL
 STATIC_URL = MEDIA_URL + 'assets/'
 EMAIL_USE_TLS = False
 EMAIL_HOST = "localhost"
-EMAIL_HOST_USER = "seafile@__DOMAIN__"
+EMAIL_HOST_USER = "__APP__@__DOMAIN__"
 EMAIL_HOST_PASSWORD = ""
 EMAIL_PORT = "25"
-DEFAULT_FROM_EMAIL = "seafile@__DOMAIN__"
-SERVER_EMAIL = "seafile@__DOMAIN__"
+DEFAULT_FROM_EMAIL = "__APP__@__DOMAIN__"
+SERVER_EMAIL = "__APP__@__DOMAIN__"
 LOGIN_URL = '__PATH2__accounts/login/'
 ENABLE_WIKI = True
 ALLOWED_HOSTS = ['__DOMAIN__']
