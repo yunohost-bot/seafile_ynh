@@ -15,6 +15,14 @@ source /usr/share/yunohost/helpers
 installed_version=${YNH_APP_CURRENT_VERSION/~ynh*/}
 seafile_version=$(ynh_app_upstream_version)
 
+# Create special path with / at the end
+if [[ $path == '/' ]]
+then
+    path2=$path
+else
+    path2=$path"/"
+fi
+
 if [ "$YNH_APP_CURRENT_VERSION" == '-' ]; then
     ynh_die "Upgrade from this version not supported"
 fi
@@ -39,10 +47,21 @@ pkill -f seaf-server || true
 pkill -f ccnet-server || true
 pkill -f seahub || true
 
-# Migrate DB if needed
+# Migrate DB name if needed
 if mysqlshow | grep -q seafiledb; then
-    ynh_mysql_execute_as_root --sql 'DROP DATABASE `'$db_name'`'
-    ynh_mysql_execute_as_root --sql 'RENAME DATABASE `seafiledb TO "'$db_name'"'
+    mysqlconn="mysql -u root"
+    sql_mv_params=$($mysqlconn -N -e "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES \
+                            WHERE table_schema='seafiledb'")
+    for name in $sql_mv_params; do
+        $mysqlconn -e "RENAME TABLE seafiledb.$name to $db_name.$name";
+    done;
+    $mysqlconn -e "DROP DATABASE seafiledb"
+fi
+
+# Set missing settings
+if [ -z ${seahub_secret_key:-} ]; then
+    seahub_secret_key=$(grep -P 'SECRET_KEY\s*=\s*".+"' $install_dir/conf/seahub_settings.py | cut -d'"' -f2)
+    ynh_app_setting_set --app $app --key seahub_secret_key --value $seahub_secret_key
 fi
 
 ynh_script_progression --message="Upgrading source files..." --weight=6
