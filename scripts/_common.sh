@@ -15,7 +15,7 @@ install_dependance() {
     chmod u+rwX -R $install_dir
 
     # Note that we install imageio to force the dependance, without this imageio 2.8 is installed and it need python3.5
-    sudo -u $YNH_APP_ID pip3 install --user --no-warn-script-location --upgrade future mysqlclient PyMySQL 'Pillow<10.0.0' pylibmc captcha Jinja2 SQLAlchemy psd-tools django-pylibmc django-simple-captcha python3-ldap pycryptodome==3.12.0 cffi==1.14.0 lxml
+    sudo -u $YNH_APP_ID pip3 install --user --no-warn-script-location --upgrade future mysqlclient PyMySQL 'Pillow<10.0.0' pylibmc captcha Jinja2 'SQLAlchemy<2' psd-tools django-pylibmc django-simple-captcha python3-ldap pycryptodome==3.12.0 cffi==1.14.0 lxml
     ynh_del_swap
 }
 
