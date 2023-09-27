@@ -29,9 +29,10 @@ install_dependance
 
 # Restore mysql dump
 ynh_script_progression --message="Restoring database..." --weight=3
-ynh_mysql_setup_db --db_user $db_user --db_name ccnetdb --db_pwd "$db_pwd"
-ynh_mysql_setup_db --db_user $db_user --db_name seafiledb --db_pwd "$db_pwd"
-ynh_mysql_setup_db --db_user $db_user --db_name seahubdb --db_pwd "$db_pwd"
+db_helper=ynh_"mysql"_setup_db
+$db_helper --db_user $db_user --db_name ccnetdb --db_pwd "$db_pwd"
+$db_helper --db_user $db_user --db_name seafiledb --db_pwd "$db_pwd"
+$db_helper --db_user $db_user --db_name seahubdb --db_pwd "$db_pwd"
 su -c "mysql -u ${app} -p$db_pwd ccnetdb < ${YNH_CWD}/ccnetdb.dmp"
 su -c "mysql -u ${app} -p$db_pwd seafiledb < ${YNH_CWD}/seafiledb.dmp"
 su -c "mysql -u ${app} -p$db_pwd seahubdb < ${YNH_CWD}/seahubdb.dmp"

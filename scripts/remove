@@ -35,9 +35,10 @@ ynh_secure_remove --file=/opt/yunohost/$app
 
 # Remove databases
 ynh_script_progression --message="Removing databases..."
-ynh_mysql_remove_db --db_name ccnetdb --db_user seafile
-ynh_mysql_remove_db --db_name seafiledb --db_user seafile
-ynh_mysql_remove_db --db_name seahubdb --db_user seafile
+db_helper=ynh_"mysql"_remove_db
+$db_helper --db_name ccnetdb --db_user seafile
+$db_helper --db_name seafiledb --db_user seafile
+$db_helper --db_name seahubdb --db_user seafile
 
 # Remove systemd service
 ynh_script_progression --message="Removing systemd units..."

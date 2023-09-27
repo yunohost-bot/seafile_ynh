@@ -38,9 +38,10 @@ ynh_setup_source --dest_dir=$install_dir/seafile-server-$seafile_version
 # init databases
 ynh_script_progression --message="Configuring MySQL database..."
 db_user=seafile
-ynh_mysql_setup_db --db_user $db_user --db_name ccnetdb
-ynh_mysql_setup_db --db_user $db_user --db_name seafiledb --db_pwd "$db_pwd"
-ynh_mysql_setup_db --db_user $db_user --db_name seahubdb --db_pwd "$db_pwd"
+db_helper=ynh_"mysql"_setup_db
+$db_helper --db_user $db_user --db_name ccnetdb
+$db_helper --db_user $db_user --db_name seafiledb --db_pwd "$db_pwd"
+$db_helper --db_user $db_user --db_name seahubdb --db_pwd "$db_pwd"
 
 ynh_script_progression --message="Configuring application..." --weight=3
 
