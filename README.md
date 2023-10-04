@@ -41,7 +41,6 @@ It's a Enterprise file sync and share platform with high reliability and perform
 * Official app website: <https://www.seafile.com>
 * Official admin documentation: <https://manual.seafile.com>
 * Upstream app code repository: <https://github.com/haiwen/seafile-server>
-* YunoHost documentation for this app: <https://yunohost.org/app_seafile>
 * Report a bug: <https://github.com/YunoHost-Apps/seafile_ynh/issues>
 
 ## Developer info
