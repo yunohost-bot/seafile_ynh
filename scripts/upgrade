@@ -66,10 +66,11 @@ fi
 
 ynh_script_progression --message="Upgrading source files..." --weight=6
 
+# Download new version from sources
 ynh_script_progression --message="Installing sources files..." --weight=7
 ynh_setup_source --dest_dir=$install_dir/seafile-server-$seafile_version
 
-# Upgrade dependances
+ynh_script_progression --message="Installing python dependancies..."
 install_dependance
 
 ynh_script_progression --message="Configuring application..."
