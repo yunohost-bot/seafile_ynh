@@ -3,6 +3,7 @@
 #=================================================
 
 time_zone=$(cat /etc/timezone)
+python_version="$(python3 -V | cut -d' ' -f2 | cut -d. -f1-2)"
 
 #=================================================
 # DEFINE ALL COMMON FONCTIONS
@@ -10,13 +11,39 @@ time_zone=$(cat /etc/timezone)
 
 install_dependance() {
     ynh_add_swap --size=2000
-    # We need to do that because we can have some issue about the permission access to the pip cache without this
-    chown -R $YNH_APP_ID $install_dir
-    chmod u+rwX -R $install_dir
+
+    # Clean venv is it was on python3 with old version in case major upgrade of debian
+    if [ ! -e $install_dir/venv/bin/python3 ] || [ ! -e $install_dir/venv/lib/python$python_version ]; then
+        ynh_secure_remove --file=$install_dir/venv/bin
+        ynh_secure_remove --file=$install_dir/venv/lib
+        ynh_secure_remove --file=$install_dir/venv/lib64
+        ynh_secure_remove --file=$install_dir/venv/include
+        ynh_secure_remove --file=$install_dir/venv/share
+        ynh_secure_remove --file=$install_dir/venv/pyvenv.cfg
+    fi
+
+    # Create venv if it don't exist
+    test -e $install_dir/venv/bin/python3 || python3 -m venv $install_dir/venv
+
+    u_arg='u'
+    set +$u_arg;
+    source $install_dir/venv/bin/activate
+    set -$u_arg;
 
     # Note that we install imageio to force the dependance, without this imageio 2.8 is installed and it need python3.5
-    sudo -u $YNH_APP_ID pip3 install --user --no-warn-script-location --upgrade future mysqlclient PyMySQL 'Pillow<10.0.0' pylibmc captcha Jinja2 'SQLAlchemy<2' psd-tools django-pylibmc django-simple-captcha python3-ldap pycryptodome==3.12.0 cffi==1.14.0 lxml
+    pip3 install --upgrade future mysqlclient PyMySQL 'Pillow<10.0.0' pylibmc captcha Jinja2 'SQLAlchemy<2' psd-tools django-pylibmc django-simple-captcha python3-ldap pycryptodome==3.12.0 cffi==1.14.0 lxml
+
+    set +$u_arg;
+    deactivate
+    set -$u_arg;
     ynh_del_swap
+
+    # Create symbolic link to venv package on seahub
+    ls $install_dir/venv/lib/python$python_version/site-packages | while read f; do
+        if [ ! -e "$install_dir/seafile-server-$seafile_version/seahub/thirdpart/$f" ]; then
+            ln -s ../../../venv/lib/python$python_version/site-packages/$f $install_dir/seafile-server-$seafile_version/seahub/thirdpart/$f
+        fi
+    done
 }
 
 mv_expect_scripts() {
@@ -28,7 +55,7 @@ mv_expect_scripts() {
 
 set_permission() {
     chown -R $YNH_APP_ID:$YNH_APP_ID $install_dir
-    chmod -R u+rw,g-wx,o= $install_dir
+    chmod -R u+rwX,g-wx,o= $install_dir
     setfacl -m user:www-data:rX $install_dir
     setfacl -m user:www-data:rX $install_dir/seafile-server-$seafile_version
     # At install time theses directory are not available
@@ -36,7 +63,6 @@ set_permission() {
     test -e $install_dir/seafile-server-latest/seahub/media && setfacl -R -m user:www-data:rX $install_dir/seafile-server-latest/seahub/media
     test -e $install_dir/seahub-data && setfacl -R -m user:www-data:rX $install_dir/seahub-data
 
-    # check that this directory exist because in some really old install the data could still be in the main seafile directory
     # We also check at the install time when data directory is not already initialised
     if [ -e /home/yunohost.app/seafile-data ]; then
         chown -R $YNH_APP_ID /home/yunohost.app/seafile-data

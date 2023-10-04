@@ -24,9 +24,6 @@ seafile_version=$(ynh_app_upstream_version)
 ynh_script_progression --message="Restoring files..." --weight=10
 ynh_restore
 
-# Restore dependencies
-install_dependance
-
 # Restore mysql dump
 ynh_script_progression --message="Restoring database..." --weight=3
 db_helper=ynh_"mysql"_setup_db
