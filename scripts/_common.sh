@@ -31,7 +31,15 @@ install_dependance() {
     set -$u_arg;
 
     # Note that we install imageio to force the dependance, without this imageio 2.8 is installed and it need python3.5
-    pip3 install --upgrade future mysqlclient PyMySQL 'Pillow<10.0.0' pylibmc captcha Jinja2 'SQLAlchemy<2' psd-tools django-pylibmc django-simple-captcha python3-ldap pycryptodome==3.12.0 cffi==1.14.0 lxml
+    if [ $(lsb_release --codename --short) == "bookworm" ]; then
+        # Fix cffi installtion issue cf: https://github.com/haiwen/seahub/issues/5166
+        pip3 install --upgrade 'cffi==1.15.1'
+        sed -e "s|1.14.0|1.15.1|" -i $install_dir/seafile-server-$seafile_version/seahub/thirdpart/cffi/__init__.py
+    else
+        pip3 install --upgrade cffi==1.14.0
+    fi
+
+    pip3 install --upgrade future mysqlclient PyMySQL 'Pillow<10.0.0' pylibmc captcha Jinja2 'SQLAlchemy<2' psd-tools django-pylibmc django-simple-captcha python3-ldap pycryptodome==3.12.0 lxml
 
     set +$u_arg;
     deactivate
