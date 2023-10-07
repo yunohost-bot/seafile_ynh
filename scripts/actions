@@ -93,21 +93,21 @@ migrate_email_in_database() {
 
     # seafile DB
     # Note that when we do a migration from seafile v6 some time don't exist. So yes it's probably a bug on seafile side. But anyway just ignore this problem...
-    mysql_relpace_db seafiledb FolderUserPerm user || true
-    mysql_relpace_db seafiledb OrgGroupRepo owner || true
-    mysql_relpace_db seafiledb OrgRepo user || true
-    mysql_relpace_db seafiledb OrgSharedRepo from_email || true
-    mysql_relpace_db seafiledb OrgSharedRepo to_email || true
-    mysql_relpace_db seafiledb OrgUserQuota user
-    mysql_relpace_db seafiledb RepoGroup user_name
-    mysql_relpace_db seafiledb RepoInfo last_modifier
-    mysql_relpace_db seafiledb RepoOwner owner_id
-    mysql_relpace_db seafiledb RepoTrash owner_id
-    mysql_relpace_db seafiledb RepoUserToken email
-    mysql_relpace_db seafiledb SharedRepo from_email
-    mysql_relpace_db seafiledb SharedRepo to_email
-    mysql_relpace_db seafiledb UserQuota user
-    mysql_relpace_db seafiledb UserShareQuota user
+    mysql_relpace_db $db_name FolderUserPerm user || true
+    mysql_relpace_db $db_name OrgGroupRepo owner || true
+    mysql_relpace_db $db_name OrgRepo user || true
+    mysql_relpace_db $db_name OrgSharedRepo from_email || true
+    mysql_relpace_db $db_name OrgSharedRepo to_email || true
+    mysql_relpace_db $db_name OrgUserQuota user
+    mysql_relpace_db $db_name RepoGroup user_name
+    mysql_relpace_db $db_name RepoInfo last_modifier
+    mysql_relpace_db $db_name RepoOwner owner_id
+    mysql_relpace_db $db_name RepoTrash owner_id
+    mysql_relpace_db $db_name RepoUserToken email
+    mysql_relpace_db $db_name SharedRepo from_email
+    mysql_relpace_db $db_name SharedRepo to_email
+    mysql_relpace_db $db_name UserQuota user
+    mysql_relpace_db $db_name UserShareQuota user
 
     # seahub DB
     mysql_relpace_db seahubdb api2_token user
@@ -168,33 +168,10 @@ migrate_user() {
     start_seafile
 }
 
-migrate_all_user() {
-    stop_seafile
-    get_email_list_in_seafile
-
-    for user in $user_list; do
-        # Try to get the main email of the user in yunohost which has is the old email
-        user_main_email=$(yunohost tools shell -c "
-from yunohost.user import user_info
-info = user_info('$user'.split('@')[0])
-print(info['mail'])
-exit()
-")
-        if [ "$user" == "$user_main_email" ]; then
-            ynh_print_info --message "Nothing to do for user $user."
-        fi
-
-        migrate_email_in_database $user $user_main_email
-    done
-
-    start_seafile
-}
-
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================
 
 case $YNH_ACTION in
-    migrate_user_email_to_mail_email) migrate_all_user;;
     change_user_email) migrate_user;;
 esac

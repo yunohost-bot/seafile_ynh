@@ -1,13 +1,4 @@
-[{
-        "id": "migrate_user_email_to_mail_email",
-        "name": "Migrate all user email with seafile domain to main user email",
-        "command": "bash scripts/actions",
-        "user": "root",
-        "accepted_return_codes": [0],
-        "description": {
-            "en": "Hight level function : Change automatically the email for the user authentication to a the main user email. This function should be run when you migrate from seafile 6 to seafile 7.\nBy example 'toto@seafile-domain.tld' will be renamed to the new email 'toto-main-email@main-yunohost-domain.tld'. Note that when do you this change the email need to be also changed in all client !!"
-        }
-},
+[
 {
         "id": "change_user_email",
         "name": "Change user email of user",
