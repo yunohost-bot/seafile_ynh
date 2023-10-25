@@ -86,7 +86,7 @@ ram.runtime = "500M"
     webdav.url = "__DOMAIN__/seafdav"
     webdav.label = "Webdav"
     webdav.allowed = "visitors"
-    webdav.auth_header = true
+    webdav.auth_header = false
     webdav.protected = true
     webdav.show_tile = false
 
