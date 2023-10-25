@@ -38,8 +38,12 @@ install_dependance() {
     else
         pip3 install --upgrade cffi==1.14.0
     fi
-
-    pip3 install --upgrade future mysqlclient PyMySQL 'Pillow<10.0.0' pylibmc captcha Jinja2 'SQLAlchemy<2' psd-tools django-pylibmc django-simple-captcha python3-ldap pycryptodome==3.12.0 lxml
+    if [ -n "$(uname -m | grep x86_64)" ]; then
+        py_dependancy="django==3.2.* Pillow<10.0.0 pylibmc captcha jinja2 SQLAlchemy<2 django-pylibmc django-simple-captcha python3-ldap mysqlclient pycryptodome==3.12.0 lxml python3-ldap"
+    else
+        py_dependancy="lxml python3-ldap"
+    fi
+    pip3 install --upgrade --timeout=3600 $py_dependancy
 
     set +$u_arg;
     deactivate
