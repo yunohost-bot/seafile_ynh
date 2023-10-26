@@ -70,6 +70,9 @@ if [ $(readlink $install_dir/seafile-data) == '/home/yunohost.app/seafile-data' 
     ln -s $data_dir $install_dir/seafile-data
 fi
 if [ -e /home/yunohost.app/seafile-data ]; then
+    if [ -e $data_dir ]; then
+        mv $data_dir $data_dir$(date '+%Y%m%d.%H%M%S')
+    fi
     mv /home/yunohost.app/seafile-data $data_dir
 fi
 
