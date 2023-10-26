@@ -22,7 +22,7 @@ This app use now the core-only feature of the backup. To keep the integrity of t
 
 `yunohost backup create --app seafile`
 
-- Do a backup of your data with your specific strategy (could be with rsync, borg backup or just cp). The data is stored in `/home/yunohost.app/seafile-data`.
+- Do a backup of your data with your specific strategy (could be with rsync, borg backup or just cp). The data is stored in `/home/yunohost.app/seafile`.
 - Restart the seafile service with theses command:
 
 `systemctl start seafile.service seahub.service`

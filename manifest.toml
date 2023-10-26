@@ -71,7 +71,7 @@ ram.runtime = "500M"
     subdirs = ["installed", "logs"]
 
     [resources.data_dir]
-    dir = "/home/yunohost.app/seafile-data"
+    dir = "/home/yunohost.app/__APP__"
 
     [resources.permissions]
     main.url = "/"

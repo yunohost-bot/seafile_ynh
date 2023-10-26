@@ -75,11 +75,11 @@ set_permission() {
     test -e $install_dir/seafile-server-latest/seahub/media && setfacl -R -m user:www-data:rX $install_dir/seafile-server-latest/seahub/media
     test -e $install_dir/seahub-data && setfacl -R -m user:www-data:rX $install_dir/seahub-data
 
-    # We also check at the install time when data directory is not already initialised
-    if [ -e /home/yunohost.app/seafile-data ]; then
-        chown -R $YNH_APP_ID /home/yunohost.app/seafile-data
-        chmod -R o= /home/yunohost.app/seafile-data
-    fi
+    find $data_dir \(   \! -perm -o= \
+                     -o \! -user $YNH_APP_ID \
+                     -o \! -group $YNH_APP_ID \) \
+                   -exec chown $YNH_APP_ID:$YNH_APP_ID {} \; \
+                   -exec chmod o= {} \;
 }
 
 clean_url_in_db_config() {

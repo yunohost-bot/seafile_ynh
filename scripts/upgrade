@@ -64,6 +64,15 @@ if [ -z ${seahub_secret_key:-} ]; then
     ynh_app_setting_set --app $app --key seahub_secret_key --value $seahub_secret_key
 fi
 
+# Update data dir if needed
+if [ $(readlink $install_dir/seafile-data) == '/home/yunohost.app/seafile-data' ]; then
+    rm $install_dir/seafile-data
+    ln -s $data_dir $install_dir/seafile-data
+fi
+if [ -e /home/yunohost.app/seafile-data ]; then
+    mv /home/yunohost.app/seafile-data $data_dir
+fi
+
 ynh_script_progression --message="Upgrading source files..." --weight=6
 
 # Download new version from sources
