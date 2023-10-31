@@ -141,7 +141,7 @@ TODO
 * Site officiel de l’app : <https://www.seafile.com>
 * Documentation officielle de l’admin : <https://manual.seafile.com>
 * Dépôt de code officiel de l’app : <https://github.com/haiwen/seafile-server>
-* Documentation YunoHost pour cette app : <https://yunohost.org/app_seafile>
+* YunoHost Store: <https://apps.yunohost.org/app/seafile>
 * Signaler un bug : <https://github.com/YunoHost-Apps/seafile_ynh/issues>
 
 ## Informations pour les développeurs
