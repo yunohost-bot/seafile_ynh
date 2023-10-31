@@ -11,19 +11,10 @@ source ../settings/scripts/_common.sh
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
-# Stop script if errors
-ynh_abort_if_errors
-
 ynh_script_progression --message="Loading settings..."
 
 # Retrieve arguments
-domain=$(ynh_app_setting_get --app $app --key domain)
-path_url=$(ynh_normalize_url_path --path_url $(ynh_app_setting_get --app $app --key path))
-seafile_data=/home/yunohost.app/seafile-data
-db_pwd=$(ynh_app_setting_get --app $app --key mysqlpwd)
-final_path=$(ynh_app_setting_get --app $app --key final_path)
 seafile_version=$(ynh_app_upstream_version)
-seafile_user=$app
 
 #=================================================
 # STANDARD RESTORATION STEPS
@@ -33,22 +24,13 @@ seafile_user=$app
 ynh_script_progression --message="Restoring files..." --weight=10
 ynh_restore
 
-# Create user
-ynh_script_progression --message="Configuring system user..."
-ynh_system_user_create --username $seafile_user --home_dir $final_path
-
-# Restore dependencies
-ynh_script_progression --message="Reinstalling dependencies..." --weight=5
-install_dependance
-
 # Restore mysql dump
 ynh_script_progression --message="Restoring database..." --weight=3
-db_user=seafile
-ynh_mysql_setup_db --db_user $db_user --db_name ccnetdb --db_pwd "$db_pwd"
-ynh_mysql_setup_db --db_user $db_user --db_name seafiledb --db_pwd "$db_pwd"
-ynh_mysql_setup_db --db_user $db_user --db_name seahubdb --db_pwd "$db_pwd"
+db_helper=ynh_"mysql"_setup_db
+$db_helper --db_user $db_user --db_name ccnetdb --db_pwd "$db_pwd"
+$db_helper --db_user $db_user --db_name seahubdb --db_pwd "$db_pwd"
+su -c "mysql -u ${app} -p$db_pwd $db_name < ${YNH_CWD}/seafiledb.dmp"
 su -c "mysql -u ${app} -p$db_pwd ccnetdb < ${YNH_CWD}/ccnetdb.dmp"
-su -c "mysql -u ${app} -p$db_pwd seafiledb < ${YNH_CWD}/seafiledb.dmp"
 su -c "mysql -u ${app} -p$db_pwd seahubdb < ${YNH_CWD}/seahubdb.dmp"
 
 #=================================================
@@ -57,8 +39,8 @@ su -c "mysql -u ${app} -p$db_pwd seahubdb < ${YNH_CWD}/seahubdb.dmp"
 
 # Add logrotate
 ynh_script_progression --message="Configuring log rotation..."
-ynh_use_logrotate --logfile $final_path/logs
-ln -s $final_path/logs /var/log/seafile
+ynh_use_logrotate --logfile $install_dir/logs
+ln -s $install_dir/logs /var/log/seafile
 
 # Set all permissions
 ynh_script_progression --message="Protecting directory..."

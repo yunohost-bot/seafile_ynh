@@ -11,55 +11,56 @@ source ./_common.sh
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
-# Stop script if errors
-ynh_abort_if_errors
-
-ynh_script_progression --message="Loading installation settings..."
-
-# Retrive arguments
-old_domain=$YNH_APP_OLD_DOMAIN
-domain=$YNH_APP_NEW_DOMAIN
-old_path=$(ynh_normalize_url_path --path_url $YNH_APP_OLD_PATH)
-path_url=$(ynh_normalize_url_path --path_url $YNH_APP_NEW_PATH)
-seahub_port=$(ynh_app_setting_get --app $app --key seahub_port)
-fileserver_port=$(ynh_app_setting_get --app $app --key fileserver_port)
-webdav_port=$(ynh_app_setting_get --app $app --key webdav_port)
-final_path=$(ynh_app_setting_get --app $app --key final_path)
-seafile_user=$app
+path=$new_path
+domain=$new_domain
 
 # Create special path with / at the end
-if [[ $old_path == '/' ]]
+if [[ $path == '/' ]]
 then
-    old_path2=$old_path
+    path2=$path
 else
-    old_path2=$old_path'/'
+    path2=$path"/"
 fi
 
-if [[ $path_url == '/' ]]
-then
-    path_url2=$path_url
-else
-    path_url2=$path_url'/'
-fi
+# Patch helper
+
+ynh_change_url_nginx_config() {
+    local old_nginx_conf_path=/etc/nginx/conf.d/$old_domain.d/$app.conf
+    local new_nginx_conf_path=/etc/nginx/conf.d/$new_domain.d/$app.conf
+
+    # Change the domain for NGINX
+    if [ $change_domain -eq 1 ]
+    then
+        ynh_delete_file_checksum --file="$old_nginx_conf_path"
+        mv "$old_nginx_conf_path" "$new_nginx_conf_path"
+        ynh_store_file_checksum --file="$new_nginx_conf_path"
+    fi
+
+    # Change the path in the NGINX config file
+    if [ $change_path -eq 1 ]
+    then
+        # Make a backup of the original NGINX config file if modified
+        ynh_backup_if_checksum_is_different --file="$new_nginx_conf_path"
+        # Set global variables for NGINX helper
+        path="$new_path"
+        path_url="$new_path"
+        # Create a dedicated NGINX config
+        ynh_add_nginx_config
+    fi
+
+    ynh_systemd_action --service_name=nginx --action=reload
+}
 
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================
 
-ynh_script_progression --message="Updating nginx configuration..."
+ynh_script_progression --message="Updating NGINX web server configuration..." --weight=1
+ynh_change_url_nginx_config
 
-# Update nginx config
-if [ "$old_domain" != "$domain" ]
-then
-    # Delete file checksum for the old conf file location
-    ynh_delete_file_checksum --file "/etc/nginx/conf.d/$old_domain.d/$app.conf"
-
-    mv "/etc/nginx/conf.d/$old_domain.d/$app.conf" "/etc/nginx/conf.d/$domain.d/$app.conf"
-
-    # Store file checksum for the new config file location
-    ynh_store_file_checksum --file "/etc/nginx/conf.d/$domain.d/$app.conf"
-fi
-ynh_add_nginx_config 'seahub_port fileserver_port webdav_port'
+#=================================================
+# SPECIFIC MODIFICATIONS
+#=================================================
 
 ynh_script_progression --message="Stoping services..."
 
@@ -75,16 +76,17 @@ pkill -f seahub || true
 ynh_script_progression --message="Updating seafile configuration..."
 
 # Update Seafile Config
-ynh_replace_string --match_string "SERVICE_URL = https://$old_domain$old_path" --replace_string "SERVICE_URL = https://$domain$path_url" --target_file $final_path/conf/ccnet.conf
+ynh_add_config --template=seahub_settings.py --destination=$install_dir/conf/seahub_settings.py
+ynh_add_config --template=ccnet.conf --destination=$install_dir/conf/ccnet.conf
+ynh_add_config --template=gunicorn.conf.py --destination=$install_dir/conf/gunicorn.conf.py
+ynh_add_config --template=seafdav.conf --destination=$install_dir/conf/seafdav.conf
 
-ynh_replace_string --match_string 'FILE_SERVER_ROOT = "https://'"$old_domain"'/seafhttp"' --replace_string 'FILE_SERVER_ROOT = "https://'"$domain"'/seafhttp"' --target_file $final_path/conf/seahub_settings.py
-ynh_replace_string --match_string 'SITE_ROOT = "'"$old_path2"'"' --replace_string 'SITE_ROOT = "'"$path_url2"'"' --target_file $final_path/conf/seahub_settings.py
-ynh_replace_string --match_string 'MEDIA_URL = "'"$old_path2"'media/"' --replace_string 'MEDIA_URL = "'"$path_url2"'media/"' --target_file $final_path/conf/seahub_settings.py
-ynh_replace_string --match_string "LOGIN_URL = '${old_path2}accounts/login/'" --replace_string "LOGIN_URL = '${path_url2}accounts/login/'" --target_file $final_path/conf/seahub_settings.py
-ynh_replace_string --match_string ' = "seafile@'"$old_domain"'"' --replace_string ' = "seafile@'"$domain"'"' --target_file $final_path/conf/seahub_settings.py
-sed --in-place "s@ALLOWED_HOSTS = \['${old_domain}'\]@ALLOWED_HOSTS = \['${domain}'\]@g" $final_path/conf/seahub_settings.py
-ynh_replace_string --match_string "REMOTE_USER_DOMAIN = '$old_domain'" --replace_string "REMOTE_USER_DOMAIN = '$domain'" --target_file $final_path/conf/seahub_settings.py
-sed --in-place "s@REMOTE_USER_PROTECTED_PATH = \['$old_path', '$old_path/accounts/login'\]@REMOTE_USER_PROTECTED_PATH = \['$path_url', '$path_url/accounts/login'\]@g"  $final_path/conf/seahub_settings.py
+# Update permissions
+ynh_permission_url --permission=file_server --url=$domain/seafhttp
+ynh_permission_url --permission=webdav --url=$domain/seafdav
+
+# Clean url in config in DB
+clean_url_in_db_config
 
 # Avoid the current effect
 sleep 2

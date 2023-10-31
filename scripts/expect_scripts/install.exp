@@ -5,7 +5,8 @@ set seafile_dir [lindex $argv 0]
 set server_name [lindex $argv 1]
 set domain [lindex $argv 2]
 set fileserver_port [lindex $argv 3]
-set db_pwd [lindex $argv 4]
+set db_name [lindex $argv 4]
+set db_pwd [lindex $argv 5]
 
 spawn $seafile_dir/setup-seafile-mysql.sh
 
@@ -40,7 +41,7 @@ expect "Enter the existing database name for ccnet:"
 send "ccnetdb\r";
 
 expect "Enter the existing database name for seafile:"
-send "seafiledb\r";
+send "$db_name\r";
 
 expect "Enter the existing database name for seahub:"
 send "seahubdb\r";
