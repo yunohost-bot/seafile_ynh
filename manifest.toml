@@ -5,7 +5,7 @@ name = "Seafile"
 description.en = "Open Source Cloud Storage"
 description.fr = "Stockage Cloud Open Source"
 
-version = "9.0.9~ynh1"
+version = "9.0.9~ynh2"
 
 maintainers = ["Josué Tille"]
 
