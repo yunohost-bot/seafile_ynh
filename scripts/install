@@ -45,12 +45,15 @@ $db_helper --db_user $db_user --db_name seahubdb --db_pwd "$db_pwd"
 ynh_script_progression --message="Configuring application..." --weight=3
 
 # Run install script
-mv_expect_scripts
-chmod +x $install_dir/seafile-server-$seafile_version/setup-seafile-mysql.sh
+expect_scripts_dir=$(mktemp -d)
+cp expect_scripts/install.exp $expect_scripts_dir
+chmod u=rwx,o= -R $expect_scripts_dir
+chown $YNH_APP_ID -R $expect_scripts_dir
+chmod u+x $install_dir/seafile-server-$seafile_version/setup-seafile-mysql.sh
 set_permission
 sudo -u $YNH_APP_ID $expect_scripts_dir/install.exp "$install_dir/seafile-server-$seafile_version" "$server_name" "$domain" "$port_fileserver" "$db_name" "$db_pwd"
 
-sleep 3
+sleep 5
 
 # Retrive values from auto generated config file
 seahub_secret_key=$(grep -P 'SECRET_KEY\s*=\s*".+"' $install_dir/conf/seahub_settings.py | cut -d'"' -f2)

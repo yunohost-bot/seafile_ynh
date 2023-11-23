@@ -89,10 +89,7 @@ install_dependance
 ynh_script_progression --message="Configuring application..."
 
 # permission to execute update script and expect helper
-mv_expect_scripts
 set_permission
-chmod u+x,o= $install_dir/seafile-server-$seafile_version/upgrade/upgrade_*.sh
-chmod u+x,o= $install_dir/seafile-server-$seafile_version/upgrade/minor-upgrade.sh
 
 # do the upgrade    ( the ";&" syntax mean when it go in the first case which is true it do all the next case)
 case $installed_version in
@@ -114,7 +111,8 @@ case $installed_version in
     popd
 
     # Update seafile by script
-    sudo -u $YNH_APP_ID $expect_scripts_dir/upgrade_7.1.exp $install_dir/seafile-server-$seafile_version
+    ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file=$install_dir/seafile-server-$seafile_version/upgrade/upgrade_7.0_7.1.sh
+    sudo -u $YNH_APP_ID bash $install_dir/seafile-server-$seafile_version/upgrade/upgrade_7.0_7.1.sh
 
     # Fix seafile data link. Look like that the upgrade script of seafile don't always work correctly
     if [ -e $install_dir/seafile-data ]; then
@@ -124,14 +122,17 @@ case $installed_version in
     ln -s $data_dir $install_dir/seafile-data
 ;&
 "7.1."* )
-	sudo -u $YNH_APP_ID $expect_scripts_dir/upgrade_8.0.exp $install_dir/seafile-server-$seafile_version
+    ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file=$install_dir/seafile-server-$seafile_version/upgrade/upgrade_8.0_9.0.sh
+    sudo -u $YNH_APP_ID bash $install_dir/seafile-server-$seafile_version/upgrade/upgrade_8.0_9.0.sh
 ;&
 "8.0."* )
-	sudo -u $YNH_APP_ID $expect_scripts_dir/upgrade_9.0.exp $install_dir/seafile-server-$seafile_version
+    ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file=$install_dir/seafile-server-$seafile_version/upgrade/upgrade_7.1_8.0.sh
+    sudo -u $YNH_APP_ID bash $install_dir/seafile-server-$seafile_version/upgrade/upgrade_7.1_8.0.sh
 ;&
 esac
 
-sudo -u $YNH_APP_ID $expect_scripts_dir/minor-upgrade.exp $install_dir/seafile-server-$seafile_version
+ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file=$install_dir/seafile-server-$seafile_version/upgrade/minor-upgrade.sh
+sudo -u $YNH_APP_ID bash $install_dir/seafile-server-$seafile_version/upgrade/minor-upgrade.sh
 
 # Clean url in config in DB
 clean_url_in_db_config
