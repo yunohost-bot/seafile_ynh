@@ -28,6 +28,13 @@ fi
 ynh_script_progression --message="Creating base directory..."
 ln -s $data_dir $install_dir/seafile-data
 
+if [ -n "$(ls -A $data_dir)" ]; then
+    old_data_dir_path="${data_dir}_$(date '+%Y%m%d.%H%M%S')"
+    ynh_print_warn "Data directory was not empty. Data was moved to $old_data_dir_path"
+    mkdir -p $old_data_dir_path
+    mv -t "$old_data_dir_path" "$data_dir"/*
+fi
+
 # Download new version from sources
 ynh_script_progression --message="Installing sources files..." --weight=7
 ynh_setup_source --dest_dir=$install_dir/seafile-server-$seafile_version
