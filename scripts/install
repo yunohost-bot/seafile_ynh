@@ -53,17 +53,20 @@ ynh_script_progression --message="Configuring application..." --weight=3
 
 # Run install script
 set_permission
+ynh_replace_special_string --match_string 'seafile_config.seafile_dir = seafile_config.validate_seafile_dir(seafile_dir)' \
+                           --replace_string 'seafile_config.seafile_dir = seafile_dir' \
+                           --target_file $install_dir/seafile-server-$seafile_version/setup-seafile-mysql.py
 sudo -u $YNH_APP_ID bash $install_dir/seafile-server-$seafile_version/setup-seafile-mysql.sh auto \
     --server-name "$server_name" \
     --server-ip $domain \
     --fileserver-port $port_fileserver \
-    --use-existing-db 0 \
+    --use-existing-db 1 \
     --mysql-host localhost \
     --mysql-port 3306 \
     --mysql-user $db_user \
     --mysql-user-passwd "$db_pwd" \
     --seafile-db "$db_name" \
-    --seafile-db ccnetdb \
+    --ccnet-db ccnetdb \
     --seahub-db seahubdb
 
 # Retrive values from auto generated config file
