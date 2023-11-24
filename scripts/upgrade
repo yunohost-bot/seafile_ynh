@@ -57,7 +57,7 @@ if mysqlshow | grep -q seafiledb; then
     done;
     $mysqlconn -e "DROP DATABASE seafiledb"
     ynh_replace_string --match_string='db_name = seafiledb' --replace_string='db_name = seafile' --target_file=$install_dir/conf/seafile.conf
-    sed -i "s|password\s*=\s*.*^|password = $db_pwd" $install_dir/conf/seafile.conf
+    sed -i "s|password\s*=\s*.*^|password = $db_pwd|g" $install_dir/conf/seafile.conf
 fi
 
 # Set missing settings
