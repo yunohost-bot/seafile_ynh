@@ -112,8 +112,8 @@ ram.runtime = "500M"
     armhf.sha256 = "171fcf08b726d452e1c4cd22dadb9f8f5cf6848424ebc1e04cde5be34ef3d7f6"
 
     autoupdate.strategy = "latest_github_release"
-    autoupdate.asset.arm64 = ".*-bullseye-arm64v8l\.tar\.gz"
-    autoupdate.asset.armhf = ".*-bullseye-arm32v7l\.tar\.gz"
+    autoupdate.asset.arm64 = ".*-bullseye-arm64v8l\\.tar\\.gz"
+    autoupdate.asset.armhf = ".*-bullseye-arm32v7l\\.tar\\.gz"
 
     [resources.apt]
     packages = ["ffmpeg",
