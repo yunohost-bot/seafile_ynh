@@ -58,21 +58,14 @@ install_dependance() {
     done
 }
 
-mv_expect_scripts() {
-    expect_scripts_dir=$(mktemp -d)
-    cp expect_scripts/* $expect_scripts_dir
-    chmod u=rwx,o= -R $expect_scripts_dir
-    chown $YNH_APP_ID -R $expect_scripts_dir
-}
-
 set_permission() {
     chown -R $YNH_APP_ID:$YNH_APP_ID $install_dir
     chmod -R u+rwX,g-wx,o= $install_dir
     setfacl -m user:www-data:rX $install_dir
     setfacl -m user:www-data:rX $install_dir/seafile-server-$seafile_version
     # At install time theses directory are not available
-    test -e $install_dir/seafile-server-latest/seahub && setfacl -m user:www-data:rX $install_dir/seafile-server-latest/seahub
-    test -e $install_dir/seafile-server-latest/seahub/media && setfacl -R -m user:www-data:rX $install_dir/seafile-server-latest/seahub/media
+    test -e $install_dir/seafile-server-$seafile_version/seahub && setfacl -m user:www-data:rX $install_dir/seafile-server-$seafile_version/seahub
+    test -e $install_dir/seafile-server-$seafile_version/seahub/media && setfacl -R -m user:www-data:rX $install_dir/seafile-server-$seafile_version/seahub/media
     test -e $install_dir/seahub-data && setfacl -R -m user:www-data:rX $install_dir/seahub-data
 
     find $data_dir \(   \! -perm -o= \
