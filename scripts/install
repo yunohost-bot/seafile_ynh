@@ -111,7 +111,6 @@ ln -s $install_dir/logs /var/log/seafile
 
 # Add fail2ban
 ynh_script_progression --message="Configuring fail2ban..."
-touch $install_dir/logs/seahub.log
 ynh_add_fail2ban_config --use_template
 
 #=================================================
