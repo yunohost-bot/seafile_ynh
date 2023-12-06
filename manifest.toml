@@ -68,7 +68,6 @@ ram.runtime = "500M"
     dir = "/opt/yunohost/__APP__"
     owner = "__APP__:rwX"
     group = "__APP__:rX"
-    subdirs = ["installed", "logs"]
 
     [resources.data_dir]
     dir = "/home/yunohost.app/__APP__"
