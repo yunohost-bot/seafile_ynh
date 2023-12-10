@@ -27,6 +27,7 @@ fi
 
 ynh_script_progression --message="Creating base directory..."
 ln -s $data_dir $install_dir/seafile-data
+mkdir -p $install_dir/logs
 
 if [ -n "$(ls -A $data_dir)" ]; then
     old_data_dir_path="${data_dir}_$(date '+%Y%m%d.%H%M%S')"
@@ -110,7 +111,6 @@ ln -s $install_dir/logs /var/log/seafile
 
 # Add fail2ban
 ynh_script_progression --message="Configuring fail2ban..."
-touch $install_dir/logs/seahub.log
 ynh_add_fail2ban_config --use_template
 
 #=================================================
