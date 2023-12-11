@@ -18,7 +18,7 @@ code = "https://github.com/haiwen/seafile-server"
 cpe = "cpe:2.3:a:seafile:seafile"
 
 [integration]
-yunohost = ">= 11.2.3"
+yunohost = ">= 11.2.8"
 architectures = ["amd64", "arm64", "armhf"]
 multi_instance = false
 ldap = true
@@ -68,7 +68,6 @@ ram.runtime = "500M"
     dir = "/opt/yunohost/__APP__"
     owner = "__APP__:rwX"
     group = "__APP__:rX"
-    subdirs = ["installed", "logs"]
 
     [resources.data_dir]
     dir = "/home/yunohost.app/__APP__"
@@ -110,10 +109,6 @@ ram.runtime = "500M"
     arm64.sha256 = "c58f5d6b741dec240be9d75d6e617102b7adbfeba98cbd866732822bf9ca10b7"
     armhf.url = "https://github.com/haiwen/seafile-rpi/releases/download/v9.0.9/seafile-server-9.0.9-bullseye-arm32v7l.tar.gz"
     armhf.sha256 = "171fcf08b726d452e1c4cd22dadb9f8f5cf6848424ebc1e04cde5be34ef3d7f6"
-
-    autoupdate.strategy = "latest_github_release"
-    autoupdate.asset.arm64 = ".*-bullseye-arm64v8l\\.tar\\.gz"
-    autoupdate.asset.armhf = ".*-bullseye-arm32v7l\\.tar\\.gz"
 
     [resources.apt]
     packages = ["ffmpeg",
