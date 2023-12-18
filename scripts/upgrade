@@ -109,12 +109,12 @@ case $installed_version in
 "7.0"* )
     # Fix file comment
     pushd $install_dir/seafile-server-$seafile_version
-    sudo -u $YNH_APP_ID $install_dir/seafile-server-$seafile_version/seahub.sh python-env python3 seahub/manage.py migrate_file_comment
+    sudo -u $app $install_dir/seafile-server-$seafile_version/seahub.sh python-env python3 seahub/manage.py migrate_file_comment
     popd
 
     # Update seafile by script
     ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file=$install_dir/seafile-server-$seafile_version/upgrade/upgrade_7.0_7.1.sh
-    sudo -u $YNH_APP_ID bash $install_dir/seafile-server-$seafile_version/upgrade/upgrade_7.0_7.1.sh
+    sudo -u $app bash $install_dir/seafile-server-$seafile_version/upgrade/upgrade_7.0_7.1.sh
 
     # Fix seafile data link. Look like that the upgrade script of seafile don't always work correctly
     if [ -e $install_dir/seafile-data ]; then
@@ -125,16 +125,16 @@ case $installed_version in
 ;&
 "7.1."* )
     ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file=$install_dir/seafile-server-$seafile_version/upgrade/upgrade_8.0_9.0.sh
-    sudo -u $YNH_APP_ID bash $install_dir/seafile-server-$seafile_version/upgrade/upgrade_8.0_9.0.sh
+    sudo -u $app bash $install_dir/seafile-server-$seafile_version/upgrade/upgrade_8.0_9.0.sh
 ;&
 "8.0."* )
     ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file=$install_dir/seafile-server-$seafile_version/upgrade/upgrade_7.1_8.0.sh
-    sudo -u $YNH_APP_ID bash $install_dir/seafile-server-$seafile_version/upgrade/upgrade_7.1_8.0.sh
+    sudo -u $app bash $install_dir/seafile-server-$seafile_version/upgrade/upgrade_7.1_8.0.sh
 ;&
 esac
 
 ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file=$install_dir/seafile-server-$seafile_version/upgrade/minor-upgrade.sh
-sudo -u $YNH_APP_ID bash $install_dir/seafile-server-$seafile_version/upgrade/minor-upgrade.sh
+sudo -u $app bash $install_dir/seafile-server-$seafile_version/upgrade/minor-upgrade.sh
 
 # Clean url in config in DB
 clean_url_in_db_config

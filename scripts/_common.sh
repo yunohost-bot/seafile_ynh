@@ -59,7 +59,7 @@ install_dependance() {
 }
 
 set_permission() {
-    chown -R $YNH_APP_ID:$YNH_APP_ID $install_dir
+    chown -R $app:$app $install_dir
     chmod -R u+rwX,g-wx,o= $install_dir
     setfacl -m user:www-data:rX $install_dir
     setfacl -m user:www-data:rX $install_dir/seafile-server-$seafile_version
@@ -69,9 +69,9 @@ set_permission() {
     test -e $install_dir/seahub-data && setfacl -R -m user:www-data:rX $install_dir/seahub-data
 
     find $data_dir \(   \! -perm -o= \
-                     -o \! -user $YNH_APP_ID \
-                     -o \! -group $YNH_APP_ID \) \
-                   -exec chown $YNH_APP_ID:$YNH_APP_ID {} \; \
+                     -o \! -user $app \
+                     -o \! -group $app \) \
+                   -exec chown $app:$app {} \; \
                    -exec chmod o= {} \;
 }
 
