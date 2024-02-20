@@ -54,8 +54,8 @@ systemctl enable seahub --quiet
 
 # Add Seafile to YunoHost's monitored services
 ynh_script_progression --message="Register seafile service..."
-yunohost service add seafile
-yunohost service add seahub
+yunohost service add seafile --description 'Main service for seafile server.'
+yunohost service add seahub --description 'Seafile server web interface.'
 
 ynh_script_progression --message="Reloading services..."
 
