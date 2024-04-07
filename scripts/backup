@@ -11,10 +11,7 @@ source ../settings/scripts/_common.sh
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
-# retrieve useful param
-seafile_version=$(ynh_app_upstream_version)
-
-if [[ ! "$(systemctl status seafile)" =~ "Active: inactive (dead)" ]] || [[ ! "$(systemctl status seahub)" =~ "Active: failed (Result: signal)" ]]; then
+if systemctl is-active seafile --quiet || systemctl is-active seahub --quiet; then
     ynh_print_warn --message="It's hightly recommended to make your backup when the service is stopped. Please stop seafile service and seahub service with this command before to run the backup 'systemctl stop seafile.service seahub.service'"
 fi
 
