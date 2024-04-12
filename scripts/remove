@@ -11,6 +11,8 @@ source ./_common.sh
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
+seafile_version=$(ynh_app_upstream_version)
+
 #=================================================
 # STANDARD REMOVE
 #=================================================

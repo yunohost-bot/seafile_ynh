@@ -5,6 +5,14 @@
 time_zone=$(cat /etc/timezone)
 python_version="$(python3 -V | cut -d' ' -f2 | cut -d. -f1-2)"
 
+# Create special path with / at the end
+if [[ $path == '/' ]]
+then
+    path2="$path"
+else
+    path2="$path/"
+fi
+
 #=================================================
 # DEFINE ALL COMMON FONCTIONS
 #=================================================
