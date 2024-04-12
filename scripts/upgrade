@@ -12,9 +12,9 @@ source ./_common.sh
 source /usr/share/yunohost/helpers
 
 seafile_version=$(ynh_app_upstream_version)
-
-# Retrieve arguments
 installed_version=${YNH_APP_CURRENT_VERSION/~ynh*/}
+
+ensure_vars_set
 
 if [ "$YNH_APP_CURRENT_VERSION" == '-' ] || ynh_compare_current_package_version --comparison=le --version='7.0~ynh1'; then
     ynh_die "Upgrade from this version not supported"
@@ -100,7 +100,9 @@ ynh_script_progression --message="Upgrading source files..." --weight=6
 
 # Download new version from sources
 ynh_script_progression --message="Installing sources files..." --weight=7
-ynh_setup_source --dest_dir="$install_dir"/seafile-server-$seafile_version
+if [ "$YNH_APP_UPGRADE_TYPE" == UPGRADE_APP ]; then
+    install_source
+fi
 
 ynh_script_progression --message="Installing python dependancies..."
 install_dependance
@@ -125,46 +127,56 @@ case $installed_version in
 ;&
 "7.0"* )
     # Fix file comment
-    pushd $install_dir/seafile-server-$seafile_version
-    sudo -u $app $install_dir/seafile-server-$seafile_version/seahub.sh python-env python3 seahub/manage.py migrate_file_comment
+    pushd "$install_dir/seafile-server-$seafile_version"
+    sudo -u "$app" "$install_dir/seafile-server-$seafile_version/seahub.sh" python-env python3 seahub/manage.py migrate_file_comment
     popd
 
     # Update seafile by script
-    ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file=$install_dir/seafile-server-$seafile_version/upgrade/upgrade_7.0_7.1.sh
-    sudo -u $app bash $install_dir/seafile-server-$seafile_version/upgrade/upgrade_7.0_7.1.sh
+    ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file="$install_dir/seafile-server-$seafile_version/upgrade/upgrade_7.0_7.1.sh"
+    sudo -u "$app" bash "$install_dir/seafile-server-$seafile_version/upgrade/upgrade_7.0_7.1.sh"
 
     # Fix seafile data link. Look like that the upgrade script of seafile don't always work correctly
-    if [ -e $install_dir/seafile-data ]; then
+    if [ -e "$install_dir"/seafile-data ]; then
         old_data_dir_path="$install_dir/seafile-data$(date '+%Y%m%d.%H%M%S')"
         mv "$install_dir/seafile-data" "$old_data_dir_path"
     fi
-    ln -s $data_dir $install_dir/seafile-data
+    ln -s "$data_dir" "$install_dir"/seafile-data
 ;&
 "7.1."* )
-    ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file=$install_dir/seafile-server-$seafile_version/upgrade/upgrade_8.0_9.0.sh
-    sudo -u $app bash $install_dir/seafile-server-$seafile_version/upgrade/upgrade_8.0_9.0.sh
+    ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file="$install_dir/seafile-server-$seafile_version/upgrade/upgrade_8.0_9.0.sh"
+    sudo -u "$app" bash "$install_dir/seafile-server-$seafile_version/upgrade/upgrade_8.0_9.0.sh"
 ;&
 "8.0."* )
-    ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file=$install_dir/seafile-server-$seafile_version/upgrade/upgrade_7.1_8.0.sh
-    sudo -u $app bash $install_dir/seafile-server-$seafile_version/upgrade/upgrade_7.1_8.0.sh
+    ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file="$install_dir/seafile-server-$seafile_version/upgrade/upgrade_7.1_8.0.sh"
+    sudo -u "$app" bash "$install_dir/seafile-server-$seafile_version/upgrade/upgrade_7.1_8.0.sh"
+;&
+"9."* )
+    ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file="$install_dir/seafile-server-$seafile_version/upgrade/upgrade_8.0_9.0.sh"
+    sudo -u "$app" bash "$install_dir/seafile-server-$seafile_version/upgrade/upgrade_8.0_9.0.sh"
+;&
+"10."* )
+    ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file="$install_dir/seafile-server-$seafile_version/upgrade/upgrade_9.0_10.0.sh"
+    sudo -u "$app" bash "$install_dir/seafile-server-$seafile_version/upgrade/upgrade_9.0_10.0.sh"
+    sudo -u "$app" "$install_dir"/venv/bin/python "$install_dir/seafile-server-$seafile_version/migrate_ldapusers.py"
 ;&
 esac
 
-ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file=$install_dir/seafile-server-$seafile_version/upgrade/minor-upgrade.sh
-sudo -u $app bash $install_dir/seafile-server-$seafile_version/upgrade/minor-upgrade.sh
+ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file="$install_dir/seafile-server-$seafile_version/upgrade/minor-upgrade.sh"
+sudo -u "$app" bash "$install_dir/seafile-server-$seafile_version/upgrade/minor-upgrade.sh"
 
 # Clean url in config in DB
 clean_url_in_db_config
 
 # Update seafile config files
-ynh_add_config --template=seahub_settings.py --destination=$install_dir/conf/seahub_settings.py
+ynh_add_jinja_config --template=seahub_settings.py --destination=$install_dir/conf/seahub_settings.py
 ynh_add_config --template=seafile.conf --destination=$install_dir/conf/seafile.conf
 ynh_add_config --template=ccnet.conf --destination=$install_dir/conf/ccnet.conf
 ynh_add_config --template=gunicorn.conf.py --destination=$install_dir/conf/gunicorn.conf.py
 ynh_add_config --template=seafdav.conf --destination=$install_dir/conf/seafdav.conf
+ynh_add_config --template=seafevents.conf --destination="$install_dir"/conf/seafevents.conf
 
 # Fix local warning
-ynh_replace_string --match_string en_US.UTF-8 --replace_string ${LANG:-'en_US.UTF-8'} --target_file $install_dir/seafile-server-$seafile_version/seahub.sh
+ynh_replace_string --match_string en_US.UTF-8 --replace_string "${LANG:-'en_US.UTF-8'}" --target_file "$install_dir/seafile-server-$seafile_version/seahub.sh"
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -211,10 +223,10 @@ sleep 2
 
 # remove old version files
 ynh_script_progression --message="Cleaning system and updating settings..."
-ls $install_dir | grep "seafile-server-" | egrep -v "(${seafile_version//./\\.})|(latest)" | \
-while read f
+ls "$install_dir" | grep "seafile-server-" | grep -E -v "(${seafile_version//./\\.})|(latest)" | \
+while read -r f
 do
-    ynh_secure_remove --file=$install_dir/$f
+    ynh_secure_remove --file="$install_dir/$f"
 done
 
 ynh_script_progression --message="Upgrade of $app completed" --last

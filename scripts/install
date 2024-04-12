@@ -15,6 +15,8 @@ seafile_version=$(ynh_app_upstream_version)
 
 install_pkg_conf
 
+ensure_vars_set
+
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================
@@ -33,7 +35,7 @@ mkdir -p "$data_dir"/{seafile-data,seahub-data}
 
 # Download new version from sources
 ynh_script_progression --message="Installing sources files..." --weight=7
-ynh_setup_source --dest_dir=$install_dir/seafile-server-$seafile_version
+install_source
 
 ynh_script_progression --message="Installing python dependancies..."
 install_dependance
@@ -60,20 +62,21 @@ sudo -u "$app" bash "$install_dir/seafile-server-$seafile_version/setup-seafile-
     --mysql-port 3306 \
     --mysql-user "$db_user" \
     --mysql-user-passwd "$db_pwd" \
-    --seafile-db "$db_name" \
-    --ccnet-db ccnetdb \
-    --seahub-db seahubdb
+    -s "$db_name" \
+    -c ccnetdb \
+    -b seahubdb
 
 # Retrive values from auto generated config file
 seahub_secret_key=$(grep -P 'SECRET_KEY\s*=\s*".+"' "$install_dir"/conf/seahub_settings.py | cut -d'"' -f2)
 ynh_app_setting_set --app "$app" --key seahub_secret_key --value "$seahub_secret_key"
 
 # Update seafile config files
-ynh_add_config --template=seahub_settings.py --destination=$install_dir/conf/seahub_settings.py
-ynh_add_config --template=seafile.conf --destination=$install_dir/conf/seafile.conf
-ynh_add_config --template=ccnet.conf --destination=$install_dir/conf/ccnet.conf
-ynh_add_config --template=gunicorn.conf.py --destination=$install_dir/conf/gunicorn.conf.py
-ynh_add_config --template=seafdav.conf --destination=$install_dir/conf/seafdav.conf
+ynh_add_jinja_config --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
+ynh_add_config --template=seafile.conf --destination="$install_dir"/conf/seafile.conf
+ynh_add_config --template=ccnet.conf --destination="$install_dir"/conf/ccnet.conf
+ynh_add_config --template=gunicorn.conf.py --destination="$install_dir"/conf/gunicorn.conf.py
+ynh_add_config --template=seafdav.conf --destination="$install_dir"/conf/seafdav.conf
+ynh_add_config --template=seafevents.conf --destination="$install_dir"/conf/seafevents.conf
 
 # Configure admin info
 # It will be used the first start
@@ -100,7 +103,7 @@ ln -s "$data_dir"/seahub-data "$install_dir"/seahub-data
 ln -s /var/log/"$app" "$install_dir"/logs
 
 # Fix local warning
-ynh_replace_string --match_string en_US.UTF-8 --replace_string ${LANG:-'en_US.UTF-8'} --target_file $install_dir/seafile-server-$seafile_version/seahub.sh
+ynh_replace_string --match_string en_US.UTF-8 --replace_string ${LANG:-'en_US.UTF-8'} --target_file "$install_dir/seafile-server-$seafile_version/seahub.sh"
 
 # Add Seafile Server to startup
 ynh_script_progression --message="Configuring a systemd service..."
