@@ -17,6 +17,14 @@ fi
 # DEFINE ALL COMMON FONCTIONS
 #=================================================
 
+install_pkg_conf() {
+    # Install manually pkgconf
+    # WARNING don't move this to dependencies
+    # We install this manually because we have an issue between pkgconf and pkg-config.
+    # If pkg-config is already installed on the system we can't declare pkgconf as dependency as pkg-config need to be removed to install pkgconf (note that pkgconf replace pkg-config and both can't be installed)
+    ynh_apt install pkgconf
+}
+
 install_dependance() {
     ynh_add_swap --size=2000
 
