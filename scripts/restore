@@ -29,8 +29,8 @@ ynh_restore
 # Restore mysql dump
 ynh_script_progression --message="Restoring database..." --weight=3
 db_helper=ynh_"mysql"_setup_db
-$db_helper --db_user $db_user --db_name ccnetdb --db_pwd "$db_pwd"
-$db_helper --db_user $db_user --db_name seahubdb --db_pwd "$db_pwd"
+$db_helper --db_user "$db_user" --db_name ccnetdb --db_pwd "$db_pwd"
+$db_helper --db_user "$db_user" --db_name seahubdb --db_pwd "$db_pwd"
 su -c "mysql -u ${app} -p$db_pwd $db_name < ${YNH_CWD}/seafiledb.dmp"
 su -c "mysql -u ${app} -p$db_pwd ccnetdb < ${YNH_CWD}/ccnetdb.dmp"
 su -c "mysql -u ${app} -p$db_pwd seahubdb < ${YNH_CWD}/seahubdb.dmp"
@@ -41,8 +41,8 @@ su -c "mysql -u ${app} -p$db_pwd seahubdb < ${YNH_CWD}/seahubdb.dmp"
 
 # Add logrotate
 ynh_script_progression --message="Configuring log rotation..."
-ynh_use_logrotate --logfile $install_dir/logs
-ln -s $install_dir/logs /var/log/seafile
+mkdir -p /var/log/"$app"
+ynh_use_logrotate --logfile "$install_dir"/logs
 
 # Set all permissions
 ynh_script_progression --message="Protecting directory..."
