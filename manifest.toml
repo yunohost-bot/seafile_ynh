@@ -5,7 +5,7 @@ name = "Seafile"
 description.en = "Open Source Cloud Storage"
 description.fr = "Stockage Cloud Open Source"
 
-version = "11.0.6~ynh1"
+version = "11.0.8~ynh1"
 
 maintainers = ["Josué Tille"]
 
@@ -121,11 +121,11 @@ ram.runtime = "500M"
     extract = true
     prefetch = false
 
-    amd64.url = "seafileltd/seafile-mc:11.0.6"
-    amd64.sha256 = "be2599ce87ad47e5bf3fd4ce70b9d6a98290e0cffe9df5f45f6fac5d9ee3b8f8"
+    amd64.url = "seafileltd/seafile-mc:11.0.8"
+    amd64.sha256 = "91099e2822f5a053c13c90eba3b5ec50440d32c920fc7c7bd2cb35de709ac039"
 
-    arm64.url = "seafileltd/seafile-mc:11.0.6"
-    arm64.sha256 = "01452c02a5866a7e7ced4448ca4e26b7e01f2a5b0ba56da62446a00343a0e1df"
+    arm64.url = "seafileltd/seafile-mc:11.0.8"
+    arm64.sha256 = "035923b7982c2ccd5d8a9813948a670b70e3fefdb91ec76d33ba1280c9c14d40"
 
     [resources.apt]
     packages = ["python3", "python3-venv", "python3-setuptools", "python3-pip", "python3-dev",
