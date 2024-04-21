@@ -82,7 +82,7 @@ set_permission() {
     # At install time theses directory are not available
     test -e $install_dir/seafile-server-$seafile_version/seahub && setfacl -m user:www-data:rX $install_dir/seafile-server-$seafile_version/seahub
     test -e $install_dir/seafile-server-$seafile_version/seahub/media && setfacl -R -m user:www-data:rX $install_dir/seafile-server-$seafile_version/seahub/media
-    test -e $install_dir/seahub-data && setfacl -R -m user:www-data:rX $install_dir/seahub-data
+    test -e $install_dir/seahub-data && setfacl -R -m user:www-data:rX $data_dir/seahub-data
 
     find $data_dir \(   \! -perm -o= \
                      -o \! -user $app \
