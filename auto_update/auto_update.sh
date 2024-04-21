@@ -40,6 +40,11 @@ upgrade_app() {
     (
         set -eu
 
+        if [ "${app_prev_version%%.*}" != "${app_version%%.*}" ]; then
+            echo "Auto upgrade from this version not supported. Major upgrade must be manually managed and tested."
+            exit 1
+        fi
+
         local docker_request_res="$(curl -s 'https://hub.docker.com/v2/repositories/seafileltd/seafile-mc/tags' -H 'Content-Type: application/json' |
             jq -r '.results[]')"
         local docker_checksum_amd64="$(echo "$docker_request_res" |
@@ -47,13 +52,14 @@ upgrade_app() {
             cut -d: -f2)"
         local docker_checksum_arm64="$(echo "$docker_request_res" |
             jq -r 'select(.name == "'"$app_version"'") | .images[] | select(.architecture == "arm64") | .digest' |
-            cut -d: -f1)"
+            cut -d: -f2)"
 
         prev_sha256sum_amd64=$(get_from_manifest ".resources.sources.main.amd64.sha256")
         prev_sha256sum_arm64=$(get_from_manifest ".resources.sources.main.arm64.sha256")
 
         # Update manifest
         sed -r -i 's|version = "[[:alnum:].]{4,8}~ynh[[:alnum:].]{1,2}"|version = "'"${app_version}"'~ynh1"|' ../manifest.toml
+        sed -r -i 's|"seafileltd/seafile-mc:[[:alnum:].]{4,10}"|"seafileltd/seafile-mc:'"${app_version}"'"|' ../manifest.toml
         sed -r -i "s|$prev_sha256sum_amd64|$docker_checksum_amd64|" ../manifest.toml
         sed -r -i "s|$prev_sha256sum_arm64|$docker_checksum_arm64|" ../manifest.toml
 
@@ -63,7 +69,8 @@ upgrade_app() {
     return "${PIPESTATUS[0]}"
 }
 
-app_version=$(get_from_manifest ".version" |  cut -d'~' -f1)
+app_prev_version="$(get_from_manifest ".version" |  cut -d'~' -f1)"
+app_version="$app_prev_version"
 
 if check_app_version
 then
