@@ -33,6 +33,9 @@ ynh_backup --src_path /etc/systemd/system/seahub.service
 ynh_backup --src_path /etc/fail2ban/jail.d/"$app".conf
 ynh_backup --src_path /etc/fail2ban/filter.d/"$app".conf
 
+# Backup logs
+ynh_backup --src_path="/var/log/$app"
+
 # Backup mysql
 ynh_print_info --message="Backing up database"
 ynh_mysql_dump_db --database "$db_name" > "${YNH_CWD}"/seafiledb.dmp
