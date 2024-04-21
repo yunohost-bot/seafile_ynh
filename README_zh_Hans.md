@@ -1,42 +1,42 @@
 <!--
-Nota bene : ce README est automatiquement généré par <https://github.com/YunoHost/apps/tree/master/tools/readme_generator>
-Il NE doit PAS être modifié à la main.
+注意：此 README 由 <https://github.com/YunoHost/apps/tree/master/tools/readme_generator> 自动生成
+请勿手动编辑。
 -->
 
-# Seafile pour YunoHost
+# YunoHost 的 Seafile
 
-[![Niveau d’intégration](https://dash.yunohost.org/integration/seafile.svg)](https://dash.yunohost.org/appci/app/seafile) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/seafile.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/seafile.maintain.svg)
+[![集成程度](https://dash.yunohost.org/integration/seafile.svg)](https://dash.yunohost.org/appci/app/seafile) ![工作状态](https://ci-apps.yunohost.org/ci/badges/seafile.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/seafile.maintain.svg)
 
-[![Installer Seafile avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=seafile)
+[![使用 YunoHost 安装 Seafile](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=seafile)
 
-*[Lire le README dans d'autres langues.](./ALL_README.md)*
+*[阅读此 README 的其它语言版本。](./ALL_README.md)*
 
-> *Ce package vous permet d’installer Seafile rapidement et simplement sur un serveur YunoHost.*  
-> *Si vous n’avez pas YunoHost, consultez [ce guide](https://yunohost.org/install) pour savoir comment l’installer et en profiter.*
+> *通过此软件包，您可以在 YunoHost 服务器上快速、简单地安装 Seafile。*  
+> *如果您还没有 YunoHost，请参阅[指南](https://yunohost.org/install)了解如何安装它。*
 
-## Vue d’ensemble
+## 概况
 
 Seafile is an open Source Cloud Storage application.
 
 It's a Enterprise file sync and share platform with high reliability and performance. It's a file hosting platform with high reliability and performance. Put files on your own server. Sync and share files across different devices, or access all the files as a virtual disk.
 
 
-**Version incluse :** 9.0.2~ynh2
+**分发版本：** 9.0.2~ynh2
 
-**Démo :** <https://demo.seafile.com>
+**演示：** <https://demo.seafile.com>
 
-## Captures d’écran
+## 截图
 
-![Capture d’écran de Seafile](./doc/screenshots/mobile-ios-client.jpg)
-![Capture d’écran de Seafile](./doc/screenshots/drive-client.png)
-![Capture d’écran de Seafile](./doc/screenshots/file-locking.jpg)
-![Capture d’écran de Seafile](./doc/screenshots/access-logs.jpg)
-![Capture d’écran de Seafile](./doc/screenshots/file-history.png)
-![Capture d’écran de Seafile](./doc/screenshots/wiki_en.png)
-![Capture d’écran de Seafile](./doc/screenshots/sharing-dialog.png)
-![Capture d’écran de Seafile](./doc/screenshots/sync-client.jpg)
+![Seafile 的截图](./doc/screenshots/mobile-ios-client.jpg)
+![Seafile 的截图](./doc/screenshots/drive-client.png)
+![Seafile 的截图](./doc/screenshots/file-locking.jpg)
+![Seafile 的截图](./doc/screenshots/access-logs.jpg)
+![Seafile 的截图](./doc/screenshots/file-history.png)
+![Seafile 的截图](./doc/screenshots/wiki_en.png)
+![Seafile 的截图](./doc/screenshots/sharing-dialog.png)
+![Seafile 的截图](./doc/screenshots/sync-client.jpg)
 
-## Avertissements / informations importantes
+## 免责声明 / 重要信息
 
 ### Multi-users support
 
@@ -136,24 +136,24 @@ TODO
 
 - Find a way to fix the issue https://github.com/YunoHost-Apps/seafile_ynh/issues/5
 
-## Documentations et ressources
+## 文档与资源
 
-- Site officiel de l’app : <https://www.seafile.com>
-- Documentation officielle de l’admin : <https://manual.seafile.com>
-- Dépôt de code officiel de l’app : <https://github.com/haiwen/seafile-server>
-- YunoHost Store : <https://apps.yunohost.org/app/seafile>
-- Signaler un bug : <https://github.com/YunoHost-Apps/seafile_ynh/issues>
+- 官方应用网站： <https://www.seafile.com>
+- 官方管理文档： <https://manual.seafile.com>
+- 上游应用代码库： <https://github.com/haiwen/seafile-server>
+- YunoHost 商店： <https://apps.yunohost.org/app/seafile>
+- 报告 bug： <https://github.com/YunoHost-Apps/seafile_ynh/issues>
 
-## Informations pour les développeurs
+## 开发者信息
 
-Merci de faire vos pull request sur la [branche `testing`](https://github.com/YunoHost-Apps/seafile_ynh/tree/testing).
+请向 [`testing` 分支](https://github.com/YunoHost-Apps/seafile_ynh/tree/testing) 发送拉取请求。
 
-Pour essayer la branche `testing`, procédez comme suit :
+如要尝试 `testing` 分支，请这样操作：
 
 ```bash
 sudo yunohost app install https://github.com/YunoHost-Apps/seafile_ynh/tree/testing --debug
-ou
+或
 sudo yunohost app upgrade seafile -u https://github.com/YunoHost-Apps/seafile_ynh/tree/testing --debug
 ```
 
-**Plus d’infos sur le packaging d’applications :** <https://yunohost.org/packaging_apps>
+**有关应用打包的更多信息：** <https://yunohost.org/packaging_apps>

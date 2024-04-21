@@ -1,42 +1,42 @@
 <!--
-Nota bene : ce README est automatiquement généré par <https://github.com/YunoHost/apps/tree/master/tools/readme_generator>
-Il NE doit PAS être modifié à la main.
+Ohart ongi: README hau automatikoki sortu da <https://github.com/YunoHost/apps/tree/master/tools/readme_generator>ri esker
+EZ editatu eskuz.
 -->
 
-# Seafile pour YunoHost
+# Seafile YunoHost-erako
 
-[![Niveau d’intégration](https://dash.yunohost.org/integration/seafile.svg)](https://dash.yunohost.org/appci/app/seafile) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/seafile.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/seafile.maintain.svg)
+[![Integrazio maila](https://dash.yunohost.org/integration/seafile.svg)](https://dash.yunohost.org/appci/app/seafile) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/seafile.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/seafile.maintain.svg)
 
-[![Installer Seafile avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=seafile)
+[![Instalatu Seafile YunoHost-ekin](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=seafile)
 
-*[Lire le README dans d'autres langues.](./ALL_README.md)*
+*[Irakurri README hau beste hizkuntzatan.](./ALL_README.md)*
 
-> *Ce package vous permet d’installer Seafile rapidement et simplement sur un serveur YunoHost.*  
-> *Si vous n’avez pas YunoHost, consultez [ce guide](https://yunohost.org/install) pour savoir comment l’installer et en profiter.*
+> *Pakete honek Seafile YunoHost zerbitzari batean azkar eta zailtasunik gabe instalatzea ahalbidetzen dizu.*  
+> *YunoHost ez baduzu, kontsultatu [gida](https://yunohost.org/install) nola instalatu ikasteko.*
 
-## Vue d’ensemble
+## Aurreikuspena
 
 Seafile is an open Source Cloud Storage application.
 
 It's a Enterprise file sync and share platform with high reliability and performance. It's a file hosting platform with high reliability and performance. Put files on your own server. Sync and share files across different devices, or access all the files as a virtual disk.
 
 
-**Version incluse :** 9.0.2~ynh2
+**Paketatutako bertsioa:** 9.0.2~ynh2
 
-**Démo :** <https://demo.seafile.com>
+**Demoa:** <https://demo.seafile.com>
 
-## Captures d’écran
+## Pantaila-argazkiak
 
-![Capture d’écran de Seafile](./doc/screenshots/mobile-ios-client.jpg)
-![Capture d’écran de Seafile](./doc/screenshots/drive-client.png)
-![Capture d’écran de Seafile](./doc/screenshots/file-locking.jpg)
-![Capture d’écran de Seafile](./doc/screenshots/access-logs.jpg)
-![Capture d’écran de Seafile](./doc/screenshots/file-history.png)
-![Capture d’écran de Seafile](./doc/screenshots/wiki_en.png)
-![Capture d’écran de Seafile](./doc/screenshots/sharing-dialog.png)
-![Capture d’écran de Seafile](./doc/screenshots/sync-client.jpg)
+![Seafile(r)en pantaila-argazkia](./doc/screenshots/mobile-ios-client.jpg)
+![Seafile(r)en pantaila-argazkia](./doc/screenshots/drive-client.png)
+![Seafile(r)en pantaila-argazkia](./doc/screenshots/file-locking.jpg)
+![Seafile(r)en pantaila-argazkia](./doc/screenshots/access-logs.jpg)
+![Seafile(r)en pantaila-argazkia](./doc/screenshots/file-history.png)
+![Seafile(r)en pantaila-argazkia](./doc/screenshots/wiki_en.png)
+![Seafile(r)en pantaila-argazkia](./doc/screenshots/sharing-dialog.png)
+![Seafile(r)en pantaila-argazkia](./doc/screenshots/sync-client.jpg)
 
-## Avertissements / informations importantes
+## Ezespena / informazio garrantzitsua
 
 ### Multi-users support
 
@@ -136,24 +136,24 @@ TODO
 
 - Find a way to fix the issue https://github.com/YunoHost-Apps/seafile_ynh/issues/5
 
-## Documentations et ressources
+## Dokumentazioa eta baliabideak
 
-- Site officiel de l’app : <https://www.seafile.com>
-- Documentation officielle de l’admin : <https://manual.seafile.com>
-- Dépôt de code officiel de l’app : <https://github.com/haiwen/seafile-server>
-- YunoHost Store : <https://apps.yunohost.org/app/seafile>
-- Signaler un bug : <https://github.com/YunoHost-Apps/seafile_ynh/issues>
+- Aplikazioaren webgune ofiziala: <https://www.seafile.com>
+- Administratzaileen dokumentazio ofiziala: <https://manual.seafile.com>
+- Jatorrizko aplikazioaren kode-gordailua: <https://github.com/haiwen/seafile-server>
+- YunoHost Denda: <https://apps.yunohost.org/app/seafile>
+- Eman errore baten berri: <https://github.com/YunoHost-Apps/seafile_ynh/issues>
 
-## Informations pour les développeurs
+## Garatzaileentzako informazioa
 
-Merci de faire vos pull request sur la [branche `testing`](https://github.com/YunoHost-Apps/seafile_ynh/tree/testing).
+Bidali `pull request`a [`testing` abarrera](https://github.com/YunoHost-Apps/seafile_ynh/tree/testing).
 
-Pour essayer la branche `testing`, procédez comme suit :
+`testing` abarra probatzeko, ondorengoa egin:
 
 ```bash
 sudo yunohost app install https://github.com/YunoHost-Apps/seafile_ynh/tree/testing --debug
-ou
+edo
 sudo yunohost app upgrade seafile -u https://github.com/YunoHost-Apps/seafile_ynh/tree/testing --debug
 ```
 
-**Plus d’infos sur le packaging d’applications :** <https://yunohost.org/packaging_apps>
+**Informazio gehiago aplikazioaren paketatzeari buruz:** <https://yunohost.org/packaging_apps>

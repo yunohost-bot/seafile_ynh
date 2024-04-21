@@ -1,42 +1,42 @@
 <!--
-Nota bene : ce README est automatiquement généré par <https://github.com/YunoHost/apps/tree/master/tools/readme_generator>
-Il NE doit PAS être modifié à la main.
+NOTA: Este README foi creado automáticamente por <https://github.com/YunoHost/apps/tree/master/tools/readme_generator>
+NON debe editarse manualmente.
 -->
 
-# Seafile pour YunoHost
+# Seafile para YunoHost
 
-[![Niveau d’intégration](https://dash.yunohost.org/integration/seafile.svg)](https://dash.yunohost.org/appci/app/seafile) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/seafile.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/seafile.maintain.svg)
+[![Nivel de integración](https://dash.yunohost.org/integration/seafile.svg)](https://dash.yunohost.org/appci/app/seafile) ![Estado de funcionamento](https://ci-apps.yunohost.org/ci/badges/seafile.status.svg) ![Estado de mantemento](https://ci-apps.yunohost.org/ci/badges/seafile.maintain.svg)
 
-[![Installer Seafile avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=seafile)
+[![Instalar Seafile con YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=seafile)
 
-*[Lire le README dans d'autres langues.](./ALL_README.md)*
+*[Le este README en outros idiomas.](./ALL_README.md)*
 
-> *Ce package vous permet d’installer Seafile rapidement et simplement sur un serveur YunoHost.*  
-> *Si vous n’avez pas YunoHost, consultez [ce guide](https://yunohost.org/install) pour savoir comment l’installer et en profiter.*
+> *Este paquete permíteche instalar Seafile de xeito rápido e doado nun servidor YunoHost.*  
+> *Se non usas YunoHost, le a [documentación](https://yunohost.org/install) para saber como instalalo.*
 
-## Vue d’ensemble
+## Vista xeral
 
 Seafile is an open Source Cloud Storage application.
 
 It's a Enterprise file sync and share platform with high reliability and performance. It's a file hosting platform with high reliability and performance. Put files on your own server. Sync and share files across different devices, or access all the files as a virtual disk.
 
 
-**Version incluse :** 9.0.2~ynh2
+**Versión proporcionada:** 9.0.2~ynh2
 
-**Démo :** <https://demo.seafile.com>
+**Demo:** <https://demo.seafile.com>
 
-## Captures d’écran
+## Capturas de pantalla
 
-![Capture d’écran de Seafile](./doc/screenshots/mobile-ios-client.jpg)
-![Capture d’écran de Seafile](./doc/screenshots/drive-client.png)
-![Capture d’écran de Seafile](./doc/screenshots/file-locking.jpg)
-![Capture d’écran de Seafile](./doc/screenshots/access-logs.jpg)
-![Capture d’écran de Seafile](./doc/screenshots/file-history.png)
-![Capture d’écran de Seafile](./doc/screenshots/wiki_en.png)
-![Capture d’écran de Seafile](./doc/screenshots/sharing-dialog.png)
-![Capture d’écran de Seafile](./doc/screenshots/sync-client.jpg)
+![Captura de pantalla de Seafile](./doc/screenshots/mobile-ios-client.jpg)
+![Captura de pantalla de Seafile](./doc/screenshots/drive-client.png)
+![Captura de pantalla de Seafile](./doc/screenshots/file-locking.jpg)
+![Captura de pantalla de Seafile](./doc/screenshots/access-logs.jpg)
+![Captura de pantalla de Seafile](./doc/screenshots/file-history.png)
+![Captura de pantalla de Seafile](./doc/screenshots/wiki_en.png)
+![Captura de pantalla de Seafile](./doc/screenshots/sharing-dialog.png)
+![Captura de pantalla de Seafile](./doc/screenshots/sync-client.jpg)
 
-## Avertissements / informations importantes
+## Avisos / información importante
 
 ### Multi-users support
 
@@ -136,19 +136,19 @@ TODO
 
 - Find a way to fix the issue https://github.com/YunoHost-Apps/seafile_ynh/issues/5
 
-## Documentations et ressources
+## Documentación e recursos
 
-- Site officiel de l’app : <https://www.seafile.com>
-- Documentation officielle de l’admin : <https://manual.seafile.com>
-- Dépôt de code officiel de l’app : <https://github.com/haiwen/seafile-server>
-- YunoHost Store : <https://apps.yunohost.org/app/seafile>
-- Signaler un bug : <https://github.com/YunoHost-Apps/seafile_ynh/issues>
+- Web oficial da app: <https://www.seafile.com>
+- Documentación oficial para admin: <https://manual.seafile.com>
+- Repositorio de orixe do código: <https://github.com/haiwen/seafile-server>
+- Tenda YunoHost: <https://apps.yunohost.org/app/seafile>
+- Informar dun problema: <https://github.com/YunoHost-Apps/seafile_ynh/issues>
 
-## Informations pour les développeurs
+## Info de desenvolvemento
 
-Merci de faire vos pull request sur la [branche `testing`](https://github.com/YunoHost-Apps/seafile_ynh/tree/testing).
+Envía a túa colaboración á [rama `testing`](https://github.com/YunoHost-Apps/seafile_ynh/tree/testing).
 
-Pour essayer la branche `testing`, procédez comme suit :
+Para probar a rama `testing`, procede deste xeito:
 
 ```bash
 sudo yunohost app install https://github.com/YunoHost-Apps/seafile_ynh/tree/testing --debug
@@ -156,4 +156,4 @@ ou
 sudo yunohost app upgrade seafile -u https://github.com/YunoHost-Apps/seafile_ynh/tree/testing --debug
 ```
 
-**Plus d’infos sur le packaging d’applications :** <https://yunohost.org/packaging_apps>
+**Máis info sobre o empaquetado da app:** <https://yunohost.org/packaging_apps>
