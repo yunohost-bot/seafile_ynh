@@ -310,11 +310,7 @@ TIME_ZONE = "{{ time_zone }}"
 LANGUAGE_CODE = '{{ language }}'
 
 # Custom language code choice.
-LANGUAGES = (
-{%- for lang in lang_list.splitlines() -%}
-    ('{{ lang.split(',')[0]}}', '{{ lang.split(',')[1] }}'),
-{%- endfor %}
-)
+# LANGUAGES = ( )
 
 # Set this to your website/company's name. This is contained in email notifications and welcome message when user login for the first time.
 SITE_NAME = 'Seafile'

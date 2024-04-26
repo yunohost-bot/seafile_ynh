@@ -2,29 +2,22 @@
 # SET ALL CONSTANTS
 #=================================================
 
-time_zone=$(cat /etc/timezone)
-language=$(echo $LANG | cut -d_ -f1)
-python_version="$(python3 -V | cut -d' ' -f2 | cut -d. -f1-2)"
+readonly time_zone="$(cat /etc/timezone)"
+readonly python_version="$(python3 -V | cut -d' ' -f2 | cut -d. -f1-2)"
 
 # Create special path with / at the end
 if [[ $path == '/' ]]
 then
-    path2="$path"
+    readonly path2="$path"
 else
-    path2="$path/"
+    readonly path2="$path/"
 fi
 
-lang_map() {
-    while read -r item; do
-        if [ "$item" == en ]; then
-            lang_name=english
-        else
-            lang_name="$((grep -E "^[a-z]+[[:space:]]+${item}_" /usr/share/locale/locale.alias || echo "$item") | head -n1 | cut -f1)"
-        fi
-        echo "$item,$lang_name"
-    done
-}
-lang_list=$(grep -E '^[a-z]' /etc/locale.gen | cut -d_ -f1 | uniq | lang_map)
+if [ "${LANG:0:2}" == C. ]; then
+    readonly language=en
+else
+    readonly language="${LANG:0:2}"
+fi
 
 #=================================================
 # DEFINE ALL COMMON FONCTIONS
