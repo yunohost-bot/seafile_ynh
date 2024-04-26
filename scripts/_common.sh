@@ -6,7 +6,7 @@ readonly time_zone="$(cat /etc/timezone)"
 readonly python_version="$(python3 -V | cut -d' ' -f2 | cut -d. -f1-2)"
 
 # Create special path with / at the end
-if [[ $path == '/' ]]
+if [[ "$path" == '/' ]]
 then
     readonly path2="$path"
 else
@@ -33,20 +33,20 @@ install_pkg_conf() {
 
 install_dependance() {
     # Clean venv is it was on python3 with old version in case major upgrade of debian
-    if [ ! -e $install_dir/venv/bin/python3 ] || [ ! -e $install_dir/venv/lib/python$python_version ]; then
-        ynh_secure_remove --file=$install_dir/venv/bin
-        ynh_secure_remove --file=$install_dir/venv/lib
-        ynh_secure_remove --file=$install_dir/venv/lib64
-        ynh_secure_remove --file=$install_dir/venv/include
-        ynh_secure_remove --file=$install_dir/venv/share
-        ynh_secure_remove --file=$install_dir/venv/pyvenv.cfg
+    if [ ! -e "$install_dir"/venv/bin/python3 ] || [ ! -e "$install_dir/venv/lib/python$python_version" ]; then
+        ynh_secure_remove --file="$install_dir"/venv/bin
+        ynh_secure_remove --file="$install_dir"/venv/lib
+        ynh_secure_remove --file="$install_dir"/venv/lib64
+        ynh_secure_remove --file="$install_dir"/venv/include
+        ynh_secure_remove --file="$install_dir"/venv/share
+        ynh_secure_remove --file="$install_dir"/venv/pyvenv.cfg
     fi
 
     # Create venv if it don't exist
-    test -e $install_dir/venv/bin/python3 || python3 -m venv $install_dir/venv
+    test -e "$install_dir"/venv/bin/python3 || python3 -m venv "$install_dir"/venv
 
     py_dependancy="django==4.2.* future==0.18.* mysqlclient==2.1.* pymysql pillow==10.2.* pylibmc captcha==0.5.* markupsafe==2.0.1 jinja2 sqlalchemy==2.0.18 psd-tools django-pylibmc django_simple_captcha==0.6.* djangosaml2==1.5.* pysaml2==7.2.* pycryptodome==3.16.* cffi==1.15.1 lxml python-ldap==3.4.3"
-    $install_dir/venv/bin/pip3 install --upgrade --timeout=3600 $py_dependancy
+    "$install_dir"/venv/bin/pip3 install --upgrade --timeout=3600 $py_dependancy
 
     # Create symbolic link to venv package on seahub
     ls "$install_dir/venv/lib/python$python_version/site-packages" | while read -r f; do
@@ -69,10 +69,10 @@ set_permission() {
     setfacl -m user:www-data:rX "$install_dir"
     setfacl -m user:www-data:rX "$install_dir/seafile-server-$seafile_version"
     # At install time theses directory are not available
-    test -e $install_dir/seafile-server-$seafile_version/seahub && setfacl -m user:www-data:rX $install_dir/seafile-server-$seafile_version/seahub
-    test -e $install_dir/seafile-server-$seafile_version/seahub/media && setfacl -R -m user:www-data:rX $install_dir/seafile-server-$seafile_version/seahub/media
-    test -e $install_dir/seahub-data && setfacl -m user:www-data:rX $data_dir
-    test -e $install_dir/seahub-data && setfacl -R -m user:www-data:rX $data_dir/seahub-data
+    test -e "$install_dir/seafile-server-$seafile_version/seahub" && setfacl -m user:www-data:rX "$install_dir/seafile-server-$seafile_version/seahub"
+    test -e "$install_dir/seafile-server-$seafile_version/seahub/media" && setfacl -R -m user:www-data:rX "$install_dir/seafile-server-$seafile_version/seahub/media"
+    test -e "$install_dir"/seahub-data && setfacl -m user:www-data:rX "$data_dir"
+    test -e "$install_dir"/seahub-data && setfacl -R -m user:www-data:rX "$data_dir"/seahub-data
 
     find "$data_dir" \(   \! -perm -o= \
                      -o \! -user "$app" \

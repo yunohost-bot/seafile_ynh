@@ -11,14 +11,14 @@ source ./_common.sh
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
-seafile_version=$(ynh_app_upstream_version)
+seafile_version="$(ynh_app_upstream_version)"
 
 # Create special path with / at the end
 if [[ $path == '/' ]]
 then
-    path2=$path
+    path2="$path"
 else
-    path2=$path"/"
+    path2="$path/"
 fi
 
 #=================================================
@@ -46,14 +46,14 @@ pkill -f seahub || true
 ynh_script_progression --message="Updating seafile configuration..."
 
 # Update Seafile Config
-ynh_add_config --template=seahub_settings.py --destination=$install_dir/conf/seahub_settings.py
-ynh_add_config --template=ccnet.conf --destination=$install_dir/conf/ccnet.conf
-ynh_add_config --template=gunicorn.conf.py --destination=$install_dir/conf/gunicorn.conf.py
-ynh_add_config --template=seafdav.conf --destination=$install_dir/conf/seafdav.conf
+ynh_add_config --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
+ynh_add_config --template=ccnet.conf --destination="$install_dir"/conf/ccnet.conf
+ynh_add_config --template=gunicorn.conf.py --destination="$install_dir"/conf/gunicorn.conf.py
+ynh_add_config --template=seafdav.conf --destination="$install_dir"/conf/seafdav.conf
 
 # Update permissions
-ynh_permission_url --permission=file_server --url=$domain/seafhttp
-ynh_permission_url --permission=webdav --url=$domain/seafdav
+ynh_permission_url --permission=file_server --url="$domain"/seafhttp
+ynh_permission_url --permission=webdav --url="$domain"/seafdav
 
 # Clean url in config in DB
 clean_url_in_db_config

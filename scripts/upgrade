@@ -11,8 +11,8 @@ source ./_common.sh
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
-seafile_version=$(ynh_app_upstream_version)
-installed_version=${YNH_APP_CURRENT_VERSION/~ynh*/}
+seafile_version="$(ynh_app_upstream_version)"
+installed_version="${YNH_APP_CURRENT_VERSION/~ynh*/}"
 
 ensure_vars_set
 
@@ -47,7 +47,7 @@ fi
 
 # Set missing settings
 if [ -z "${seahub_secret_key:-}" ]; then
-    seahub_secret_key=$(grep -P 'SECRET_KEY\s*=\s*".+"' "$install_dir"/conf/seahub_settings.py | cut -d'"' -f2)
+    seahub_secret_key="$(grep -P 'SECRET_KEY\s*=\s*".+"' "$install_dir"/conf/seahub_settings.py | cut -d'"' -f2)"
     ynh_app_setting_set --app="$app" --key=seahub_secret_key --value="$seahub_secret_key"
 fi
 
@@ -113,7 +113,7 @@ ynh_script_progression --message="Configuring application..."
 set_permission
 
 # do the upgrade    ( the ";&" syntax mean when it go in the first case which is true it do all the next case)
-case $installed_version in
+case "$installed_version" in
 "4."* )
 	# Update seafile by script
 	ynh_die "Upgrade form the version 4.x was removed. Upgrade from this version won't be supported any more."
@@ -168,11 +168,11 @@ sudo -u "$app" bash "$install_dir/seafile-server-$seafile_version/upgrade/minor-
 clean_url_in_db_config
 
 # Update seafile config files
-ynh_add_jinja_config --template=seahub_settings.py --destination=$install_dir/conf/seahub_settings.py
-ynh_add_config --template=seafile.conf --destination=$install_dir/conf/seafile.conf
-ynh_add_config --template=ccnet.conf --destination=$install_dir/conf/ccnet.conf
-ynh_add_config --template=gunicorn.conf.py --destination=$install_dir/conf/gunicorn.conf.py
-ynh_add_config --template=seafdav.conf --destination=$install_dir/conf/seafdav.conf
+ynh_add_jinja_config --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
+ynh_add_config --template=seafile.conf --destination="$install_dir"/conf/seafile.conf
+ynh_add_config --template=ccnet.conf --destination="$install_dir"/conf/ccnet.conf
+ynh_add_config --template=gunicorn.conf.py --destination="$install_dir"/conf/gunicorn.conf.py
+ynh_add_config --template=seafdav.conf --destination="$install_dir"/conf/seafdav.conf
 ynh_add_config --template=seafevents.conf --destination="$install_dir"/conf/seafevents.conf
 
 # Fix local warning
@@ -223,10 +223,10 @@ sleep 2
 
 # remove old version files
 ynh_script_progression --message="Cleaning system and updating settings..."
-ls "$install_dir" | grep "seafile-server-" | grep -E -v "(${seafile_version//./\\.})|(latest)" | \
-while read -r f
-do
-    ynh_secure_remove --file="$install_dir/$f"
+for f in "$install_dir"/seafile-server-*;do
+    if [[ ! "$f" =~ ${seafile_version//./\\.}|latest ]]; then
+        ynh_secure_remove --file="$f"
+    fi
 done
 
 ynh_script_progression --message="Upgrade of $app completed" --last
