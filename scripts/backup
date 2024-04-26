@@ -23,23 +23,23 @@ fi
 
 # # Backup app files
 ynh_print_info --message="Backing up code..."
-ynh_backup --src_path "$install_dir"
+ynh_backup --src_path="$install_dir"
 ynh_print_info --message="Backing up user data..."
 ynh_backup --src_path="$data_dir" --dest_path="data" --is_big=1
 ynh_print_info --message="Backing up configuration..."
-ynh_backup --src_path "/etc/nginx/conf.d/$domain.d/${app}.conf"
-ynh_backup --src_path /etc/systemd/system/seafile.service
-ynh_backup --src_path /etc/systemd/system/seahub.service
-ynh_backup --src_path /etc/fail2ban/jail.d/"$app".conf
-ynh_backup --src_path /etc/fail2ban/filter.d/"$app".conf
+ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/${app}.conf"
+ynh_backup --src_path=/etc/systemd/system/seafile.service
+ynh_backup --src_path=/etc/systemd/system/seahub.service
+ynh_backup --src_path=/etc/fail2ban/jail.d/"$app".conf
+ynh_backup --src_path=/etc/fail2ban/filter.d/"$app".conf
 
 # Backup logs
 ynh_backup --src_path="/var/log/$app"
 
 # Backup mysql
 ynh_print_info --message="Backing up database"
-ynh_mysql_dump_db --database "$db_name" > "${YNH_CWD}"/seafiledb.dmp
-ynh_mysql_dump_db --database ccnetdb > "${YNH_CWD}"/ccnetdb.dmp
-ynh_mysql_dump_db --database seahubdb > "${YNH_CWD}"/seahubdb.dmp
+ynh_mysql_dump_db --database="$db_name" > "${YNH_CWD}"/seafiledb.dmp
+ynh_mysql_dump_db --database=ccnetdb > "${YNH_CWD}"/ccnetdb.dmp
+ynh_mysql_dump_db --database=seahubdb > "${YNH_CWD}"/seahubdb.dmp
 
 ynh_print_info --message="Backup script completed for $app. (YunoHost will then actually copy those files to the archive)."

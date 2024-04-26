@@ -24,8 +24,8 @@ install_pkg_conf
 
 ynh_script_progression --message="Stoping services..."
 
-ynh_systemd_action --service_name seafile --action stop
-ynh_systemd_action --service_name seahub --action stop
+ynh_systemd_action --service_name=seafile --action=stop
+ynh_systemd_action --service_name=seahub --action=stop
 sleep 5
 pkill -f seafile-controller || true
 pkill -f seaf-server || true
@@ -48,7 +48,7 @@ fi
 # Set missing settings
 if [ -z "${seahub_secret_key:-}" ]; then
     seahub_secret_key=$(grep -P 'SECRET_KEY\s*=\s*".+"' "$install_dir"/conf/seahub_settings.py | cut -d'"' -f2)
-    ynh_app_setting_set --app "$app" --key seahub_secret_key --value "$seahub_secret_key"
+    ynh_app_setting_set --app="$app" --key=seahub_secret_key --value="$seahub_secret_key"
 fi
 
 #
@@ -176,7 +176,7 @@ ynh_add_config --template=seafdav.conf --destination=$install_dir/conf/seafdav.c
 ynh_add_config --template=seafevents.conf --destination="$install_dir"/conf/seafevents.conf
 
 # Fix local warning
-ynh_replace_string --match_string en_US.UTF-8 --replace_string "${LANG:-'en_US.UTF-8'}" --target_file "$install_dir/seafile-server-$seafile_version/seahub.sh"
+ynh_replace_string --match_string=en_US.UTF-8 --replace_string="${LANG:-'en_US.UTF-8'}" --target_file="$install_dir/seafile-server-$seafile_version/seahub.sh"
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -187,8 +187,8 @@ ynh_add_nginx_config 'seahub_port fileserver_port webdav_port'
 
 # Add Seafile Server to startup
 ynh_script_progression --message="Updating systemd units..."
-ynh_add_systemd_config --service seafile --template seafile.service
-ynh_add_systemd_config --service seahub --template seahub.service
+ynh_add_systemd_config --service=seafile --template=seafile.service
+ynh_add_systemd_config --service=seahub --template=seahub.service
 
 #=================================================
 # GENERIC FINALIZATION
@@ -216,9 +216,9 @@ yunohost service add seahub --description 'Seafile server web interface.'
 # restart seafile server
 ynh_script_progression --message="Starting seafile services..." --weight=3
 sleep 5
-ynh_systemd_action --service_name memcached.service -p "systemd"
-ynh_systemd_action --service_name seafile -l "spawned seaf-server, pid " -p /var/log/seafile/controller.log
-ynh_systemd_action --service_name seahub -l "Started Seafile hub." -p "systemd"
+ynh_systemd_action --service_name=memcached.service -p "systemd"
+ynh_systemd_action --service_name=seafile -l "spawned seaf-server, pid " -p /var/log/seafile/controller.log
+ynh_systemd_action --service_name=seahub -l "Started Seafile hub." -p "systemd"
 sleep 2
 
 # remove old version files
