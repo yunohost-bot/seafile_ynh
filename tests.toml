@@ -20,6 +20,6 @@ test_format = 1.0
     # Commits to test upgrade from
     # -------------------------------
 
-    test_upgrade_from.70087df.name = "Pre packaging v2 (Old_version_for_CI_6 branch)"
+    test_upgrade_from.b4ba63d.name = "Pre packaging v2 (Old_version_for_CI_6 branch)"
     test_upgrade_from.d9381d3.name = "Version 7.1 (Old_version_for_CI_4 branch)"
     test_upgrade_from.fb2a04e.name = "Version 8.x (Old_version_for_CI_5 branch)"
