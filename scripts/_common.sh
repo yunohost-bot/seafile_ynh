@@ -39,9 +39,15 @@ install_dependance() {
     # We need to do that because we can have some issue about the permission access to the pip cache without this
     set_permission
     # Note that we install imageio to force the dependance, without this imageio 2.8 is installed and it need python3.5
-    sudo -u $seafile_user pip3 install --user --upgrade --break-system-packages 'Pillow<10.0.0' pylibmc captcha jinja2 sqlalchemy psd-tools \
-        django-pylibmc django-simple-captcha python3-ldap \
-        pylibmc django-pylibmc # Memcached support
+    if [ $(lsb_release --codename --short) == bullseye ]; then
+        sudo -u $seafile_user pip3 install --user --upgrade 'Pillow<10.0.0' pylibmc captcha jinja2 sqlalchemy psd-tools \
+            django-pylibmc django-simple-captcha python3-ldap \
+            pylibmc django-pylibmc # Memcached support
+    else
+        sudo -u $seafile_user pip3 install --user --upgrade --break-system-packages 'Pillow<10.0.0' pylibmc captcha jinja2 sqlalchemy psd-tools \
+            django-pylibmc django-simple-captcha python3-ldap \
+            pylibmc django-pylibmc # Memcached support
+    fi
     ynh_del_swap
 }
 
