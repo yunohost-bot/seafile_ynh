@@ -13,14 +13,6 @@ source /usr/share/yunohost/helpers
 
 seafile_version="$(ynh_app_upstream_version)"
 
-# Create special path with / at the end
-if [[ $path == '/' ]]
-then
-    path2="$path"
-else
-    path2="$path/"
-fi
-
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================
