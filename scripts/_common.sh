@@ -44,7 +44,11 @@ install_dependance() {
     chown -R $seafile_user:$seafile_user $final_path
 
     # Note that we install imageio to force the dependance, without this imageio 2.8 is installed and it need python3.5
-    sudo -u $seafile_user pip3 install --break-system-packages --user --no-warn-script-location --upgrade future mysqlclient PyMySQL 'Pillow<10.0.0' pylibmc captcha Jinja2 SQLAlchemy psd-tools django-pylibmc django-simple-captcha python3-ldap pycryptodome==3.12.0 cffi==1.14.1
+    if [ $(lsb_release --codename --short) == bullseye ]; then
+        sudo -u $seafile_user pip3 install --no-warn-script-location --user --upgrade future mysqlclient PyMySQL 'Pillow<10.0.0' pylibmc captcha Jinja2 SQLAlchemy psd-tools django-pylibmc django-simple-captcha python3-ldap pycryptodome==3.12.0 cffi==1.14.1
+    else
+        sudo -u $seafile_user pip3 install --break-system-packages --user --no-warn-script-location --upgrade future mysqlclient PyMySQL 'Pillow<10.0.0' pylibmc captcha Jinja2 SQLAlchemy psd-tools django-pylibmc django-simple-captcha python3-ldap pycryptodome==3.12.0 cffi==1.14.1
+    fi
     # TODO add dependance when upgrade to seafile 8: django==2.2.*
     ynh_del_swap
 }
