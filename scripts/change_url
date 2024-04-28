@@ -38,7 +38,7 @@ pkill -f seahub || true
 ynh_script_progression --message="Updating seafile configuration..."
 
 # Update Seafile Config
-ynh_add_config --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
+ynh_add_jinja_config --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
 ynh_add_config --template=ccnet.conf --destination="$install_dir"/conf/ccnet.conf
 ynh_add_config --template=gunicorn.conf.py --destination="$install_dir"/conf/gunicorn.conf.py
 ynh_add_config --template=seafdav.conf --destination="$install_dir"/conf/seafdav.conf
