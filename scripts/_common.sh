@@ -5,9 +5,25 @@
 time_zone=$(cat /etc/timezone)
 python_version="$(python3 -V | cut -d' ' -f2 | cut -d. -f1-2)"
 
+# Create special path with / at the end
+if [[ $path == '/' ]]
+then
+    path2="$path"
+else
+    path2="$path/"
+fi
+
 #=================================================
 # DEFINE ALL COMMON FONCTIONS
 #=================================================
+
+install_pkg_conf() {
+    # Install manually pkgconf
+    # WARNING don't move this to dependencies
+    # We install this manually because we have an issue between pkgconf and pkg-config.
+    # If pkg-config is already installed on the system we can't declare pkgconf as dependency as pkg-config need to be removed to install pkgconf (note that pkgconf replace pkg-config and both can't be installed)
+    ynh_apt install pkgconf
+}
 
 install_dependance() {
     ynh_add_swap --size=2000
@@ -59,19 +75,20 @@ install_dependance() {
 }
 
 set_permission() {
-    chown -R $YNH_APP_ID:$YNH_APP_ID $install_dir
+    chown -R $app:$app $install_dir
     chmod -R u+rwX,g-wx,o= $install_dir
     setfacl -m user:www-data:rX $install_dir
     setfacl -m user:www-data:rX $install_dir/seafile-server-$seafile_version
     # At install time theses directory are not available
     test -e $install_dir/seafile-server-$seafile_version/seahub && setfacl -m user:www-data:rX $install_dir/seafile-server-$seafile_version/seahub
     test -e $install_dir/seafile-server-$seafile_version/seahub/media && setfacl -R -m user:www-data:rX $install_dir/seafile-server-$seafile_version/seahub/media
-    test -e $install_dir/seahub-data && setfacl -R -m user:www-data:rX $install_dir/seahub-data
+    test -e $install_dir/seahub-data && setfacl -m user:www-data:rX $data_dir
+    test -e $install_dir/seahub-data && setfacl -R -m user:www-data:rX $data_dir/seahub-data
 
     find $data_dir \(   \! -perm -o= \
-                     -o \! -user $YNH_APP_ID \
-                     -o \! -group $YNH_APP_ID \) \
-                   -exec chown $YNH_APP_ID:$YNH_APP_ID {} \; \
+                     -o \! -user $app \
+                     -o \! -group $app \) \
+                   -exec chown $app:$app {} \; \
                    -exec chmod o= {} \;
 }
 

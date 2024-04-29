@@ -11,6 +11,8 @@ source ./_common.sh
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
+seafile_version=$(ynh_app_upstream_version)
+
 #=================================================
 # STANDARD REMOVE
 #=================================================
@@ -27,8 +29,10 @@ pkill -f seaf-server || true
 pkill -f ccnet-server || true
 pkill -f seahub || true
 
-ynh_script_progression --message="Removing logs..."
-ynh_secure_remove --file=/var/log/seafile
+if [ "$YNH_APP_PURGE" -eq 1 ]; then
+    ynh_script_progression --message="Removing logs..."
+    ynh_secure_remove --file=/var/log/"$app"
+fi
 ynh_script_progression --message="Removing code..."
 ynh_secure_remove --file=/var/www/$app
 ynh_secure_remove --file=/opt/yunohost/$app
