@@ -3,7 +3,7 @@
 请勿手动编辑。
 -->
 
-# YunoHost 的 Seafile
+# YunoHost 上的 Seafile
 
 [![集成程度](https://dash.yunohost.org/integration/seafile.svg)](https://dash.yunohost.org/appci/app/seafile) ![工作状态](https://ci-apps.yunohost.org/ci/badges/seafile.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/seafile.maintain.svg)
 
