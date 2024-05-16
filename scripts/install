@@ -10,6 +10,7 @@ source ./_common.sh
 
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
+source ./ynh_setup_source
 
 seafile_version=$(ynh_app_upstream_version)
 
