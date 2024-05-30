@@ -7,7 +7,7 @@ workers = 5
 bind = "127.0.0.1:__PORT_SEAHUB__"
 
 # Pid
-pids_dir = '__INSTALL_DIR__/pids'
+pids_dir = '/opt/seafile/pids'
 pidfile = os.path.join(pids_dir, 'seahub.pid')
 
 # for file upload, we need a longer timeout value (default is only 30s, too short)

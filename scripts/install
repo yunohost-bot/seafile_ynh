@@ -13,8 +13,7 @@ source /usr/share/yunohost/helpers
 source ./ynh_setup_source
 
 seafile_version=$(ynh_app_upstream_version)
-
-install_pkg_conf
+seafile_code="$install_dir/seafile_image/opt/seafile/seafile-server-$seafile_version"
 
 ensure_vars_set
 
@@ -33,13 +32,11 @@ fi
 
 mkdir -p /var/log/"$app"
 mkdir -p "$data_dir"/{seafile-data,seahub-data}
+mkdir -p "$install_dir"/conf
 
 # Download new version from sources
 ynh_script_progression --message="Installing sources files..." --weight=7
 install_source
-
-ynh_script_progression --message="Installing python dependancies..."
-install_dependance
 
 # init databases
 ynh_script_progression --message="Configuring MySQL database..."
@@ -53,8 +50,8 @@ ynh_script_progression --message="Configuring application..." --weight=3
 set_permission
 ynh_replace_special_string --match_string='seafile_config.seafile_dir = seafile_config.validate_seafile_dir(seafile_dir)' \
                            --replace_string 'seafile_config.seafile_dir = seafile_dir' \
-                           --target_file "$install_dir/seafile-server-$seafile_version/setup-seafile-mysql.py"
-sudo -u "$app" bash "$install_dir/seafile-server-$seafile_version/setup-seafile-mysql.sh" auto \
+                           --target_file "$seafile_code/setup-seafile-mysql.py"
+run_seafile_cmd bash "/opt/seafile/seafile-server-$seafile_version/setup-seafile-mysql.sh" auto \
     --server-name "$server_name" \
     --server-ip "$domain" \
     --fileserver-port "$port_fileserver" \
@@ -104,7 +101,7 @@ ln -s "$data_dir"/seahub-data "$install_dir"/seahub-data
 ln -s /var/log/"$app" "$install_dir"/logs
 
 # Fix local warning
-ynh_replace_string --match_string=en_US.UTF-8 --replace_string="${LANG:-'en_US.UTF-8'}" --target_file="$install_dir/seafile-server-$seafile_version/seahub.sh"
+ynh_replace_string --match_string=en_US.UTF-8 --replace_string="${LANG:-'en_US.UTF-8'}" --target_file="$seafile_code/seahub.sh"
 
 # Add Seafile Server to startup
 ynh_script_progression --message="Configuring a systemd service..."

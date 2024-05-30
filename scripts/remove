@@ -12,6 +12,7 @@ source ./_common.sh
 source /usr/share/yunohost/helpers
 
 seafile_version="$(ynh_app_upstream_version)"
+seafile_code="$install_dir/seafile_image/opt/seafile/seafile-server-$seafile_version"
 
 #=================================================
 # STANDARD REMOVE
