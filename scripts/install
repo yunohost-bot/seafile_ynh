@@ -7,10 +7,10 @@
 # Import common cmd
 source ./experimental_helper.sh
 source ./_common.sh
+source ./ynh_setup_source
 
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
-source ./ynh_setup_source
 
 seafile_version=$(ynh_app_upstream_version)
 seafile_code="$install_dir/seafile_image/opt/seafile/seafile-server-$seafile_version"

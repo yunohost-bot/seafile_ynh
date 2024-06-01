@@ -7,10 +7,10 @@
 # Import common cmd
 source ./experimental_helper.sh
 source ./_common.sh
+source ./ynh_setup_source
 
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
-source ./ynh_setup_source
 
 seafile_version="$(ynh_app_upstream_version)"
 installed_version="${YNH_APP_CURRENT_VERSION/~ynh*/}"
@@ -125,9 +125,7 @@ case "$installed_version" in
 ;&
 "7.0"* )
     # Fix file comment
-    pushd "$seafile_code"
-    run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/seahub.sh" python-env python3 seahub/manage.py migrate_file_comment
-    popd
+    run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/seahub.sh" python-env python3 "/opt/seafile/seafile-server-$seafile_version/seahub/manage.py" migrate_file_comment
 
     # Update seafile by script
     ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file="$seafile_code/upgrade/upgrade_7.0_7.1.sh"
@@ -155,7 +153,7 @@ case "$installed_version" in
 "10."* )
     ynh_replace_string --match_string='read dummy' --replace_string='# patched' --target_file="$seafile_code/upgrade/upgrade_9.0_10.0.sh"
     run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/upgrade_9.0_10.0.sh"
-    sudo -u "$app" "$install_dir"/venv/bin/python "$seafile_code/migrate_ldapusers.py"
+    run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/seahub.sh" python-env python3 "/opt/seafile/seafile-server-$seafile_version/migrate_ldapusers.py"
 ;&
 esac
 

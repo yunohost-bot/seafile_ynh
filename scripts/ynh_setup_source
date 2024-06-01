@@ -9,7 +9,7 @@
 #
 # WARNING Note it's a patched version of the official helper with a fix for docker specific to arm64
 #
-ynh_setup_source() {
+ynh_setup_source_custom() {
     # Declare an array to define the options of this helper.
     local legacy_args=dsk
     local -A args_array=([d]=dest_dir= [s]=source_id= [k]=keep= [r]=full_replace=)
