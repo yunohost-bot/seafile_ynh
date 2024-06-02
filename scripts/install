@@ -32,7 +32,7 @@ fi
 
 mkdir -p /var/log/"$app"
 mkdir -p "$data_dir"/{seafile-data,seahub-data}
-mkdir -p "$install_dir"/conf
+mkdir -p "$install_dir"/{conf,ccnet}
 
 # Download new version from sources
 ynh_script_progression --message="Installing sources files..." --weight=7
