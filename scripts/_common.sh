@@ -47,8 +47,8 @@ install_source() {
 }
 
 set_permission() {
-    chown -R "$app:$app" "$install_dir"/conf
-    chmod -R u+rwX,g-w,o= "$install_dir"/conf
+    chown -R "$app:$app" "$install_dir"/{conf,ccnet}
+    chmod -R u+rwX,g-w,o= "$install_dir"/{conf,ccnet}
     chown -R "$app:$app" "$install_dir"/seafile_image/opt/seafile
     chmod -R u+rwX,g-w,o= "$install_dir"/seafile_image/opt/seafile
 

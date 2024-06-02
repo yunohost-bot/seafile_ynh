@@ -49,8 +49,11 @@ ynh_script_progression --message="Configuring application..." --weight=3
 # Run install script
 set_permission
 ynh_replace_special_string --match_string='seafile_config.seafile_dir = seafile_config.validate_seafile_dir(seafile_dir)' \
-                           --replace_string 'seafile_config.seafile_dir = seafile_dir' \
-                           --target_file "$seafile_code/setup-seafile-mysql.py"
+                           --replace_string='seafile_config.seafile_dir = seafile_dir' \
+                           --target_file="$seafile_code/setup-seafile-mysql.py"
+ynh_replace_special_string --match_string="Utils.error('Ccnet config dir \\\"%s\\\" already exists.' % ccnet_config.ccnet_dir)" \
+                           --replace_string='patched = 1' \
+                           --target_file="$seafile_code/setup-seafile-mysql.py"
 run_seafile_cmd bash "/opt/seafile/seafile-server-$seafile_version/setup-seafile-mysql.sh" auto \
     --server-name "$server_name" \
     --server-ip "$domain" \
