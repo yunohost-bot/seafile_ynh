@@ -8,6 +8,7 @@ systemd_seafile_bind_mount="$data_dir/seafile-data:/opt/seafile/seafile-data "
 systemd_seafile_bind_mount+="$data_dir/seahub-data:/opt/seafile/seahub-data "
 systemd_seafile_bind_mount+="/var/log/$app:/opt/seafile/logs "
 systemd_seafile_bind_mount+="$install_dir/conf:/opt/seafile/conf "
+systemd_seafile_bind_mount+="$install_dir/ccnet:/opt/seafile/ccnet "
 systemd_seafile_bind_mount+="/proc "
 systemd_seafile_bind_mount+="/dev"
 
