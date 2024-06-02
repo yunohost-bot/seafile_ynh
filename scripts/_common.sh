@@ -39,7 +39,7 @@ run_seafile_cmd() {
 
 install_source() {
     ynh_setup_source_custom --dest_dir="$install_dir"/seafile_image --full_replace
-    mkdir -p "$install_dir"/seafile_image/opt/seafile/{seafile-data,seahub-data,conf,logs}
+    mkdir -p "$install_dir"/seafile_image/opt/seafile/{seafile-data,seahub-data,conf,ccnet,logs}
     grep "^$app:x"  /etc/passwd | sed "s|$install_dir|/opt/seafile|" >> "$install_dir"/seafile_image/etc/passwd
     grep "^$app:x"  /etc/group >> "$install_dir"/seafile_image/etc/group
     grep "^$app:x"  /etc/group- >> "$install_dir"/seafile_image/etc/group-
