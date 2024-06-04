@@ -164,7 +164,7 @@ run_seafile_cmd "/opt/seafile/seafile-server-$seafile_version/upgrade/minor-upgr
 clean_url_in_db_config
 
 # Update seafile config files
-ynh_add_jinja_config --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
+ynh_add_config --jinja --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
 ynh_add_config --template=seafile.conf --destination="$install_dir"/conf/seafile.conf
 ynh_add_config --template=ccnet.conf --destination="$install_dir"/conf/ccnet.conf
 ynh_add_config --template=gunicorn.conf.py --destination="$install_dir"/conf/gunicorn.conf.py

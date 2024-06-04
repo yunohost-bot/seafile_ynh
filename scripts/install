@@ -72,7 +72,7 @@ seahub_secret_key=$(grep -P 'SECRET_KEY\s*=\s*".+"' "$install_dir"/conf/seahub_s
 ynh_app_setting_set --app="$app" --key=seahub_secret_key --value="$seahub_secret_key"
 
 # Update seafile config files
-ynh_add_jinja_config --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
+ynh_add_config --jinja --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
 ynh_add_config --template=seafile.conf --destination="$install_dir"/conf/seafile.conf
 ynh_add_config --template=ccnet.conf --destination="$install_dir"/conf/ccnet.conf
 ynh_add_config --template=gunicorn.conf.py --destination="$install_dir"/conf/gunicorn.conf.py
