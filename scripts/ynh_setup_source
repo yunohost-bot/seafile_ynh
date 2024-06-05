@@ -1,14 +1,6 @@
 # Download, check integrity, uncompress and patch the source from app.src
 #
-# usage: ynh_setup_source --dest_dir=dest_dir [--source_id=source_id] [--keep="file1 file2"] [--full_replace]
-# | arg: -d, --dest_dir=     - Directory where to setup sources
-# | arg: -s, --source_id=    - Name of the source, defaults to `main` (when the sources resource exists in manifest.toml) or (legacy) `app` otherwise
-# | arg: -k, --keep=         - Space-separated list of files/folders that will be backup/restored in $dest_dir, such as a config file you don't want to overwrite. For example 'conf.json secrets.json logs' (no trailing `/` for folders)
-# | arg: -r, --full_replace= - Remove previous sources before installing new sources
-#
-#
-# WARNING Note it's a patched version of the official helper with a fix for docker specific to arm64
-#
+# Requires YunoHost version 2.6.4 or higher.
 ynh_setup_source_custom() {
     # Declare an array to define the options of this helper.
     local legacy_args=dsk
@@ -179,7 +171,7 @@ ynh_setup_source_custom() {
             mv $src_filename $dest_dir/$src_rename
         fi
     elif [[ "$src_format" == "docker" ]]; then
-        /usr/share/yunohost/helpers.d/vendor/docker-image-extract/docker-image-extract -p $src_platform -o $dest_dir $src_url 2>&1
+        "$YNH_HELPERS_DIR/vendor/docker-image-extract/docker-image-extract" -p $src_platform -o $dest_dir $src_url 2>&1
     elif [[ "$src_format" == "zip" ]]; then
         # Zip format
         # Using of a temp directory, because unzip doesn't manage --strip-components
