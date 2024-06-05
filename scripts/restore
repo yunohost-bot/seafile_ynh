@@ -11,12 +11,10 @@ source ../settings/scripts/_common.sh
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
-seafile_version=$(ynh_app_upstream_version)
+seafile_version="$(ynh_app_upstream_version)"
+seafile_code="$install_dir/seafile_image/opt/seafile/seafile-server-$seafile_version"
 
 ynh_script_progression --message="Loading settings..."
-
-# Retrieve arguments
-seafile_version=$(ynh_app_upstream_version)
 
 #=================================================
 # STANDARD RESTORATION STEPS
@@ -42,7 +40,7 @@ su -c "mysql -u ${app} -p$db_pwd seahubdb < ${YNH_CWD}/seahubdb.dmp"
 # Add logrotate
 ynh_script_progression --message="Configuring log rotation..."
 mkdir -p /var/log/"$app"
-ynh_use_logrotate --logfile "$install_dir"/logs
+ynh_use_logrotate --logfile="$install_dir"/logs
 
 # Set all permissions
 ynh_script_progression --message="Protecting directory..."
@@ -72,8 +70,8 @@ sleep 5
 
 # Restart service
 ynh_script_progression --message="Starting seafile services..." --weight=3
-ynh_systemd_action --service_name seafile -l "spawned seaf-server, pid " -p /var/log/seafile/controller.log
-ynh_systemd_action --service_name seahub -l "Started Seafile hub." -p "systemd"
+ynh_systemd_action --service_name=seafile -l "spawned seaf-server, pid " -p /var/log/seafile/controller.log
+ynh_systemd_action --service_name=seahub -l "Started Seafile hub." -p "systemd"
 sleep 2
 
 ynh_script_progression --message="Restoration completed for $app" --last

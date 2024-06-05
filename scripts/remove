@@ -11,7 +11,8 @@ source ./_common.sh
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
-seafile_version=$(ynh_app_upstream_version)
+seafile_version="$(ynh_app_upstream_version)"
+seafile_code="$install_dir/seafile_image/opt/seafile/seafile-server-$seafile_version"
 
 #=================================================
 # STANDARD REMOVE
@@ -20,8 +21,8 @@ seafile_version=$(ynh_app_upstream_version)
 ynh_script_progression --message="Stoping services..."
 
 # Stop all services
-ynh_systemd_action --service_name seafile --action stop
-ynh_systemd_action --service_name seahub --action stop
+ynh_systemd_action --service_name=seafile --action=stop
+ynh_systemd_action --service_name=seahub --action=stop
 
 # Force to kill all process in case of a process is not stoped cleanly
 pkill -f seafile-controller || true
@@ -34,8 +35,8 @@ if [ "$YNH_APP_PURGE" -eq 1 ]; then
     ynh_secure_remove --file=/var/log/"$app"
 fi
 ynh_script_progression --message="Removing code..."
-ynh_secure_remove --file=/var/www/$app
-ynh_secure_remove --file=/opt/yunohost/$app
+ynh_secure_remove --file=/var/www/"$app"
+ynh_secure_remove --file=/opt/yunohost/"$app"
 
 # Remove databases
 ynh_script_progression --message="Removing databases..."
@@ -45,8 +46,8 @@ $db_helper --db_name seahubdb --db_user seafile
 
 # Remove systemd service
 ynh_script_progression --message="Removing systemd units..."
-ynh_remove_systemd_config --service seafile
-ynh_remove_systemd_config --service seahub
+ynh_remove_systemd_config --service=seafile
+ynh_remove_systemd_config --service=seahub
 
 # Remove nginx config
 ynh_script_progression --message="Removing nginx configuration..."

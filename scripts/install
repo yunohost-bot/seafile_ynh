@@ -7,13 +7,15 @@
 # Import common cmd
 source ./experimental_helper.sh
 source ./_common.sh
+source ./ynh_setup_source
 
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
 seafile_version=$(ynh_app_upstream_version)
+seafile_code="$install_dir/seafile_image/opt/seafile/seafile-server-$seafile_version"
 
-install_pkg_conf
+ensure_vars_set
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -30,28 +32,29 @@ fi
 
 mkdir -p /var/log/"$app"
 mkdir -p "$data_dir"/{seafile-data,seahub-data}
+mkdir -p "$install_dir"/{conf,ccnet}
 
 # Download new version from sources
 ynh_script_progression --message="Installing sources files..." --weight=7
-ynh_setup_source --dest_dir=$install_dir/seafile-server-$seafile_version
-
-ynh_script_progression --message="Installing python dependancies..."
-install_dependance
+install_source
 
 # init databases
 ynh_script_progression --message="Configuring MySQL database..."
 db_user=seafile
-ynh_''mysql_setup_db --db_user "$db_user" --db_name ccnetdb --db_pwd "$db_pwd"
-ynh_''mysql_setup_db --db_user "$db_user" --db_name seahubdb --db_pwd "$db_pwd"
+ynh_''mysql_setup_db --db_user="$db_user" --db_name=ccnetdb --db_pwd="$db_pwd"
+ynh_''mysql_setup_db --db_user="$db_user" --db_name=seahubdb --db_pwd="$db_pwd"
 
 ynh_script_progression --message="Configuring application..." --weight=3
 
 # Run install script
 set_permission
-ynh_replace_special_string --match_string 'seafile_config.seafile_dir = seafile_config.validate_seafile_dir(seafile_dir)' \
-                           --replace_string 'seafile_config.seafile_dir = seafile_dir' \
-                           --target_file "$install_dir/seafile-server-$seafile_version/setup-seafile-mysql.py"
-sudo -u "$app" bash "$install_dir/seafile-server-$seafile_version/setup-seafile-mysql.sh" auto \
+ynh_replace_special_string --match_string='seafile_config.seafile_dir = seafile_config.validate_seafile_dir(seafile_dir)' \
+                           --replace_string='seafile_config.seafile_dir = seafile_dir' \
+                           --target_file="$seafile_code/setup-seafile-mysql.py"
+ynh_replace_special_string --match_string="Utils.error('Ccnet config dir \\\"%s\\\" already exists.' % ccnet_config.ccnet_dir)" \
+                           --replace_string='patched = 1' \
+                           --target_file="$seafile_code/setup-seafile-mysql.py"
+run_seafile_cmd bash "/opt/seafile/seafile-server-$seafile_version/setup-seafile-mysql.sh" auto \
     --server-name "$server_name" \
     --server-ip "$domain" \
     --fileserver-port "$port_fileserver" \
@@ -60,27 +63,28 @@ sudo -u "$app" bash "$install_dir/seafile-server-$seafile_version/setup-seafile-
     --mysql-port 3306 \
     --mysql-user "$db_user" \
     --mysql-user-passwd "$db_pwd" \
-    --seafile-db "$db_name" \
-    --ccnet-db ccnetdb \
-    --seahub-db seahubdb
+    -s "$db_name" \
+    -c ccnetdb \
+    -b seahubdb
 
 # Retrive values from auto generated config file
 seahub_secret_key=$(grep -P 'SECRET_KEY\s*=\s*".+"' "$install_dir"/conf/seahub_settings.py | cut -d'"' -f2)
-ynh_app_setting_set --app "$app" --key seahub_secret_key --value "$seahub_secret_key"
+ynh_app_setting_set --app="$app" --key=seahub_secret_key --value="$seahub_secret_key"
 
 # Update seafile config files
-ynh_add_config --template=seahub_settings.py --destination=$install_dir/conf/seahub_settings.py
-ynh_add_config --template=seafile.conf --destination=$install_dir/conf/seafile.conf
-ynh_add_config --template=ccnet.conf --destination=$install_dir/conf/ccnet.conf
-ynh_add_config --template=gunicorn.conf.py --destination=$install_dir/conf/gunicorn.conf.py
-ynh_add_config --template=seafdav.conf --destination=$install_dir/conf/seafdav.conf
+ynh_add_config --jinja --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
+ynh_add_config --template=seafile.conf --destination="$install_dir"/conf/seafile.conf
+ynh_add_config --template=ccnet.conf --destination="$install_dir"/conf/ccnet.conf
+ynh_add_config --template=gunicorn.conf.py --destination="$install_dir"/conf/gunicorn.conf.py
+ynh_add_config --template=seafdav.conf --destination="$install_dir"/conf/seafdav.conf
+ynh_add_config --template=seafevents.conf --destination="$install_dir"/conf/seafevents.conf
 
 # Configure admin info
 # It will be used the first start
-admin_email=$(ynh_user_get_info --username "$admin" --key 'mail')
+admin_email=$(ynh_user_get_info --username="$admin" --key='mail')
 cp ../conf/create_admin.json $install_dir/conf/admin.txt
-ynh_replace_string         --match_string __ADMIN__ --replace_string "$admin_email" --target_file $install_dir/conf/admin.txt
-ynh_replace_special_string --match_string __PASSWORD__ --replace_string "$admin_password" --target_file $install_dir/conf/admin.txt
+ynh_replace_string         --match_string=__ADMIN__ --replace_string="$admin_email" --target_file=$install_dir/conf/admin.txt
+ynh_replace_special_string --match_string=__PASSWORD__ --replace_string="$admin_password" --target_file=$install_dir/conf/admin.txt
 
 # Use symlink to store data
 if [ -e "$install_dir"/seafile-data ]; then
@@ -100,12 +104,12 @@ ln -s "$data_dir"/seahub-data "$install_dir"/seahub-data
 ln -s /var/log/"$app" "$install_dir"/logs
 
 # Fix local warning
-ynh_replace_string --match_string en_US.UTF-8 --replace_string ${LANG:-'en_US.UTF-8'} --target_file $install_dir/seafile-server-$seafile_version/seahub.sh
+ynh_replace_string --match_string=en_US.UTF-8 --replace_string="${LANG:-'en_US.UTF-8'}" --target_file="$seafile_code/seahub.sh"
 
 # Add Seafile Server to startup
 ynh_script_progression --message="Configuring a systemd service..."
-ynh_add_systemd_config --service seafile --template seafile.service
-ynh_add_systemd_config --service seahub --template seahub.service
+ynh_add_systemd_config --service=seafile --template=seafile.service
+ynh_add_systemd_config --service=seahub --template=seahub.service
 
 # register yunohost service
 yunohost service add seafile --description 'Main service for seafile server.'
@@ -135,9 +139,9 @@ set_permission
 sleep 3
 
 ynh_script_progression --message="Starting seafile services..."
-ynh_systemd_action --service_name seafile -l "spawned seaf-server, pid " -p /var/log/seafile/controller.log
+ynh_systemd_action --service_name=seafile -l "spawned seaf-server, pid " -p /var/log/seafile/controller.log
 sleep 2
-ynh_systemd_action --service_name seahub -l "Started Seafile hub." -p "systemd"
+ynh_systemd_action --service_name=seahub -l "Started Seafile hub." -p "systemd"
 sleep 2
 
 ynh_script_progression --message="Installation of $app completed" --last

@@ -220,3 +220,4 @@ pip-log.txt
 .directory
 *-swp
 
+auto_update_config.sh
