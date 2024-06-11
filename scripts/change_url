@@ -11,13 +11,8 @@ source ./_common.sh
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
-# Create special path with / at the end
-if [[ $path == '/' ]]
-then
-    path2=$path
-else
-    path2=$path"/"
-fi
+seafile_version="$(ynh_app_upstream_version)"
+seafile_code="$install_dir/seafile_image/opt/seafile/seafile-server-$seafile_version"
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -33,8 +28,8 @@ ynh_change_url_nginx_config
 ynh_script_progression --message="Stoping services..."
 
 # Stop service before any change
-ynh_systemd_action --service_name seafile --action stop
-ynh_systemd_action --service_name seahub --action stop
+ynh_systemd_action --service_name=seafile --action=stop
+ynh_systemd_action --service_name=seahub --action=stop
 sleep 2
 pkill -f seafile-controller || true
 pkill -f seaf-server || true
@@ -44,14 +39,14 @@ pkill -f seahub || true
 ynh_script_progression --message="Updating seafile configuration..."
 
 # Update Seafile Config
-ynh_add_config --template=seahub_settings.py --destination=$install_dir/conf/seahub_settings.py
-ynh_add_config --template=ccnet.conf --destination=$install_dir/conf/ccnet.conf
-ynh_add_config --template=gunicorn.conf.py --destination=$install_dir/conf/gunicorn.conf.py
-ynh_add_config --template=seafdav.conf --destination=$install_dir/conf/seafdav.conf
+ynh_add_config --jinja --template=seahub_settings.py --destination="$install_dir"/conf/seahub_settings.py
+ynh_add_config --template=ccnet.conf --destination="$install_dir"/conf/ccnet.conf
+ynh_add_config --template=gunicorn.conf.py --destination="$install_dir"/conf/gunicorn.conf.py
+ynh_add_config --template=seafdav.conf --destination="$install_dir"/conf/seafdav.conf
 
 # Update permissions
-ynh_permission_url --permission=file_server --url=$domain/seafhttp
-ynh_permission_url --permission=webdav --url=$domain/seafdav
+ynh_permission_url --permission=file_server --url="$domain"/seafhttp
+ynh_permission_url --permission=webdav --url="$domain"/seafdav
 
 # Clean url in config in DB
 clean_url_in_db_config
@@ -61,8 +56,8 @@ sleep 2
 
 # Reload services
 ynh_script_progression --message="Starting services..."
-ynh_systemd_action --service_name seafile -l "spawned seaf-server, pid " -p /var/log/seafile/controller.log
-ynh_systemd_action --service_name seahub -l "Started Seafile hub." -p "systemd"
+ynh_systemd_action --service_name=seafile -l "spawned seaf-server, pid " -p /var/log/seafile/controller.log
+ynh_systemd_action --service_name=seahub -l "Started Seafile hub." -p "systemd"
 sleep 2
 
-ynh_script_progression --message="Change of URL completed for $app" --time --last
+ynh_script_progression --message="Change of URL completed for $app" --time=--last

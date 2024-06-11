@@ -9,7 +9,7 @@ It shall NOT be edited by hand.
 
 [![Install Seafile with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=seafile)
 
-*[Read this README is other languages.](./ALL_README.md)*
+*[Read this README in other languages.](./ALL_README.md)*
 
 > *This package allows you to install Seafile quickly and simply on a YunoHost server.*  
 > *If you don't have YunoHost, please consult [the guide](https://yunohost.org/install) to learn how to install it.*
@@ -21,7 +21,7 @@ Seafile is an open Source Cloud Storage application.
 It's a Enterprise file sync and share platform with high reliability and performance. It's a file hosting platform with high reliability and performance. Put files on your own server. Sync and share files across different devices, or access all the files as a virtual disk.
 
 
-**Shipped version:** 9.0.9~ynh2
+**Shipped version:** 11.0.9~ynh1
 
 **Demo:** <https://demo.seafile.com>
 
