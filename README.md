@@ -27,14 +27,14 @@ It's a Enterprise file sync and share platform with high reliability and perform
 
 ## Screenshots
 
-![Screenshot of Seafile](./doc/screenshots/access-logs.jpg)
-![Screenshot of Seafile](./doc/screenshots/drive-client.png)
-![Screenshot of Seafile](./doc/screenshots/file-history.png)
-![Screenshot of Seafile](./doc/screenshots/file-locking.jpg)
 ![Screenshot of Seafile](./doc/screenshots/mobile-ios-client.jpg)
+![Screenshot of Seafile](./doc/screenshots/drive-client.png)
+![Screenshot of Seafile](./doc/screenshots/file-locking.jpg)
+![Screenshot of Seafile](./doc/screenshots/access-logs.jpg)
+![Screenshot of Seafile](./doc/screenshots/file-history.png)
+![Screenshot of Seafile](./doc/screenshots/wiki_en.png)
 ![Screenshot of Seafile](./doc/screenshots/sharing-dialog.png)
 ![Screenshot of Seafile](./doc/screenshots/sync-client.jpg)
-![Screenshot of Seafile](./doc/screenshots/wiki_en.png)
 
 ## Documentation and resources
 
