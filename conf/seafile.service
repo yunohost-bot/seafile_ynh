@@ -5,10 +5,14 @@ After=mysql.service
 
 [Service]
 Type=forking
-ExecStart=/opt/yunohost/__APP__/seafile-server-latest/seafile.sh start
-ExecStop=/opt/yunohost/__APP__/seafile-server-latest/seafile.sh stop
+ExecStart=/opt/seafile/seafile-server-__SEAFILE_VERSION__/seafile.sh start
+ExecStop=/opt/seafile/seafile-server-__SEAFILE_VERSION__/seafile.sh stop
 User=__APP__
 Group=__APP__
+
+# Config releated to run in docker provied file system
+RootDirectory=__INSTALL_DIR__/seafile_image
+BindPaths=__SYSTEMD_SEAFILE_BIND_MOUNT__
 
 # Sandboxing options to harden security
 # Details for these options: https://www.freedesktop.org/software/systemd/man/systemd.exec.html
