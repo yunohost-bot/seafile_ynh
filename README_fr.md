@@ -20,21 +20,13 @@ Seafile is an open Source Cloud Storage application.
 
 It's a Enterprise file sync and share platform with high reliability and performance. It's a file hosting platform with high reliability and performance. Put files on your own server. Sync and share files across different devices, or access all the files as a virtual disk.
 
-
 **Version incluse :** 11.0.9~ynh1
 
 **Démo :** <https://demo.seafile.com>
 
 ## Captures d’écran
 
-![Capture d’écran de Seafile](./doc/screenshots/access-logs.jpg)
-![Capture d’écran de Seafile](./doc/screenshots/drive-client.png)
-![Capture d’écran de Seafile](./doc/screenshots/file-history.png)
-![Capture d’écran de Seafile](./doc/screenshots/file-locking.jpg)
-![Capture d’écran de Seafile](./doc/screenshots/mobile-ios-client.jpg)
-![Capture d’écran de Seafile](./doc/screenshots/sharing-dialog.png)
-![Capture d’écran de Seafile](./doc/screenshots/sync-client.jpg)
-![Capture d’écran de Seafile](./doc/screenshots/wiki_en.png)
+![Capture d’écran de Seafile](./doc/screenshots/screenshot.png)
 
 ## Documentations et ressources
 

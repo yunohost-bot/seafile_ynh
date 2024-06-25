@@ -20,21 +20,13 @@ Seafile is an open Source Cloud Storage application.
 
 It's a Enterprise file sync and share platform with high reliability and performance. It's a file hosting platform with high reliability and performance. Put files on your own server. Sync and share files across different devices, or access all the files as a virtual disk.
 
-
 **分发版本：** 11.0.9~ynh1
 
 **演示：** <https://demo.seafile.com>
 
 ## 截图
 
-![Seafile 的截图](./doc/screenshots/access-logs.jpg)
-![Seafile 的截图](./doc/screenshots/drive-client.png)
-![Seafile 的截图](./doc/screenshots/file-history.png)
-![Seafile 的截图](./doc/screenshots/file-locking.jpg)
-![Seafile 的截图](./doc/screenshots/mobile-ios-client.jpg)
-![Seafile 的截图](./doc/screenshots/sharing-dialog.png)
-![Seafile 的截图](./doc/screenshots/sync-client.jpg)
-![Seafile 的截图](./doc/screenshots/wiki_en.png)
+![Seafile 的截图](./doc/screenshots/screenshot.png)
 
 ## 文档与资源
 
