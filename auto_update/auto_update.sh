@@ -4,6 +4,8 @@ set -eu
 
 readonly app_name=seafile
 
+source auto_update_config.sh
+
 get_from_manifest() {
     result=$(python3 <<EOL
 import toml
@@ -24,7 +26,8 @@ check_app_version() {
     local docker_digest_latest="$(echo "$docker_request_res" |
         jq -r 'select(.name == "latest") | .digest')"
     local app_remote_version=$(echo "$docker_request_res" |
-        jq -r 'select(.digest == "'"$docker_digest_latest"'" and .name != "latest") | .name')
+        jq -r 'select(.digest == "'"$docker_digest_latest"'" and .name != "latest") | .name' |
+        grep -E -v ".*-latest" | tail -n1)
 
     ## Check if new build is needed
     if [[ "$app_version" != "$app_remote_version" ]]
