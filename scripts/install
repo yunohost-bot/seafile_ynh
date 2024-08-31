@@ -80,9 +80,9 @@ ynh_config_add --template=seafevents.conf --destination="$install_dir"/conf/seaf
 # Configure admin info
 # It will be used the first start
 admin_email=$(ynh_user_get_info --username="$admin" --key='mail')
-cp ../conf/create_admin.json $install_dir/conf/admin.txt
-ynh_replace         --match=__ADMIN__ --replace="$admin_email" --file=$install_dir/conf/admin.txt
-ynh_replace_regex --match=__PASSWORD__ --replace="$admin_password" --file=$install_dir/conf/admin.txt
+cp ../conf/create_admin.json "$install_dir"/conf/admin.txt
+ynh_replace         --match=__ADMIN__ --replace="$admin_email" --file="$install_dir"/conf/admin.txt
+ynh_replace_regex --match=__PASSWORD__ --replace="$admin_password" --file="$install_dir"/conf/admin.txt
 
 # Use symlink to store data
 if [ -e "$install_dir"/seafile-data ]; then

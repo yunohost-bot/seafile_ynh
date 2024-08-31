@@ -47,11 +47,7 @@ if mysqlshow | grep -q seafiledb; then
 fi
 
 # Set missing settings
-# FIXMEhelpers2.1: maybe replace with: ynh_app_setting_set_default --key=seahub_secret_key --value="$(grep -P 'SECRET_KEY\s*=\s*".+"' "$install_dir"/conf/seahub_settings.py | cut -d'"' -f2)"
-if [ -z "${seahub_secret_key:-}" ]; then
-    seahub_secret_key="$(grep -P 'SECRET_KEY\s*=\s*".+"' "$install_dir"/conf/seahub_settings.py | cut -d'"' -f2)"
-    ynh_app_setting_set --key=seahub_secret_key --value="$seahub_secret_key"
-fi
+ynh_app_setting_set_default --key=seahub_secret_key --value="$(grep -P 'SECRET_KEY\s*=\s*".+"' "$install_dir"/conf/seahub_settings.py | cut -d'"' -f2)"
 
 #
 # Update data dir if needed
