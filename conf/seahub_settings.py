@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+# WARNING: Don't edit this file. All change will be removed after each app upgrade
+
 SECRET_KEY = "{{ seahub_secret_key }}"
 
 DATABASES = {
