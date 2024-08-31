@@ -31,7 +31,7 @@ fi
 #=================================================
 
 run_seafile_cmd() {
-    ynh_exec_warn_less systemd-run --wait --uid="$app" --gid="$app" \
+    ynh_hide_warnings systemd-run --wait --uid="$app" --gid="$app" \
         --property=RootDirectory="$install_dir"/seafile_image \
         --property="BindPaths=$systemd_seafile_bind_mount" \
         $@
@@ -76,14 +76,15 @@ set_permission() {
 
 clean_url_in_db_config() {
     sql_request='DELETE FROM `constance_config` WHERE `constance_key`= "SERVICE_URL"'
-    ynh_mysql_execute_as_root --sql="$sql_request" --database=seahubdb
+    ynh_mysql_db_shell <<< "$sql_request" --database=seahubdb
     sql_request='DELETE FROM `constance_config` WHERE `constance_key`= "FILE_SERVER_ROOT"'
-    ynh_mysql_execute_as_root --sql="$sql_request" --database=seahubdb
+    ynh_mysql_db_shell <<< "$sql_request" --database=seahubdb
 }
 
 ensure_vars_set() {
+# FIXMEhelpers2.1: maybe replace with: ynh_app_setting_set_default --key=jwt_private_key_notification_server --value=$(ynh_string_random -l 32)
     if [ -z "${jwt_private_key_notification_server:-}" ]; then
         jwt_private_key_notification_server=$(ynh_string_random -l 32)
-        ynh_app_setting_set --app="$app" --key=jwt_private_key_notification_server --value="$jwt_private_key_notification_server"
+        ynh_app_setting_set --key=jwt_private_key_notification_server --value="$jwt_private_key_notification_server"
     fi
 }

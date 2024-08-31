@@ -18,7 +18,8 @@ code = "https://github.com/haiwen/seafile-server"
 cpe = "cpe:2.3:a:seafile:seafile"
 
 [integration]
-yunohost = ">= 11.2.13"
+yunohost = ">= 11.2.18"
+helpers_version = "2.1"
 architectures = ["amd64", "arm64"]
 multi_instance = false
 ldap = true
@@ -65,6 +66,7 @@ ram.runtime = "500M"
     home = "/opt/yunohost/__APP__"
 
     [resources.install_dir]
+    group = "www-data:r-x"
     dir = "/opt/yunohost/__APP__"
     owner = "__APP__:rwx"
     group = "www-data:rx"
