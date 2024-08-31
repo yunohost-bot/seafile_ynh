@@ -65,9 +65,8 @@ ram.runtime = "500M"
     allow_email = true
 
     [resources.install_dir]
-    group = "www-data:r-x"
     owner = "__APP__:rwx"
-    group = "www-data:rx"
+    group = "www-data:r-x"
 
     [resources.data_dir]
     dir = "/home/yunohost.app/__APP__"
