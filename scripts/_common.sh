@@ -82,9 +82,5 @@ clean_url_in_db_config() {
 }
 
 ensure_vars_set() {
-# FIXMEhelpers2.1: maybe replace with: ynh_app_setting_set_default --key=jwt_private_key_notification_server --value=$(ynh_string_random -l 32)
-    if [ -z "${jwt_private_key_notification_server:-}" ]; then
-        jwt_private_key_notification_server=$(ynh_string_random -l 32)
-        ynh_app_setting_set --key=jwt_private_key_notification_server --value="$jwt_private_key_notification_server"
-    fi
+    ynh_app_setting_set_default --key=jwt_private_key_notification_server --value=$(ynh_string_random -l 32)
 }
