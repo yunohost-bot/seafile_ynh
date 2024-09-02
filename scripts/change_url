@@ -54,8 +54,9 @@ sleep 2
 
 # Reload services
 ynh_script_progression "Starting services..."
-ynh_systemctl --service=seafile -l "spawned seaf-server, pid " -p /var/log/seafile/controller.log
-ynh_systemctl --service=seahub -l "Started Seafile hub." -p "systemd"
+ynh_systemctl --service=seafile --wait_until="spawned seaf-server, pid " --log_path=/var/log/seafile/controller.log
+sleep 2
+ynh_systemctl --service=seahub --wait_until="Started Seafile hub." --log_path="systemd"
 sleep 2
 
 ynh_script_progression "Change of URL completed for $app" --time=
