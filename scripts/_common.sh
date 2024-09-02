@@ -47,8 +47,10 @@ install_source() {
 }
 
 set_permission() {
+    chown "$app:$app" "$install_dir"
+    chmod u=rwx,g=rx,o= "$install_dir"
     chown -R "$app:$app" "$install_dir"/{conf,ccnet}
-    chmod -R u+rwX,g-w,o= "$install_dir"/{conf,ccnet}
+    chmod -R u+rwX,g+rX-w,o= "$install_dir"/{conf,ccnet}
     chown -R "$app:$app" "$install_dir"/seafile_image/opt/seafile
     chmod -R u+rwX,g-w,o= "$install_dir"/seafile_image/opt/seafile
 
@@ -67,6 +69,7 @@ set_permission() {
     test -e "$install_dir"/seahub-data && setfacl -m user:www-data:rX "$data_dir"
     test -e "$install_dir"/seahub-data && setfacl -R -m user:www-data:rX "$data_dir"/seahub-data
 
+    chmod u=rwx,g=rx,o= "$data_dir"
     find "$data_dir" \(   \! -perm -o= \
                      -o \! -user "$app" \
                      -o \! -group "$app" \) \
