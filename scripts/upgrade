@@ -19,7 +19,7 @@ seafile_code="$install_dir/seafile_image/opt/seafile/seafile-server-$seafile_ver
 
 ensure_vars_set
 
-if [ "$YNH_APP_CURRENT_VERSION" == '-' ] || ynh_compare_current_package_version --comparison=le --version='7.0~ynh1'; then
+if [ "$YNH_APP_CURRENT_VERSION" == '-' ] || ynh_app_upgrading_from_version_before_or_equal_to '7.0~ynh1'; then
     ynh_die "Upgrade from this version not supported"
 fi
 
