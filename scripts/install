@@ -137,7 +137,7 @@ sleep 3
 ynh_script_progression "Starting seafile services..."
 ynh_systemctl --service=seafile --wait_until="spawned seaf-server, pid " --log_path=/var/log/seafile/controller.log
 sleep 2
-ynh_systemctl --service=seahub --wait_until="Started Seafile hub." --log_path="systemd"
+ynh_systemctl --service=seahub --wait_until="Seahub is started" --log_path="systemd"
 sleep 2
 
 ynh_script_progression "Installation of $app completed"
