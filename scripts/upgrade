@@ -12,10 +12,7 @@ source ./ynh_setup_source
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
-seafile_version="$(ynh_app_upstream_version)"
 installed_version="${YNH_APP_CURRENT_VERSION/~ynh*/}"
-
-seafile_code="$install_dir/seafile_image/opt/seafile/seafile-server-$seafile_version"
 
 ensure_vars_set
 

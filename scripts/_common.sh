@@ -1,6 +1,11 @@
+source /usr/share/yunohost/helpers
+
 #=================================================
 # SET ALL CONSTANTS
 #=================================================
+
+readonly seafile_version=$(ynh_app_upstream_version)
+readonly seafile_code="$install_dir/seafile_image/opt/seafile/seafile-server-$seafile_version"
 
 readonly time_zone="$(cat /etc/timezone)"
 readonly python_version="$(python3 -V | cut -d' ' -f2 | cut -d. -f1-2)"

@@ -11,9 +11,6 @@ source ../settings/scripts/_common.sh
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
-seafile_version=$(ynh_app_upstream_version)
-seafile_code="$install_dir/seafile_image/opt/seafile/seafile-server-$seafile_version"
-
 if systemctl is-active seafile --quiet || systemctl is-active seahub --quiet; then
     ynh_print_warn "It's hightly recommended to make your backup when the service is stopped. Please stop seafile service and seahub service with this command before to run the backup 'systemctl stop seafile.service seahub.service'"
 fi
