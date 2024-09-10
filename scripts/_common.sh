@@ -86,4 +86,5 @@ clean_url_in_db_config() {
 
 ensure_vars_set() {
     ynh_app_setting_set_default --key=jwt_private_key_notification_server --value=$(ynh_string_random -l 32)
+    ynh_app_setting_set_default --key=protect_against_basic_auth_spoofing --value=false
 }
