@@ -8,9 +8,6 @@
 source ./experimental_helper.sh
 source ./_common.sh
 
-# Source YunoHost helpers
-source /usr/share/yunohost/helpers
-
 #=================================================
 # STANDARD REMOVE
 #=================================================

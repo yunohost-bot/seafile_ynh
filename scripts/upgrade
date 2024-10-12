@@ -9,9 +9,6 @@ source ./experimental_helper.sh
 source ./_common.sh
 source ./ynh_setup_source
 
-# Source YunoHost helpers
-source /usr/share/yunohost/helpers
-
 installed_version="${YNH_APP_CURRENT_VERSION/~ynh*/}"
 
 ensure_vars_set
